@@ -1,3 +1,24 @@
 {
-  "theme_toggler_label": "Toggle Theme"
+  "landingPage": {
+    "hero": {
+      "title": "Feel better about finding",
+      "text": "We take the guesswork out of finding the right, doctors, hospitals, and care for you and your family."
+    },
+    "features": {
+      "title-1": "Emergency",
+      "text-1": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore...",
+      "title-2": "Find Doctor",
+      "text-2": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore...",
+      "title-3": "Appointment",
+      "text-3": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore..."
+    },
+    "cta-section-title": "Book your medical appointment today",
+    "cta": {
+      "primary-label": "Appointment",
+      "secondary-label": "Schedule a call"
+    }
+  },
+  "login-btn-label": "sign in",
+  "theme_toggler_label": "Toggle Theme",
+  "copyright_text": "© 2024 HealthCare All rights reserved"
 }

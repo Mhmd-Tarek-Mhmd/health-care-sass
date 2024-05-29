@@ -1,9 +1,10 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import LandingPage from "./containers/landingPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <h1>HealthCare</h1>,
+    element: <LandingPage />,
   },
 ]);
 
