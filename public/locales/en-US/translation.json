@@ -20,5 +20,6 @@
   },
   "login-btn-label": "sign in",
   "theme_toggler_label": "Toggle Theme",
+  "language-select-label": "Choose language",
   "copyright_text": "© 2024 HealthCare All rights reserved"
 }
