@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import LandingPage from "./containers/landingPage";
+
+import { LandingPage } from "./containers";
 
 const router = createBrowserRouter([
   {
