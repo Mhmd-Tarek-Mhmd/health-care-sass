@@ -19,6 +19,11 @@
       "secondary-label": "جدولة مكالمة"
     }
   },
+  "notFoundPage": {
+    "title": "هذه الصفحة غير موجودة",
+    "text": "يبدو أن الصفحة التي تبحث عنها غير موجودة",
+    "cta": "الرجوع للصفحة الرئيسية"
+  },
   "login-btn-label": "تسجيل الدخول",
   "language-select-label": "اختر لغة",
   "theme_toggler_label": "تبديل اللون",

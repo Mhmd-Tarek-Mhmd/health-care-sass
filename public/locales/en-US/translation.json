@@ -18,6 +18,11 @@
       "secondary-label": "Schedule a call"
     }
   },
+  "notFoundPage": {
+    "title": "Page Not Found",
+    "text": "The page you're looking for does not seem to exist",
+    "cta": "Go to Home"
+  },
   "login-btn-label": "sign in",
   "theme_toggler_label": "Toggle Theme",
   "language-select-label": "Choose language",
