@@ -5,9 +5,10 @@ import { useColorMode } from "@chakra-ui/react";
 import { IoIosSunny, IoIosMoon } from "react-icons/io";
 import { DarkMode, IconButton } from "@chakra-ui/react";
 
-const ThemeToggler = () => {
+const ThemeToggler = ({ isDarkOnly = true }) => {
   const { t } = useTranslation();
   const { colorMode, toggleColorMode } = useColorMode();
+  const Wrapper = isDarkOnly ? DarkMode : React.Fragment;
 
   React.useEffect(() => {
     if (
@@ -19,14 +20,14 @@ const ThemeToggler = () => {
   }, []);
 
   return (
-    <DarkMode>
+    <Wrapper>
       <IconButton
         onClick={toggleColorMode}
         aria-label={t("theme_toggler_label")}
       >
         {colorMode === "light" ? <IoIosMoon /> : <IoIosSunny />}
       </IconButton>
-    </DarkMode>
+    </Wrapper>
   );
 };
 
