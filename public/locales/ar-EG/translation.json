@@ -24,6 +24,14 @@
     "text": "يبدو أن الصفحة التي تبحث عنها غير موجودة",
     "cta": "الرجوع للصفحة الرئيسية"
   },
+  "pagination": {
+    "container-label": "التنقل بين الصفحات",
+    "next": "الصفحة التالية",
+    "prev": "الصفحة السابقة",
+    "select-page": "اختر صفحة {{ num }}",
+    "per-page-label": "صفوف لكل صفحة",
+    "per-page-select-label": "اختر عدد الصفوف لكل صفحة",
+  },
   "login-btn-label": "تسجيل الدخول",
   "logout-btn-label": "تسجيل الخروج",
   "language-select-label": "اختر لغة",

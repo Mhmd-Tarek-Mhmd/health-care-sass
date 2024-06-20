@@ -6,3 +6,7 @@ export interface LinkItemProps {
   label: string;
   icon: IconType;
 }
+
+export type AnyObject = {
+  [key: string]: any;
+};

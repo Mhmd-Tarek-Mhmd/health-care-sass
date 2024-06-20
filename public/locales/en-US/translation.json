@@ -23,6 +23,14 @@
     "text": "The page you're looking for does not seem to exist",
     "cta": "Go to Home"
   },
+  "pagination": {
+    "container-label": "pagination navigation",
+    "next": "next page",
+    "prev": "previous page",
+    "select-page": "Choose page {{ num }}",
+    "per-page-label": "rows per page",
+    "per-page-select-label": "select per page count",
+  },
   "login-btn-label": "log in",
   "logout-btn-label": "log out",
   "theme_toggler_label": "Toggle Theme",
