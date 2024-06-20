@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { Logo } from "../../components";
+import { Logo } from "@components";
 import { Box, Text, Stack, Container } from "@chakra-ui/react";
 
 const Footer = () => {

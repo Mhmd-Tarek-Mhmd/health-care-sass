@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { superDashboardRoutes } from "./routes";
-import { LandingPage, NotFound } from "./containers";
+import { superDashboardRoutes } from "@routes";
+import { LandingPage, NotFound } from "@containers";
 
 
 const router = createBrowserRouter([

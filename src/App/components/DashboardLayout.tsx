@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { useDisclosure, useColorModeValue } from "@chakra-ui/react";
 
+import { LinkItemProps } from "@types";
 import { BoxProps } from "@chakra-ui/react";
-import { LinkItemProps } from "../utils/types";
 
 import {
   Box,

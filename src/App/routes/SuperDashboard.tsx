@@ -1,6 +1,6 @@
 import { RouteObject } from "react-router-dom";
 
-import { SuperDashboard } from "../containers";
+import { SuperDashboard } from "@containers";
 
 const superDashboardRoutes: Array<RouteObject> = [
   {

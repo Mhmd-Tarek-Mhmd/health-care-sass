@@ -1,7 +1,23 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import path from "path";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-})
+  resolve: {
+    alias: {
+      "@store": `${path.resolve(__dirname, "./src/App/store/")}`,
+      "@routes": `${path.resolve(__dirname, "./src/App/routes/")}`,
+      "@types": `${path.resolve(__dirname, "./src/App/utils/types/")}`,
+      "@services": `${path.resolve(__dirname, "./src/App/services/")}`,
+      "@components": `${path.resolve(__dirname, "./src/App/components/")}`,
+      "@containers": `${path.resolve(__dirname, "./src/App/containers/")}`,
+    },
+  },
+  server: {
+    watch: {
+      usePolling: true,
+    },
+  },
+});

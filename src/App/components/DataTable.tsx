@@ -1,4 +1,4 @@
-import { AnyObject } from "../utils/types";
+import { AnyObject } from "@types";
 import { ServerPaginationProps } from "./ServerPagination";
 
 import {

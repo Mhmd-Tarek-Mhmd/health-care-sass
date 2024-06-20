@@ -1,8 +1,8 @@
 import React from "react";
 
-import { getHospitals } from "../../services";
+import { getHospitals } from "@services";
 
-import { DataTable } from "../../components";
+import { DataTable } from "@components";
 
 type Hospital = {
   id: string;

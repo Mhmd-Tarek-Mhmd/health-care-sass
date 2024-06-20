@@ -2,8 +2,8 @@ import { useTranslation } from "react-i18next";
 import { useColorModeValue } from "@chakra-ui/react";
 
 import { Link } from "react-router-dom";
+import { Logo, ThemeToggler, LanguageSelect } from "@components";
 import { Box, Flex, Stack, Button, DarkMode } from "@chakra-ui/react";
-import { Logo, ThemeToggler, LanguageSelect } from "../../components";
 
 const Nav = () => {
   const { t } = useTranslation();
