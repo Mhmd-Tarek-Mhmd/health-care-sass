@@ -1,6 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import { superDashboardRoutes } from "./routes";
 import { LandingPage, NotFound } from "./containers";
+
 
 const router = createBrowserRouter([
   {
@@ -8,6 +10,7 @@ const router = createBrowserRouter([
     element: <LandingPage />,
     errorElement: <NotFound />,
   },
+  ...superDashboardRoutes,
 ]);
 
 function App() {
