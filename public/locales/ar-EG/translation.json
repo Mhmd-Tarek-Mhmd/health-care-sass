@@ -24,14 +24,48 @@
     "text": "يبدو أن الصفحة التي تبحث عنها غير موجودة",
     "cta": "الرجوع للصفحة الرئيسية"
   },
+  "logInPage": {
+    "mainTitle": "تسجيل الدخول إلى حسابك",
+    "secTitle": "للاستمتاع بجميع ميزاتنا الرائعة ✌️",
+    "forget-label": "هل نسيت كلمة السر؟",
+    "remember-label": "تذكرنى",
+    "no-acc-label": "ليس لديك حساب؟"
+  },
+  "logUpPage": {
+    "title": "قم بالتسجيل",
+    "caption": "للاستمتاع بجميع ميزاتنا الرائعة ✌️",
+    "has-acc-label": "هل أنت مستخدم بالفعل؟"
+  },
+  "forgetPasswordPage": {
+    "title": "نسيت كلمة السر الخاصة بك؟",
+    "caption": "ستصلك رسالة بريد إلكتروني تحتوي على رابط إعادة التعيين",
+    "reset-label": "إعادة ضبط"
+  },
   "pagination": {
     "container-label": "التنقل بين الصفحات",
     "next": "الصفحة التالية",
     "prev": "الصفحة السابقة",
     "select-page": "اختر صفحة {{ num }}",
     "per-page-label": "صفوف لكل صفحة",
-    "per-page-select-label": "اختر عدد الصفوف لكل صفحة",
+    "per-page-select-label": "اختر عدد الصفوف لكل صفحة"
   },
+  "forms": {
+    "firstName-label": "الاسم الأول",
+    "firstName-placeholder": "أدخل اسمك الأول",
+    "lastName-label": "اسم العائلة",
+    "lastName-placeholder": "أدخل اسم العائلة الخاص بك",
+    "email-label": "عنوان البريد الإلكتروني",
+    "email-placeholder": "أدخل عنوان بريدك الالكتروني",
+    "password-label": "كلمة المرور",
+    "password-placeholder": "أدخل رقمك السري"
+  },
+  "validations": {
+    "required": "هذا الحقل مطلوب",
+    "email": "من فضلك أدخل بريد إلكتروني صحيح.",
+    "default": "هناك خطأ ما. حاول ثانية!"
+  },
+  "google-btn-label": "الإستمرار مع جوجل",
+  "logup-btn-label": "قم بالتسجيل",
   "login-btn-label": "تسجيل الدخول",
   "logout-btn-label": "تسجيل الخروج",
   "language-select-label": "اختر لغة",
