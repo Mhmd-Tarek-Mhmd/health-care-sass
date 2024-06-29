@@ -1,5 +1,13 @@
+import useAppStore from "@store";
+import { useForm } from "react-hook-form";
+import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useColorModeValue } from "@chakra-ui/react";
+
+import { Auth } from "@types";
+import { SubmitHandler } from "react-hook-form";
+import { login as loginService, LogInArgs } from "@services";
 
 import {
   Box,
@@ -10,9 +18,8 @@ import {
   Button,
   Heading,
   Checkbox,
-  useColorModeValue,
 } from "@chakra-ui/react";
-import { GoogleButton, FormInput } from "@components";
+import { FormInput } from "@components";
 import { Link as LinkRouter } from "react-router-dom";
 
 type Inputs = {
@@ -27,8 +34,21 @@ const LogIn = () => {
     formState: { errors },
   } = useForm<Inputs>();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const login = useAppStore((state) => state.login);
+  const [trigger, { isLoading }] = useServiceRequest<LogInArgs, Auth>(
+    loginService,
+    {
+      isShowErrorToast: true,
+      isShowSuccessToast: true,
+      onSuccess: (res) => {
+        login(res as Auth);
+        navigate("/dashboard");
+      },
+    }
+  );
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = (args) => trigger({ args });
 
   return (
     <Flex
@@ -42,8 +62,6 @@ const LogIn = () => {
           <Heading fontSize="4xl">{t("logInPage.mainTitle")}</Heading>
           <Text fontSize="lg">{t("logInPage.secTitle")}</Text>
         </Stack>
-
-        <GoogleButton />
 
         <Box
           p={8}
@@ -63,7 +81,7 @@ const LogIn = () => {
               type="email"
               label={t("forms.email-label")}
               placeholder={t("forms.email-placeholder")}
-              error={errors.email?.message}
+              error={errors.email?.message as "required" | "email"}
               {...register("email", {
                 required: "required",
                 pattern: {
@@ -77,7 +95,7 @@ const LogIn = () => {
               type="password"
               label={t("forms.password-label")}
               placeholder={t("forms.password-placeholder")}
-              error={errors.password?.message}
+              error={errors.password?.message as "required"}
               {...register("password", { required: "required" })}
             />
 
@@ -96,6 +114,7 @@ const LogIn = () => {
                 type="submit"
                 bg="blue.400"
                 color="white"
+                isLoading={isLoading}
                 _hover={{ bg: "blue.500" }}
               >
                 {t("login-btn-label")}

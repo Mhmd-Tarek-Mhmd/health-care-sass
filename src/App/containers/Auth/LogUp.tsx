@@ -1,6 +1,10 @@
+import { useForm } from "react-hook-form";
+import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
 import { useColorModeValue } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+
+import { logUp, LogUpArgs } from "@services";
+import { SubmitHandler } from "react-hook-form";
 
 import {
   Box,
@@ -11,8 +15,8 @@ import {
   Button,
   Heading,
 } from "@chakra-ui/react";
+import { FormInput } from "@components";
 import { Link as LinkRouter } from "react-router-dom";
-import { GoogleButton, FormInput } from "@components";
 
 type Inputs = {
   firstName: string;
@@ -29,7 +33,14 @@ const LogUp = () => {
   } = useForm<Inputs>();
   const { t } = useTranslation();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const [trigger, { isLoading }] = useServiceRequest<LogUpArgs, void>(logUp, {
+    isShowErrorToast: true,
+    isShowSuccessToast: true,
+    successToastOptions: { description: t("toast.logup-success") },
+  });
+
+  const onSubmit: SubmitHandler<Inputs> = ({ email, password, ...data }) =>
+    trigger({ args: { email, password, ...data, type: "patient" } });
 
   return (
     <Flex
@@ -46,8 +57,6 @@ const LogUp = () => {
           <Text fontSize="lg">{t("logUpPage.caption")}</Text>
         </Stack>
 
-        <GoogleButton />
-
         <Box
           p={8}
           rounded="lg"
@@ -63,17 +72,15 @@ const LogUp = () => {
           >
             <FormInput
               isRequired
-              type="firstName"
               label={t("forms.firstName-label")}
               placeholder={t("forms.firstName-placeholder")}
-              error={errors.firstName?.message}
+              error={errors.firstName?.message as "required" | undefined}
               {...register("firstName", { required: "required" })}
             />
             <FormInput
-              type="lastName"
               label={t("forms.lastName-label")}
               placeholder={t("forms.lastName-placeholder")}
-              error={errors.lastName?.message}
+              error={errors.lastName?.message as undefined}
               {...register("lastName")}
             />
 
@@ -82,7 +89,7 @@ const LogUp = () => {
               type="email"
               label={t("forms.email-label")}
               placeholder={t("forms.email-placeholder")}
-              error={errors.email?.message}
+              error={errors.email?.message as "required" | "email" | undefined}
               {...register("email", {
                 required: "required",
                 pattern: {
@@ -96,12 +103,13 @@ const LogUp = () => {
               type="password"
               label={t("forms.password-label")}
               placeholder={t("forms.password-placeholder")}
-              error={errors.password?.message}
+              error={errors.password?.message as "required" | undefined}
               {...register("password", { required: "required" })}
             />
 
             <Button
               type="submit"
+              isLoading={isLoading}
               loadingText="Submitting"
               size="lg"
               bg="blue.400"

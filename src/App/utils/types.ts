@@ -10,3 +10,17 @@ export interface LinkItemProps {
 export type AnyObject = {
   [key: string]: any;
 };
+
+export type User = {
+  id: string;
+  type: string;
+  displayName: string;
+  firstName: string;
+  lastName: string;
+  photoURL: string;
+};
+
+export type Auth = {
+  token: string | null;
+  user: User | null;
+};

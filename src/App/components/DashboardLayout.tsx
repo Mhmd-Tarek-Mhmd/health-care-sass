@@ -1,3 +1,5 @@
+import useAppStore from "@store";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDisclosure, useColorModeValue } from "@chakra-ui/react";
 
@@ -164,12 +166,13 @@ interface HeaderProps {
 
 const Header = ({ onOpen }: HeaderProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const logout = useAppStore((state) => state.logout);
+  const user = useAppStore((state) => state.auth?.user);
 
-  const user = {
-    name: "Justina Clark",
-    jobTitle: "Admin",
-    avatarSrc:
-      "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9",
+  const onLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (
@@ -204,19 +207,19 @@ const Header = ({ onOpen }: HeaderProps) => {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar size="sm" src={user.avatarSrc} />
+                <Avatar size="sm" src={user?.photoURL} />
                 <VStack
                   ml="2"
                   spacing="1px"
                   alignItems="flex-start"
                   display={{ base: "none", md: "flex" }}
                 >
-                  <Text fontSize="sm">{user.name}</Text>
+                  <Text fontSize="sm">{user?.displayName}</Text>
                   <Text
                     fontSize="xs"
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    {user.jobTitle}
+                    {user?.type}
                   </Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>
@@ -228,7 +231,7 @@ const Header = ({ onOpen }: HeaderProps) => {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              <MenuItem>{t("logout-btn-label")}</MenuItem>
+              <MenuItem onClick={onLogout}>{t("logout-btn-label")}</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

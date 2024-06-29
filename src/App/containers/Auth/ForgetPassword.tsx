@@ -1,6 +1,10 @@
+import { useForm } from "react-hook-form";
+import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
 import { useColorModeValue } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+
+import { SubmitHandler } from "react-hook-form";
+import { forgetPassword, ForgetPasswordArgs } from "@services";
 
 import { FormInput } from "@components";
 import { Text, Flex, Stack, Button, Heading } from "@chakra-ui/react";
@@ -16,8 +20,16 @@ const ForgetPassword = () => {
     formState: { errors },
   } = useForm<Inputs>();
   const { t } = useTranslation();
+  const [trigger, { isLoading }] = useServiceRequest<ForgetPasswordArgs, void>(
+    forgetPassword,
+    {
+      isShowErrorToast: true,
+      isShowSuccessToast: true,
+      successToastOptions: { description: t("toast.reset-password-success") },
+    }
+  );
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = (args) => trigger({ args });
 
   return (
     <Flex
@@ -54,7 +66,7 @@ const ForgetPassword = () => {
           type="email"
           label={t("forms.email-label")}
           placeholder={t("forms.email-placeholder")}
-          error={errors.email?.message}
+          error={errors.email?.message as "required" | "email"}
           {...register("email", {
             required: "required",
             pattern: {
@@ -66,11 +78,10 @@ const ForgetPassword = () => {
 
         <Button
           type="submit"
-          bg={"blue.400"}
-          color={"white"}
-          _hover={{
-            bg: "blue.500",
-          }}
+          bg="blue.400"
+          color="white"
+          isLoading={isLoading}
+          _hover={{ bg: "blue.500" }}
         >
           {t("forgetPasswordPage.reset-label")}
         </Button>

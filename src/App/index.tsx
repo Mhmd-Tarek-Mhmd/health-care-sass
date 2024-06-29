@@ -1,3 +1,7 @@
+import React from "react";
+import useAppStore from "@store";
+
+import { AUTH_STORAGE_KEY } from "./utils/constants";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { superDashboardRoutes, authRoutes } from "@routes";
@@ -14,6 +18,15 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const login = useAppStore((state) => state.login);
+
+  React.useEffect(() => {
+    if (localStorage?.[AUTH_STORAGE_KEY]) {
+      const { auth } = JSON.parse(localStorage?.[AUTH_STORAGE_KEY])?.state;
+      login(auth);
+    }
+  }, []);
+
   return <RouterProvider router={router} />;
 }
 
