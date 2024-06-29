@@ -11,6 +11,7 @@ export default defineConfig({
       "@routes": `${path.resolve(__dirname, "./src/App/routes/")}`,
       "@types": `${path.resolve(__dirname, "./src/App/utils/types/")}`,
       "@services": `${path.resolve(__dirname, "./src/App/services/")}`,
+      "@helpers": `${path.resolve(__dirname, "./src/App/utils/helpers/")}`,
       "@components": `${path.resolve(__dirname, "./src/App/components/")}`,
       "@containers": `${path.resolve(__dirname, "./src/App/containers/")}`,
     },

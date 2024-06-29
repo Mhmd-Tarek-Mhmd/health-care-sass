@@ -64,6 +64,18 @@
     "email": "من فضلك أدخل بريد إلكتروني صحيح.",
     "default": "هناك خطأ ما. حاول ثانية!"
   },
+  "toast": {
+    "toast.default-success-title": "تم بنجاح",
+    "toast.default-success-desc": "",
+    "toast.default-error-title": "خطأ",
+    "toast.default-error-desc": "حدث خطأ. حاول ثانية.",
+    "toast.default-info-title": "",
+    "toast.default-info-desc": "",
+    "toast.default-warning-title": "",
+    "toast.default-warning-desc": "",
+    "toast.default-loading-title": "",
+    "toast.default-loading-desc": ""
+  },
   "google-btn-label": "الإستمرار مع جوجل",
   "logup-btn-label": "قم بالتسجيل",
   "login-btn-label": "تسجيل الدخول",

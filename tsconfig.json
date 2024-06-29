@@ -27,6 +27,7 @@
       "@routes": ["src/App/routes"],
       "@types": ["src/App/utils/types"],
       "@services": ["src/App/services"],
+      "@helpers": ["src/App/utils/helpers"],
       "@components": ["src/App/components"],
       "@containers": ["src/App/containers"],
     }

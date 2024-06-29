@@ -63,6 +63,18 @@
     "email": "Please enter a valid email.",
     "default": "Something went wrong. Try again!"
   },
+  "toast": {
+    "toast.default-success-title": "Success",
+    "toast.default-success-desc": "",
+    "toast.default-error-title": "Error",
+    "toast.default-error-desc": "An error occurred. Try again.",
+    "toast.default-info-title": "",
+    "toast.default-info-desc": "",
+    "toast.default-warning-title": "",
+    "toast.default-warning-desc": "",
+    "toast.default-loading-title": "",
+    "toast.default-loading-desc": ""
+  },
   "google-btn-label": "Continue with Google",
   "logup-btn-label": "log up",
   "login-btn-label": "log in",
