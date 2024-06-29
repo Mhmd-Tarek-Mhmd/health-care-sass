@@ -9,6 +9,7 @@ export default defineConfig({
     alias: {
       "@store": `${path.resolve(__dirname, "./src/App/store/")}`,
       "@routes": `${path.resolve(__dirname, "./src/App/routes/")}`,
+      "@hooks": `${path.resolve(__dirname, "./src/App/utils/hooks/")}`,
       "@types": `${path.resolve(__dirname, "./src/App/utils/types/")}`,
       "@services": `${path.resolve(__dirname, "./src/App/services/")}`,
       "@helpers": `${path.resolve(__dirname, "./src/App/utils/helpers/")}`,

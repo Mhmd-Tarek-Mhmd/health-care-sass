@@ -25,6 +25,7 @@
     "paths": {
       "@store": ["src/App/store"],
       "@routes": ["src/App/routes"],
+      "@hooks": ["src/App/utils/hooks"],
       "@types": ["src/App/utils/types"],
       "@services": ["src/App/services"],
       "@helpers": ["src/App/utils/helpers"],
