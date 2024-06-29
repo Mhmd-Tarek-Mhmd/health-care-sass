@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
   Input,
   FormLabel,
+  InputProps,
   FormControl,
   FormErrorMessage,
 } from "@chakra-ui/react";
@@ -20,9 +21,9 @@ const errors: Errors = {
   default: "validations.default",
 };
 
-type FormInputProps = {
+interface FormInputProps extends InputProps {
   label: string;
-  error?: keyof Errors;
+  error?: keyof Errors | undefined;
   inputOnly?: boolean;
   isRequired?: boolean;
 };
