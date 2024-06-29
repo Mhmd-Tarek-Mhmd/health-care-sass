@@ -1,7 +1,14 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-type Store = {};
+import { AUTH_STORAGE_KEY } from "@constants";
 
-const useAppStore = create<Store>()(() => ({}));
+import createAuthSlice, { AuthSlice } from "./auth";
+
+type Store = AuthSlice;
+
+const useAppStore = create<Store>()((...a) => ({
+  ...persist(createAuthSlice, { name: AUTH_STORAGE_KEY })(...a),
+}));
 
 export default useAppStore;

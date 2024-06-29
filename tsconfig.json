@@ -31,6 +31,7 @@
       "@helpers": ["src/App/utils/helpers"],
       "@components": ["src/App/components"],
       "@containers": ["src/App/containers"],
+      "@constants": ["src/App/utils/constants"],
     }
   },
   "include": ["src"],

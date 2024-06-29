@@ -15,6 +15,7 @@ export default defineConfig({
       "@helpers": `${path.resolve(__dirname, "./src/App/utils/helpers/")}`,
       "@components": `${path.resolve(__dirname, "./src/App/components/")}`,
       "@containers": `${path.resolve(__dirname, "./src/App/containers/")}`,
+      "@constants": `${path.resolve(__dirname, "./src/App/utils/constants/")}`,
     },
   },
   server: {
