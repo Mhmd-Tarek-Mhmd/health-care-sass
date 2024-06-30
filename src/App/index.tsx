@@ -4,8 +4,8 @@ import { useAppStore } from "@store";
 import { AUTH_STORAGE_KEY } from "./utils/constants";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { superDashboardRoutes, authRoutes } from "@routes";
 import { LandingPage, NotFound } from "@containers";
+import { dashboardRoutes, authRoutes } from "@routes";
 
 const router = createBrowserRouter([
   {
@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
   },
   ...authRoutes,
-  ...superDashboardRoutes,
+  ...dashboardRoutes,
 ]);
 
 function App() {
