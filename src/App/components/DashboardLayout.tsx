@@ -1,4 +1,4 @@
-import useAppStore from "@store";
+import { useAppStore } from "@store";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDisclosure, useColorModeValue } from "@chakra-ui/react";

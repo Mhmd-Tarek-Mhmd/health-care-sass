@@ -7,8 +7,9 @@ import createAuthSlice, { AuthSlice } from "./auth";
 
 type Store = AuthSlice;
 
-const useAppStore = create<Store>()((...a) => ({
+export const useAppStore = create<Store>()((...a) => ({
   ...persist(createAuthSlice, { name: AUTH_STORAGE_KEY })(...a),
 }));
 
-export default useAppStore;
+const Store = useAppStore.getState();
+export default Store;

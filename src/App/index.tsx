@@ -1,5 +1,5 @@
 import React from "react";
-import useAppStore from "@store";
+import { useAppStore } from "@store";
 
 import { AUTH_STORAGE_KEY } from "./utils/constants";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";

@@ -1,4 +1,4 @@
-import useAppStore from "@store";
+import { useAppStore } from "@store";
 import { useForm } from "react-hook-form";
 import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
