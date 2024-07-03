@@ -40,6 +40,9 @@
     "caption": "You'll get an email with a reset link",
     "reset-label": "reset"
   },
+  "dataTable": {
+    "nodata": "No data available"
+  },
   "pagination": {
     "container-label": "pagination navigation",
     "next": "next page",
