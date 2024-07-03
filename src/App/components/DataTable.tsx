@@ -1,6 +1,3 @@
-import { AnyObject } from "@types";
-import { ServerPaginationProps } from "./ServerPagination";
-
 import {
   Tr,
   Th,
@@ -12,35 +9,39 @@ import {
   Spinner,
   TableContainer,
 } from "@chakra-ui/react";
-import ServerPagination from "./ServerPagination";
+import ServerPagination, { ServerPaginationProps } from "./ServerPagination";
 
-type Column = {
+export type Column<T> = {
   name?: string;
-  selector?: string;
-  cell?: (row: AnyObject) => JSX.Element | string;
+  selector?: keyof T;
+  cell?: (row: T) => JSX.Element | string;
 };
 
-interface DataTableProps {
+interface DataTableProps<T> {
+  data: T[];
   size: string;
-  columns: Column[];
+  columns: Column<T>[];
   isLoading: boolean;
-  data: Array<AnyObject>;
   pagination?: ServerPaginationProps;
 }
 
-const getSelectorOrCell = (row: AnyObject, col: Column) => {
-  if (col?.cell) return col?.cell(row);
-  if (col?.selector && row?.[col?.selector]) return row?.[col?.selector];
+const getSelectorOrCell = <T,>(
+  row: T,
+  col: Column<T>
+): string | JSX.Element => {
+  if (col?.cell) return col?.cell(row) as JSX.Element;
+  if (col?.selector && row?.[col?.selector])
+    return row?.[col?.selector] as string;
   return "";
 };
 
-const DataTable = ({
+const DataTable = <T,>({
   data,
   size,
   columns,
   isLoading,
   pagination,
-}: DataTableProps) => {
+}: DataTableProps<T>) => {
   return (
     <TableContainer rounded="md" boxShadow="base" pt={5} pb={3}>
       {isLoading ? (

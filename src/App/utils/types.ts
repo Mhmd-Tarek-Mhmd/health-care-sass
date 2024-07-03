@@ -1,5 +1,6 @@
 import { IconType } from "react-icons";
 import { To } from "react-router-dom";
+export type { Column } from "src/App/components/DataTable";
 
 export interface LinkItemProps {
   to: To;
