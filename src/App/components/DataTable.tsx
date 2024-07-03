@@ -17,12 +17,10 @@ export type Column<T> = {
   cell?: (row: T) => JSX.Element | string;
 };
 
-interface DataTableProps<T> {
+interface DataTableProps<T> extends ServerPaginationProps {
   data: T[];
   size: string;
   columns: Column<T>[];
-  isLoading: boolean;
-  pagination?: ServerPaginationProps;
 }
 
 const getSelectorOrCell = <T,>(
@@ -41,6 +39,7 @@ const DataTable = <T,>({
   columns,
   isLoading,
   pagination,
+  ...props
 }: DataTableProps<T>) => {
   return (
     <TableContainer rounded="md" boxShadow="base" pt={5} pb={3}>
@@ -75,7 +74,15 @@ const DataTable = <T,>({
         </Table>
       )}
 
-      {pagination && <ServerPagination {...pagination} sx={{ px: 1 }} />}
+      {pagination && (
+        <ServerPagination
+          sx={{ px: 1 }}
+          isLoading={isLoading}
+          pagination={pagination}
+          onPaginate={props.onPaginate}
+          onPerPageChange={props.onPerPageChange}
+        />
+      )}
     </TableContainer>
   );
 };

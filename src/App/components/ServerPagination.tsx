@@ -6,6 +6,8 @@ import {
   SystemStyleObject,
 } from "@chakra-ui/react";
 
+import { PaginationBase } from "@types";
+
 import {
   Box,
   Flex,
@@ -86,32 +88,38 @@ const getRenderedIndexes = (
  *
  */
 
-export type ServerPaginationProps = {
+export interface Pagination extends PaginationBase {
   page: number;
-  perPage: number;
-  totalPages: number;
-  totalCount: number;
-  isLoading: boolean;
-  sx?: SystemStyleObject;
   perPageOptions?: number[];
+}
+
+export interface PaginationActions {
   onPaginate: (page: number) => void;
   onPerPageChange?: (perPage: number) => void;
-};
+}
 
-const ServerPagination = (props: ServerPaginationProps) => {
+export interface ServerPaginationProps extends PaginationActions {
+  isLoading: boolean;
+  pagination: Pagination;
+  sx?: SystemStyleObject;
+}
+
+const ServerPagination = ({ pagination, ...props }: ServerPaginationProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
   // Constants
-  const isPrevDisabled = props.isLoading || props.page === 1;
-  const isNextDisabled = props.isLoading || props.page === props.totalPages;
+  const isPrevDisabled = props.isLoading || pagination.page === 1;
+  const isNextDisabled =
+    props.isLoading || pagination.page === pagination.totalPages;
   const arr = React.useMemo(
-    () => getRenderedIndexes(props.page, props.totalPages),
-    [props.page, props.totalPages]
+    () => getRenderedIndexes(pagination.page, pagination.totalPages),
+    [pagination.page, pagination.totalPages]
   );
   const perPageOptions = React.useMemo(
-    () => generatePerPageOptions(props?.perPageOptions, props.perPage),
-    [props.perPage]
+    () =>
+      generatePerPageOptions(pagination?.perPageOptions, pagination.perPage),
+    [pagination.perPage]
   );
 
   return (
@@ -133,7 +141,7 @@ const ServerPagination = (props: ServerPaginationProps) => {
           </Box>
           <Select
             size="xs"
-            value={props.perPage}
+            value={pagination.perPage}
             aria-label={t("pagination.per-page-select-label")}
             onChange={(e) => props?.onPerPageChange?.(+e.target.value)}
           >
@@ -157,7 +165,7 @@ const ServerPagination = (props: ServerPaginationProps) => {
               isDisabled={isPrevDisabled}
               aria-label={t("pagination.prev")}
               onClick={() =>
-                !isPrevDisabled && props.onPaginate(props.page - 1)
+                !isPrevDisabled && props.onPaginate(pagination.page - 1)
               }
               icon={
                 theme.direction === "rtl" ? (
@@ -179,10 +187,10 @@ const ServerPagination = (props: ServerPaginationProps) => {
               size="sm"
               borderRadius="50%"
               opacity="1 !important"
-              isDisabled={val === props.page}
+              isDisabled={val === pagination.page}
               aria-label={t("pagination.select-page", { num: val })}
-              colorScheme={val === props.page ? "teal" : undefined}
-              onClick={() => val !== props.page && props.onPaginate(val)}
+              colorScheme={val === pagination.page ? "teal" : undefined}
+              onClick={() => val !== pagination.page && props.onPaginate(val)}
               transition="color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
             >
               {val}
@@ -199,7 +207,7 @@ const ServerPagination = (props: ServerPaginationProps) => {
               isDisabled={isNextDisabled}
               aria-label={t("pagination.next")}
               onClick={() =>
-                !isNextDisabled && props.onPaginate(props.page + 1)
+                !isNextDisabled && props.onPaginate(pagination.page + 1)
               }
               icon={
                 theme.direction === "rtl" ? (
