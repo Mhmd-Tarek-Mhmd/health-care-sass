@@ -97,4 +97,24 @@ export const useServiceRequest = <Args, Response, Error = FirebaseError>(
  *
  * End of `useServiceRequest`
  *
+ * Start of `useDidUpdateEffect`
+ *
+ */
+
+export const useDidUpdateEffect = (
+  effect: React.EffectCallback,
+  deps?: React.DependencyList
+) => {
+  const isInitialRender = React.useRef(true);
+
+  React.useEffect(() => {
+    if (isInitialRender.current) isInitialRender.current = false;
+    else effect();
+  }, deps);
+};
+
+/**
+ *
+ * End of `useDidUpdateEffect`
+ *
  */
