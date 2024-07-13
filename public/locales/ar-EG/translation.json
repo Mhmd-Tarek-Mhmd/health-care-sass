@@ -89,6 +89,10 @@
     "default-cancelText": "إلغاء",
     "default-confirmText": "تأكيد"
   },
+  "icon-button": {
+    "edit-button-default": "تعديل",
+    "remove-button-default": "حذف"
+  },
   "logup-btn-label": "قم بالتسجيل",
   "login-btn-label": "تسجيل الدخول",
   "logout-btn-label": "تسجيل الخروج",
