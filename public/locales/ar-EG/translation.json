@@ -93,6 +93,10 @@
     "edit-button-default": "تعديل",
     "remove-button-default": "حذف"
   },
+  "form-modal": {
+    "save-label-default": "حفظ",
+    "cancel-label-default": "إلغاء"
+  },
   "loader-label": "جار التحميل",
   "logup-btn-label": "قم بالتسجيل",
   "login-btn-label": "تسجيل الدخول",

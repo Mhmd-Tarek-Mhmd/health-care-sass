@@ -3,6 +3,7 @@ export * from "./IconButtonWithTooltip";
 
 export { default as Logo } from "./Logo";
 export { default as Loader } from "./Loader";
+export { default as FormModal } from "./FormModal";
 export { default as FormInput } from "./FormInput";
 export { default as DataTable } from "./DataTable";
 export { default as ThemeToggler } from "./ThemeToggler";

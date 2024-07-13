@@ -92,6 +92,10 @@
     "edit-button-default": "Edit",
     "remove-button-default": "Remove"
   },
+  "form-modal": {
+    "save-label-default": "Save",
+    "cancel-label-default": "Cancel"
+  },
   "loader-label": "loading",
   "logup-btn-label": "log up",
   "login-btn-label": "log in",
