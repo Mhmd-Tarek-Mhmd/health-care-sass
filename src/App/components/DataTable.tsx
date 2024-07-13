@@ -1,5 +1,6 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
+
+import ServerPagination, { ServerPaginationProps } from "./ServerPagination";
 
 import {
   Tr,
@@ -9,10 +10,9 @@ import {
   Table,
   Thead,
   Tbody,
-  Spinner,
   TableContainer,
 } from "@chakra-ui/react";
-import ServerPagination, { ServerPaginationProps } from "./ServerPagination";
+import Loader from "./Loader";
 
 export type Column<T> = {
   name?: string;
@@ -57,15 +57,7 @@ const DataTable = <T,>({
   return (
     <TableContainer rounded="md" boxShadow="base" pt={5} pb={3}>
       {isLoading ? (
-        <Flex h={300} alignItems="center" justifyContent="center">
-          <Spinner
-            size="xl"
-            speed="0.65s"
-            thickness="4px"
-            color="teal.500"
-            emptyColor="gray.200"
-          />
-        </Flex>
+        <Loader h={200} size="lg" isLoading={isLoading} />
       ) : (
         <Table size={size} mb={10}>
           <Thead>
