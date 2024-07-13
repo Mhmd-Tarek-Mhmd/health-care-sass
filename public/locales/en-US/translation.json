@@ -92,6 +92,7 @@
     "edit-button-default": "Edit",
     "remove-button-default": "Remove"
   },
+  "loader-label": "loading",
   "logup-btn-label": "log up",
   "login-btn-label": "log in",
   "logout-btn-label": "log out",

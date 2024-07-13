@@ -1,0 +1,20 @@
+.loader {
+  display: grid;
+  user-select: none;
+  place-items: center;
+}
+
+.fixed {
+  inset: 0;
+  z-index: 99999;
+  position: fixed;
+}
+
+:has(.absolute) {
+  position: relative;
+}
+.absolute {
+  inset: 0;
+  z-index: 99999;
+  position: absolute;
+}

@@ -93,6 +93,7 @@
     "edit-button-default": "تعديل",
     "remove-button-default": "حذف"
   },
+  "loader-label": "جار التحميل",
   "logup-btn-label": "قم بالتسجيل",
   "login-btn-label": "تسجيل الدخول",
   "logout-btn-label": "تسجيل الخروج",
