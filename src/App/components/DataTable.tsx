@@ -1,3 +1,6 @@
+import React from "react";
+import { useTranslation } from "react-i18next";
+
 import {
   Tr,
   Th,
@@ -10,7 +13,6 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import ServerPagination, { ServerPaginationProps } from "./ServerPagination";
-import { useTranslation } from "react-i18next";
 
 export type Column<T> = {
   name?: string;
@@ -44,7 +46,7 @@ const DataTable = <T,>({
 }: DataTableProps<T>) => {
   const { t } = useTranslation();
 
-  if (!data.length) {
+  if (!data.length && !isLoading) {
     return (
       <Flex h="full" maxH={300} alignItems="center" justifyContent="center">
         <p role="alert">{t("dataTable.nodata")}</p>
