@@ -1,12 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  useTheme,
-  useColorModeValue,
-  SystemStyleObject,
-} from "@chakra-ui/react";
+import { useTheme, useColorModeValue } from "@chakra-ui/react";
 
 import { PaginationBase } from "@types";
+import { SystemStyleObject } from "@chakra-ui/react";
 
 import {
   Box,
@@ -15,7 +12,9 @@ import {
   Button,
   Select,
   Tooltip,
+  ListItem,
   IconButton,
+  UnorderedList,
 } from "@chakra-ui/react";
 import { CgChevronRight, CgChevronLeft } from "react-icons/cg";
 
@@ -89,7 +88,6 @@ const getRenderedIndexes = (
  */
 
 export interface Pagination extends PaginationBase {
-  page: number;
   perPageOptions?: number[];
 }
 
@@ -155,8 +153,8 @@ const ServerPagination = ({ pagination, ...props }: ServerPaginationProps) => {
       ) : null}
 
       {/* Buttons */}
-      <Flex as="ul" gap={3}>
-        <li>
+      <Flex as={UnorderedList} styleType="''" gap={3}>
+        <ListItem>
           <Tooltip isDisabled={isPrevDisabled} label={t("pagination.prev")}>
             <IconButton
               size="sm"
@@ -176,11 +174,11 @@ const ServerPagination = ({ pagination, ...props }: ServerPaginationProps) => {
               }
             />
           </Tooltip>
-        </li>
+        </ListItem>
 
         {arr.map((val, i) =>
           val === -1 ? (
-            <li key={i}>...</li>
+            <ListItem key={i}>...</ListItem>
           ) : val ? (
             <Button
               key={i}
@@ -198,7 +196,7 @@ const ServerPagination = ({ pagination, ...props }: ServerPaginationProps) => {
           ) : null
         )}
 
-        <li>
+        <ListItem>
           <Tooltip isDisabled={isNextDisabled} label={t("pagination.next")}>
             <IconButton
               size="sm"
@@ -218,7 +216,7 @@ const ServerPagination = ({ pagination, ...props }: ServerPaginationProps) => {
               }
             />
           </Tooltip>
-        </li>
+        </ListItem>
       </Flex>
     </HStack>
   );
