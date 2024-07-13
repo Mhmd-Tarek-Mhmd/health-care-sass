@@ -1,5 +1,5 @@
-import { IconType } from "react-icons";
 import { To } from "react-router-dom";
+import { IconType } from "react-icons";
 export type { Column } from "src/App/components/DataTable";
 export type { Pagination } from "src/App/components/ServerPagination";
 
@@ -14,14 +14,14 @@ export type AnyObject = {
 };
 
 export interface PaginationBase {
-  page?: number;
+  page: number;
   perPage: number;
   totalPages: number;
   totalCount: number;
 }
 
 export type PaginatorResponse<T> = {
-  data: T[];
+  items: T[];
   pagination: PaginationBase;
 };
 
