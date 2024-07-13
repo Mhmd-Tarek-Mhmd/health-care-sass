@@ -83,7 +83,12 @@
     "auth/weak-password": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
     "logup-success": "تم إنشاء الحساب بنجاح."
   },
-  "google-btn-label": "الإستمرار مع جوجل",
+  "confirm": {
+    "default-title": "هل أنت متأكد؟",
+    "default-body": "بمجرد حذفه، لن تتمكن من استعادة هذا السجل",
+    "default-cancelText": "إلغاء",
+    "default-confirmText": "تأكيد"
+  },
   "logup-btn-label": "قم بالتسجيل",
   "login-btn-label": "تسجيل الدخول",
   "logout-btn-label": "تسجيل الخروج",

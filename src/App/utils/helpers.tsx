@@ -1,4 +1,6 @@
 import i18next from "i18next";
+import ReactDOM from "react-dom/client";
+import { ConfirmDialog, ConfirmDialogOptions } from "@components";
 import { createStandaloneToast, UseToastOptions } from "@chakra-ui/react";
 
 /**
@@ -38,6 +40,44 @@ export const showToast = (options: UseToastOptions = {}) => {
  *
  * End of `showToast`
  *
- * Start of ``
+ * Start of `confirm`
+ *
+ */
+
+export const confirm = (
+  options: Omit<ConfirmDialogOptions, "onConfirm" | "onCancel">
+): Promise<{ isConfirmed: boolean; cleanup: VoidFunction }> => {
+  return new Promise((resolve) => {
+    const cleanup = () => {
+      if (root) {
+        root.unmount();
+      }
+    };
+
+    const handleConfirm = () => {
+      !options?.showLoaderOnConfirm && cleanup();
+      resolve({ isConfirmed: true, cleanup });
+    };
+
+    const handleCancel = () => {
+      cleanup();
+      resolve({ isConfirmed: false, cleanup });
+    };
+
+    const container = document.getElementById("dialog-root")!;
+    const root = ReactDOM.createRoot(container);
+    root.render(
+      <ConfirmDialog
+        {...options}
+        onCancel={handleCancel}
+        onConfirm={handleConfirm}
+      />
+    );
+  });
+};
+
+/**
+ *
+ * End of `confirm`
  *
  */

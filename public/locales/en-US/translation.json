@@ -82,7 +82,12 @@
     "auth/weak-password": "Password should be at least 6 characters",
     "logup-success": "Account created successfully."
   },
-  "google-btn-label": "Continue with Google",
+  "confirm": {
+    "default-title": "Are you sure?",
+    "default-body": "Once deleted, you will not be able to recover this record",
+    "default-cancelText": "Cancel",
+    "default-confirmText": "Confirm"
+  },
   "logup-btn-label": "log up",
   "login-btn-label": "log in",
   "logout-btn-label": "log out",
