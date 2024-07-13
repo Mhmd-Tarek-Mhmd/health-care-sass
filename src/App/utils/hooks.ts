@@ -30,6 +30,7 @@ type ReturnOpt<Response, Error> = {
   data: Response | null;
   error: Error | null;
   isLoading: boolean;
+  called: boolean;
 };
 type HookReturn<Args, Response, Error> = [
   Trigger<Args, Response, Error>,
@@ -50,6 +51,7 @@ export const useServiceRequest = <Args, Response, Error = FirebaseError>(
   options: Options<Args, Response, Error> = {}
 ): HookReturn<Args, Response, Error> => {
   const { t } = useTranslation();
+  const [called, setCalled] = React.useState(false);
   const [error, setError] = React.useState<Error | null>(null);
   const [data, setData] = React.useState<Response | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -57,6 +59,7 @@ export const useServiceRequest = <Args, Response, Error = FirebaseError>(
   const trigger = async (
     triggerOptions: Options<Args, Response, Error> = {}
   ) => {
+    setCalled(true);
     setIsLoading(true);
     const mergedOptions = { ...options, ...triggerOptions };
     const {
@@ -87,7 +90,7 @@ export const useServiceRequest = <Args, Response, Error = FirebaseError>(
     }
   };
 
-  return [trigger, { data, error, isLoading }];
+  return [trigger, { data, error, called, isLoading }];
 };
 
 /**
