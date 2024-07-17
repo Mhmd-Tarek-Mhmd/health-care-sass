@@ -52,7 +52,7 @@ const FormControl = ({
       return <InputLeftAddon userSelect="none">{suffix}</InputLeftAddon>;
     else if (suffixIcon)
       return (
-        <InputLeftElement userSelect="none">
+        <InputLeftElement pointerEvents="none">
           {icons[suffixIcon]}
         </InputLeftElement>
       );
@@ -64,7 +64,7 @@ const FormControl = ({
       return <InputRightAddon userSelect="none">{prefix}</InputRightAddon>;
     else if (prefixIcon)
       return (
-        <InputRightElement userSelect="none">
+        <InputRightElement pointerEvents="none">
           {icons[prefixIcon]}
         </InputRightElement>
       );
