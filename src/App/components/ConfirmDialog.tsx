@@ -14,6 +14,7 @@ import {
 
 export type ConfirmDialogOptions = {
   title?: string;
+  noBody?: boolean;
   cancelText?: string;
   confirmText?: string;
   onCancel: () => void;
@@ -25,6 +26,7 @@ export type ConfirmDialogOptions = {
 const ConfirmDialog: React.FC<ConfirmDialogOptions> = ({
   body,
   title,
+  noBody,
   onCancel,
   onConfirm,
   cancelText,
@@ -54,11 +56,15 @@ const ConfirmDialog: React.FC<ConfirmDialogOptions> = ({
               {t(title || "confirm.default-title")}
             </AlertDialogHeader>
 
-            <AlertDialogBody>
-              {typeof body === "string"
-                ? t(body || "confirm.default-body")
-                : body}
-            </AlertDialogBody>
+            {noBody ? null : (
+              <AlertDialogBody>
+                {body
+                  ? typeof body === "string"
+                    ? t(body)
+                    : body
+                  : t("confirm.default-body")}
+              </AlertDialogBody>
+            )}
 
             <AlertDialogFooter>
               <Button
