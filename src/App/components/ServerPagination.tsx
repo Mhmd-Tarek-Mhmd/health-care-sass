@@ -132,6 +132,7 @@ const ServerPagination = ({ pagination, ...props }: ServerPaginationProps) => {
         <Flex as="label" gap={2} alignItems="center">
           <Box
             as="span"
+            minW={75}
             fontSize="xs"
             color={useColorModeValue("gray.600", "gray.300")}
           >
