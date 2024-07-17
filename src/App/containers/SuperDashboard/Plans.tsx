@@ -96,12 +96,7 @@ const Plans = () => {
         remove({
           args: { id: plan.id },
           onSuccess() {
-            getData({
-              args: {
-                pageNumber: 1,
-                pageSize: pagination.perPage,
-              },
-            });
+            onPaginate(1);
             cleanup();
           },
         });
