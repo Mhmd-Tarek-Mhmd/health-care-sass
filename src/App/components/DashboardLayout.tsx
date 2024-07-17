@@ -45,11 +45,17 @@ const Dashboard = ({ links }: DashboardProps) => {
         display: "grid",
         gridTemplateRows: "80px 1fr",
         gridTemplateColumns: { base: "1fr", md: "240px 1fr" },
-        gridTemplateAreas: `"aside header" "aside main" "aside main"`,
+        gridTemplateAreas: {
+          base: `"header" "main" "main"`,
+          md: `"aside header" "aside main" "aside main"`,
+        },
         ".desktop-aside": { display: { base: "none", md: "block" } },
         ".header": { gridArea: "header" },
         ".aside": { gridArea: "aside" },
-        ".main": { gridArea: "main" },
+        ".main": {
+          gridArea: "main",
+          width: { base: "100vw", md: "calc(100vw - 240px - 1rem * 2)" },
+        },
       }}
     >
       {/* Desktop Sidebar */}
