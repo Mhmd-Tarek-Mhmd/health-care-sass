@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import App from "./App";
+import "./dayjs";
 import "./i18n";
 
 const theme = extendTheme({

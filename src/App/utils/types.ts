@@ -1,5 +1,6 @@
 import { To } from "react-router-dom";
 import { IconType } from "react-icons";
+import { Timestamp } from "firebase/firestore";
 export type { Column } from "src/App/components/DataTable";
 export type { Pagination } from "src/App/components/ServerPagination";
 
@@ -37,4 +38,16 @@ export type User = {
 export type Auth = {
   token: string | null;
   user: User | null;
+};
+
+export type Plan = {
+  id: string;
+  name: string;
+  createdAt: Timestamp;
+  updatedAt?: Timestamp;
+  users: number;
+  price: number;
+  storage: number;
+  currency: string;
+  isInfiniteUsers: boolean;
 };

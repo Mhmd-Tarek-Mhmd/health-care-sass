@@ -97,11 +97,37 @@
     "save-label-default": "حفظ",
     "cancel-label-default": "إلغاء"
   },
+  "actions": "الإجراءات",
   "loader-label": "جار التحميل",
   "logup-btn-label": "قم بالتسجيل",
   "login-btn-label": "تسجيل الدخول",
   "logout-btn-label": "تسجيل الخروج",
   "language-select-label": "اختر لغة",
   "theme_toggler_label": "تبديل اللون",
-  "copyright_text": "© 2024 HealthCare كل الحقوق محفوظة"
+  "copyright_text": "© 2024 HealthCare كل الحقوق محفوظة",
+
+  "plans-list": {
+    "add-plan": "إضافة نظام إشتراك",
+    "name-cell-label": "الاسم",
+    "createdAt-cell-label": "تم إنشاؤها في",
+    "users-cell-label": "عدد المستخدمين",
+    "storage-cell-label": "مساحة تخزين البيانات",
+    "price-cell-label": "السعر",
+    "Infinity": "عدد لا نهائي"
+  },
+  "plan-form": {
+    "create-title": "إنشاء نظام إشتراك",
+    "edit-title": "تعديل نظام إشتراك",
+    "name-label": "الاسم",
+    "name-placeholder": "أدخل اسم نظام الإشتراك",
+    "isInfiniteUsers-label": "عدد لا نهائي من المستخدمين",
+    "users-label": "عدد المستخدمين",
+    "users-placeholder": "أدخل عدد المستخدمين",
+    "storage-label": "مساحة تخزين البيانات المسموح بها",
+    "storage-placeholder": "أدخل مساحة تخزين البيانات المسموح بها",
+    "price-label": "السعر",
+    "price-placeholder": "أدخل السعر",
+    "currency-label": "العملة",
+    "currency-placeholder": "أدخل العملة"
+  }
 }

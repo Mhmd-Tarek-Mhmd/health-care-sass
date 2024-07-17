@@ -96,11 +96,37 @@
     "save-label-default": "Save",
     "cancel-label-default": "Cancel"
   },
+  "actions": "actions",
   "loader-label": "loading",
   "logup-btn-label": "log up",
   "login-btn-label": "log in",
   "logout-btn-label": "log out",
   "theme_toggler_label": "Toggle Theme",
   "language-select-label": "Choose language",
-  "copyright_text": "© 2024 HealthCare All rights reserved"
+  "copyright_text": "© 2024 HealthCare All rights reserved",
+
+  "plans-list": {
+    "add-plan": "Add Plan",
+    "name-cell-label": "Name",
+    "createdAt-cell-label": "created at",
+    "users-cell-label": "Users",
+    "storage-cell-label": "Storage",
+    "price-cell-label": "Price",
+    "Infinity": "Infinity"
+  },
+  "plan-form": {
+    "create-title": "Create Plan",
+    "edit-title": "Edit Plan",
+    "name-label": "Name",
+    "name-placeholder": "Enter plan name",
+    "isInfiniteUsers-label": "Infinite Users",
+    "users-label": "Number of user",
+    "users-placeholder": "Enter number of user",
+    "storage-label": "Allowed data storage",
+    "storage-placeholder": "Enter allowed data storage",
+    "price-label": "Price",
+    "price-placeholder": "Enter price",
+    "currency-label": "Currency",
+    "currency-placeholder": "Enter currency"
+  }
 }

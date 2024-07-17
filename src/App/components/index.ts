@@ -1,5 +1,6 @@
 export * from "./FormBuilder";
 export * from "./ConfirmDialog";
+export * from "./SuperDashboardForms";
 export * from "./IconButtonWithTooltip";
 
 export { default as Logo } from "./Logo";
