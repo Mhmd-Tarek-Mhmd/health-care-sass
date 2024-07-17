@@ -1,7 +1,7 @@
 import React from "react";
-import i18n from "../../i18n";
 import { useTranslation } from "react-i18next";
-import { DarkMode, Select } from "@chakra-ui/react";
+
+import { Select } from "@chakra-ui/react";
 
 const lngs = [
   { label: "English", value: "en-US" },
@@ -9,7 +9,7 @@ const lngs = [
 ];
 
 const LanguageSelect = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const handleChange = (e: React.BaseSyntheticEvent) => {
     i18n.changeLanguage(e.target.value);
@@ -24,20 +24,18 @@ const LanguageSelect = () => {
   }, [i18n.language]);
 
   return (
-    <DarkMode>
-      <Select
-        width={100}
-        value={i18n.language}
-        onChange={handleChange}
-        aria-label={t("language-select-label")}
-      >
-        {lngs.map((lng) => (
-          <option key={lng.value} value={lng.value} className="text-white">
-            {lng.label}
-          </option>
-        ))}
-      </Select>
-    </DarkMode>
+    <Select
+      width={100}
+      value={i18n.language}
+      onChange={handleChange}
+      aria-label={t("language-select-label")}
+    >
+      {lngs.map((lng) => (
+        <option key={lng.value} value={lng.value}>
+          {lng.label}
+        </option>
+      ))}
+    </Select>
   );
 };
 
