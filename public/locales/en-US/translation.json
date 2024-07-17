@@ -49,7 +49,7 @@
     "prev": "previous page",
     "select-page": "Choose page {{ num }}",
     "per-page-label": "rows per page",
-    "per-page-select-label": "select per page count",
+    "per-page-select-label": "select per page count"
   },
   "forms": {
     "firstName-label": "First Name",
