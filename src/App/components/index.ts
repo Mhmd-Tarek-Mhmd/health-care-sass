@@ -1,10 +1,10 @@
+export * from "./FormBuilder";
 export * from "./ConfirmDialog";
 export * from "./IconButtonWithTooltip";
 
 export { default as Logo } from "./Logo";
 export { default as Loader } from "./Loader";
 export { default as FormModal } from "./FormModal";
-export { default as FormInput } from "./FormInput";
 export { default as DataTable } from "./DataTable";
 export { default as ThemeToggler } from "./ThemeToggler";
 export { default as ConfirmDialog } from "./ConfirmDialog";
