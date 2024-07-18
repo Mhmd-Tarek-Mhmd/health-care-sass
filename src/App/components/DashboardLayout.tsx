@@ -1,3 +1,4 @@
+import React from "react";
 import { useAppStore } from "@store";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -36,7 +37,14 @@ interface DashboardProps {
 }
 
 const Dashboard = ({ links }: DashboardProps) => {
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  React.useEffect(() => {
+    if (window.location.pathname === "/dashboard") {
+      navigate(links[0].to);
+    }
+  }, []);
 
   return (
     <Box
