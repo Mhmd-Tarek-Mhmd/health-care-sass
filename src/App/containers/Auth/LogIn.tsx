@@ -2,7 +2,6 @@ import { useAppStore } from "@store";
 import { useForm } from "react-hook-form";
 import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { useColorModeValue } from "@chakra-ui/react";
 
 import { Auth } from "@types";
@@ -34,7 +33,6 @@ const LogIn = () => {
     formState: { errors },
   } = useForm<Inputs>();
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const login = useAppStore((state) => state.login);
   const [trigger, { isLoading }] = useServiceRequest<LogInArgs, Auth>(
     loginService,
@@ -43,7 +41,7 @@ const LogIn = () => {
       isShowSuccessToast: true,
       onSuccess: (res) => {
         login(res as Auth);
-        navigate("/dashboard");
+        window.location.pathname = "/dashboard";
       },
     }
   );
@@ -99,18 +97,12 @@ const LogIn = () => {
               {...register("password", { required: "required" })}
             />
 
-            <Stack spacing={10}>
-              <Stack
-                align="start"
-                justify="space-between"
-                direction={{ base: "column", sm: "row" }}
-              >
-                <Checkbox>{t("logInPage.remember-label")}</Checkbox>
-                <Link to="/forget-password" as={LinkRouter} color="blue.400">
-                  {t("logInPage.forget-label")}
-                </Link>
-              </Stack>
+            <Stack spacing={4} alignItems="flex-end">
+              <Link to="/forget-password" as={LinkRouter} color="blue.400">
+                {t("logInPage.forget-label")}
+              </Link>
               <Button
+                w="full"
                 type="submit"
                 bg="blue.400"
                 color="white"

@@ -27,7 +27,6 @@
     "mainTitle": "Log in to your account",
     "secTitle": "to enjoy all of our cool features ✌️",
     "forget-label": "Forgot password?",
-    "remember-label": "Remember me",
     "no-acc-label": "Don't have an account?"
   },
   "logUpPage": {
@@ -98,8 +97,8 @@
   },
   "actions": "actions",
   "loader-label": "loading",
-  "logup-btn-label": "log up",
-  "login-btn-label": "log in",
+  "logup-btn-label": "Logup",
+  "login-btn-label": "Login",
   "logout-btn-label": "log out",
   "theme_toggler_label": "Toggle Theme",
   "language-select-label": "Choose language",
