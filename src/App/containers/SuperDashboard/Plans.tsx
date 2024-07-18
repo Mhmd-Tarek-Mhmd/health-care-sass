@@ -46,12 +46,11 @@ const Plans = () => {
       { name: t("plans-list.name-cell-label"), selector: "name" },
       {
         name: t("plans-list.createdAt-cell-label"),
-        cell: (row) =>
-          dayjs.unix(row.createdAt.seconds).format(datTimeFormat),
+        cell: (row) => dayjs.unix(row.createdAt.seconds).format(datTimeFormat),
       },
       {
         name: t("plans-list.users-cell-label"),
-        cell: (row) => row?.users || t("Infinity"),
+        cell: (row) => row?.users || t("plans-list.Infinity"),
       },
       {
         name: t("plans-list.storage-cell-label"),
@@ -64,11 +63,12 @@ const Plans = () => {
       {
         name: t("actions"),
         cell: (row) => (
-          <Flex columnGap={2}>
+          <Flex columnGap={1}>
             <EditIconButton
+              size="sm"
               onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
             />
-            <RemoveIconButton onClick={() => handleDelete(row)} />
+            <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
           </Flex>
         ),
       },
