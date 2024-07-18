@@ -32,7 +32,7 @@ interface ExtendedIconButtonWithTooltipProps
 export const EditIconButton = (props: ExtendedIconButtonWithTooltipProps) => (
   <IconButtonWithTooltip
     label="icon-button.edit-button-default"
-    icon={<MdEdit />}
+    icon={<MdEdit color="#68D391" />}
     {...props}
   />
 );
@@ -40,7 +40,7 @@ export const EditIconButton = (props: ExtendedIconButtonWithTooltipProps) => (
 export const RemoveIconButton = (props: ExtendedIconButtonWithTooltipProps) => (
   <IconButtonWithTooltip
     label="icon-button.remove-button-default"
-    icon={<MdDelete />}
+    icon={<MdDelete color="#E53E3E" />}
     {...props}
   />
 );
