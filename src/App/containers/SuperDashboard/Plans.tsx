@@ -114,12 +114,13 @@ const Plans = () => {
 
   return (
     <section>
-      <Flex justifyContent="flex-end">
+      <Flex mb={4} justifyContent="flex-end">
         <Button
+          size="sm"
           leftIcon={<BiPlus />}
           onClick={() => handleOpenModal({ isEdit: false })}
         >
-          {t("add")}
+          {t("plans-list.add-plan")}
         </Button>
       </Flex>
 
