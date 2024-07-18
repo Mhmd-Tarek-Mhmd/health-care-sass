@@ -32,6 +32,9 @@ import LanguageSelect from "./LanguageSelect";
 import { NavLink, Outlet } from "react-router-dom";
 import { FiMenu, FiChevronDown } from "react-icons/fi";
 
+const ASIDE_WIDTH = 240;
+const MAIN_PADDING = 4;
+
 interface DashboardProps {
   links: Array<LinkItemProps>;
 }
@@ -52,7 +55,7 @@ const Dashboard = ({ links }: DashboardProps) => {
         minH: "100vh",
         display: "grid",
         gridTemplateRows: "80px 1fr",
-        gridTemplateColumns: { base: "1fr", md: "240px 1fr" },
+        gridTemplateColumns: { base: "1fr", md: `${ASIDE_WIDTH}px 1fr` },
         gridTemplateAreas: {
           base: `"header" "main" "main"`,
           md: `"aside header" "aside main" "aside main"`,
@@ -62,7 +65,11 @@ const Dashboard = ({ links }: DashboardProps) => {
         ".aside": { gridArea: "aside" },
         ".main": {
           gridArea: "main",
-          width: { base: "100vw", md: "calc(100vw - 240px - 1rem * 2)" },
+          minWidth: "100%",
+          width: {
+            base: "100vw",
+            md: `calc(100vw - ${ASIDE_WIDTH}px - var(--chakra-space-${MAIN_PADDING}))`,
+          },
         },
       }}
     >
@@ -88,7 +95,7 @@ const Dashboard = ({ links }: DashboardProps) => {
       <Header onOpen={onOpen} />
 
       {/* Main */}
-      <Box p="4" as="main" className="main">
+      <Box as="main" p={MAIN_PADDING} className="main">
         <Outlet />
       </Box>
     </Box>
