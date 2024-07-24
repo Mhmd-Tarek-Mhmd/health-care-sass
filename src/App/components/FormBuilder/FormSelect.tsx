@@ -1,10 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+import { TranslationKeys } from "@types";
 import { Select, SelectProps } from "@chakra-ui/react";
 import FormControl, { FormControlProps } from "./FormControl";
 
-type Option = { value: string | number; label: string };
+type Option = { value: string | number; label: TranslationKeys };
 
 interface FormSelectProps
   extends Omit<FormControlProps, "children">,
@@ -48,14 +49,14 @@ const FormSelect = React.forwardRef(
     const renderOptions = (() =>
       options.map((opt) => {
         let value: string | number = "",
-          label = "";
+          label: TranslationKeys | string = "";
 
         if (typeof opt === "string") (value = opt), (label = opt);
         else if ("value" in opt) (value = opt.value), (label = opt.label);
 
         return (
           <option key={value} value={value}>
-            {t(label)}
+            {t(label as TranslationKeys)}
           </option>
         );
       }))();

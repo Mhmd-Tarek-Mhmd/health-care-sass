@@ -1,6 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+import { TranslationKeys } from "@types";
+
 import {
   Button,
   AlertDialog,
@@ -13,14 +15,14 @@ import {
 } from "@chakra-ui/react";
 
 export type ConfirmDialogOptions = {
-  title?: string;
+  title?: TranslationKeys;
   noBody?: boolean;
-  cancelText?: string;
-  confirmText?: string;
+  cancelText?: TranslationKeys;
+  confirmText?: TranslationKeys;
   onCancel: () => void;
   onConfirm: () => void;
   showLoaderOnConfirm?: boolean;
-  body?: string | React.ReactNode;
+  body?: TranslationKeys | React.ReactNode;
 };
 
 const ConfirmDialog: React.FC<ConfirmDialogOptions> = ({

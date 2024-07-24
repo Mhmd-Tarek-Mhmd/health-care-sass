@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 import { Input, InputProps } from "@chakra-ui/react";
 import FormControl, { FormControlProps } from "./FormControl";
@@ -26,6 +27,7 @@ const FormInput = React.forwardRef(
     }: FormInputProps,
     ref
   ) => {
+    const { t } = useTranslation();
     const formControlProps = {
       label,
       helperText,
@@ -42,7 +44,7 @@ const FormInput = React.forwardRef(
       <FormControl {...formControlProps}>
         <Input
           {...props}
-          aria-label={inputOnly ? label : undefined}
+          aria-label={inputOnly ? t(label) : undefined}
           ref={ref as React.LegacyRef<HTMLInputElement>}
         />
       </FormControl>

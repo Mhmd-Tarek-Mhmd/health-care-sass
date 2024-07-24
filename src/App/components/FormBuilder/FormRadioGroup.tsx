@@ -7,6 +7,7 @@ import {
   FieldValues,
   RegisterOptions,
 } from "react-hook-form";
+import { TranslationKeys } from "@types";
 import FormControl, { FormControlProps } from "./FormControl";
 import { Radio, RadioGroup, Stack, StackDirection } from "@chakra-ui/react";
 
@@ -63,14 +64,14 @@ const FormRadioGroup = <T extends FieldValues>({
   const renderOptions = (() =>
     options.map((opt) => {
       let value: string | number = "",
-        label = "";
+        label: TranslationKeys | string = "";
 
       if (typeof opt === "string") (value = opt), (label = opt);
       else if ("value" in opt) (value = opt.value), (label = opt.label);
 
       return (
         <Radio key={value} value={value}>
-          {t(label)}
+          {t(label as TranslationKeys)}
         </Radio>
       );
     }))();

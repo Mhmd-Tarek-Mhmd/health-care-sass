@@ -1,6 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+import { TranslationKeys } from "@types";
+
 import {
   Modal,
   Button,
@@ -13,15 +15,15 @@ import {
 } from "@chakra-ui/react";
 
 type FormModalProps = {
-  title: string;
+  title: TranslationKeys;
   isOpen: boolean;
   isLoading?: boolean;
   onSave: VoidFunction;
   onClose: VoidFunction;
   children: React.ReactNode;
 
-  saveText?: string;
-  cancelText?: string;
+  saveText?: TranslationKeys;
+  cancelText?: TranslationKeys;
   footer?: React.ReactNode;
 };
 

@@ -1,5 +1,6 @@
 import i18next from "i18next";
 import ReactDOM from "react-dom/client";
+import { TranslationKeys } from "@types";
 import { ConfirmDialog, ConfirmDialogOptions } from "@components";
 import { createStandaloneToast, UseToastOptions } from "@chakra-ui/react";
 
@@ -11,14 +12,21 @@ import { createStandaloneToast, UseToastOptions } from "@chakra-ui/react";
 
 export const showToast = (options: UseToastOptions = {}) => {
   const { toast } = createStandaloneToast();
-  const defaultTitles = {
+  type Defaults = {
+    success: TranslationKeys;
+    error: TranslationKeys;
+    info: TranslationKeys;
+    warning: TranslationKeys;
+    loading: TranslationKeys;
+  };
+  const defaultTitles: Defaults = {
     success: "toast.default-success-title",
     error: "toast.default-error-title",
     info: "toast.default-info-title",
     warning: "toast.default-warning-title",
     loading: "toast.default-loading-title",
   };
-  const defaultDesc = {
+  const defaultDesc: Defaults = {
     success: "toast.default-success-desc",
     error: "toast.default-error-desc",
     info: "toast.default-info-desc",
@@ -29,7 +37,7 @@ export const showToast = (options: UseToastOptions = {}) => {
   toast({
     isClosable: true,
     ...(options?.status && {
-      title: i18next.t(defaultTitles[options?.status]),
+      title: i18next.t(defaultTitles[options?.status] as string as TranslationKeys),
       description: i18next.t(defaultDesc[options?.status]),
     }),
     ...options,

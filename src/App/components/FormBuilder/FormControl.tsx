@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+import { TranslationKeys } from "@types";
 import { errors, Errors, icons, Icons } from "./constants";
 
 import {
@@ -17,8 +18,8 @@ import {
 } from "@chakra-ui/react";
 
 export interface FormControlProps {
-  label: string;
-  helperText?: string;
+  label: TranslationKeys;
+  helperText?: TranslationKeys;
   error?: keyof Errors;
   inputOnly?: boolean;
   isRequired?: boolean;
@@ -78,7 +79,7 @@ const FormControl = ({
       isInvalid={Boolean(error)}
     >
       {!inputOnly && (
-        <FormLabel color={error ? "red.300" : undefined}>{label}</FormLabel>
+        <FormLabel color={error ? "red.300" : undefined}>{t(label)}</FormLabel>
       )}
       <InputGroup sx={sx}>
         {renderSuffix}

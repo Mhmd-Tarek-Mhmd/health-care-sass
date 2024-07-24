@@ -1,12 +1,13 @@
 import React from "react";
+import { TranslationKeys } from "@types";
 import { MdAttachMoney } from "react-icons/md";
 import { FaMoneyBillAlt } from "react-icons/fa";
 import { Icon as SVGIcon } from "@chakra-ui/react";
 
 export type Errors = {
-  required: string;
-  email: string;
-  default: string;
+  required: TranslationKeys;
+  email: TranslationKeys;
+  default: TranslationKeys;
 };
 
 export const errors: Errors = {
