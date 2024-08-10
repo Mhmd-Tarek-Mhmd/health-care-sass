@@ -3,6 +3,7 @@ import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
 import { useColorModeValue } from "@chakra-ui/react";
 
+import { emailPattern } from "@constants";
 import { logUp, LogUpArgs } from "@services";
 import { SubmitHandler } from "react-hook-form";
 
@@ -74,7 +75,7 @@ const LogUp = () => {
               isRequired
               label={t("forms.firstName-label")}
               placeholder={t("forms.firstName-placeholder")}
-              error={errors.firstName?.message as "required" | undefined}
+              error={errors.firstName?.message as "required"}
               {...register("firstName", { required: "required" })}
             />
             <FormInput
@@ -89,13 +90,10 @@ const LogUp = () => {
               type="email"
               label={t("forms.email-label")}
               placeholder={t("forms.email-placeholder")}
-              error={errors.email?.message as "required" | "email" | undefined}
+              error={errors.email?.message as "required" | "email"}
               {...register("email", {
                 required: "required",
-                pattern: {
-                  message: "email",
-                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                },
+                pattern: { message: "email", value: emailPattern },
               })}
             />
             <FormInput
@@ -103,7 +101,7 @@ const LogUp = () => {
               type="password"
               label={t("forms.password-label")}
               placeholder={t("forms.password-placeholder")}
-              error={errors.password?.message as "required" | undefined}
+              error={errors.password?.message as "required"}
               {...register("password", { required: "required" })}
             />
 

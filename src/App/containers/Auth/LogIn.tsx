@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useColorModeValue } from "@chakra-ui/react";
 
 import { Auth } from "@types";
+import { emailPattern } from "@constants";
 import { SubmitHandler } from "react-hook-form";
 import { login as loginService, LogInArgs } from "@services";
 
@@ -16,7 +17,6 @@ import {
   Stack,
   Button,
   Heading,
-  Checkbox,
 } from "@chakra-ui/react";
 import { FormInput } from "@components";
 import { Link as LinkRouter } from "react-router-dom";
@@ -82,10 +82,7 @@ const LogIn = () => {
               error={errors.email?.message as "required" | "email"}
               {...register("email", {
                 required: "required",
-                pattern: {
-                  message: "email",
-                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                },
+                pattern: { message: "email", value: emailPattern },
               })}
             />
             <FormInput

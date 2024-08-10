@@ -4,6 +4,8 @@ export const AUTH_STORAGE_KEY = "auth-store";
 
 export const datTimeFormat = "DD/MM/YYYY hh:mm A";
 
+export const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 export const paginationInitState: Pagination = {
   page: 1,
   perPage: 1,
