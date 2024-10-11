@@ -4,14 +4,15 @@ import { useTranslation } from "react-i18next";
 import { Input, InputProps } from "@chakra-ui/react";
 import FormControl, { FormControlProps } from "./FormControl";
 
-interface FormInputProps
+export interface FormInputProps
   extends Omit<FormControlProps, "children">,
-    Omit<InputProps, "sx"> {}
+    Omit<InputProps, "sx" | "prefix"> {}
 
-const FormInput = React.forwardRef(
+const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
   (
     {
       // Form Control Props
+      sx,
       label,
       helperText,
       error,
@@ -24,11 +25,12 @@ const FormInput = React.forwardRef(
 
       // Input Props
       ...props
-    }: FormInputProps,
+    },
     ref
   ) => {
     const { t } = useTranslation();
     const formControlProps = {
+      sx,
       label,
       helperText,
       error,
@@ -44,8 +46,8 @@ const FormInput = React.forwardRef(
       <FormControl {...formControlProps}>
         <Input
           {...props}
+          ref={ref}
           aria-label={inputOnly ? t(label) : undefined}
-          ref={ref as React.LegacyRef<HTMLInputElement>}
         />
       </FormControl>
     );

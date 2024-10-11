@@ -9,11 +9,11 @@ type Option = { value: string | number; label: TranslationKeys };
 
 interface FormSelectProps
   extends Omit<FormControlProps, "children">,
-    Omit<SelectProps, "sx"> {
+    Omit<SelectProps, "sx" | "prefix"> {
   options: [] | string[] | Option[];
 }
 
-const FormSelect = React.forwardRef(
+const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
   (
     {
       options,
@@ -31,7 +31,7 @@ const FormSelect = React.forwardRef(
 
       // Select Props
       ...props
-    }: FormSelectProps,
+    },
     ref
   ) => {
     const { t } = useTranslation();
