@@ -28,7 +28,7 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
     });
 
     const formControlProps = {
-      suffix: (
+      prefix: (
         <CountrySelector
           selectedCountry={phoneInput.country.iso2 || ""}
           onSelect={(country) => phoneInput.setCountry(country.iso2)}
