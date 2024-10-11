@@ -25,10 +25,11 @@ export interface FormControlProps {
   isRequired?: boolean;
   sx?: SystemStyleObject;
   children: React.ReactNode;
-  suffix?: string;
-  prefix?: string;
+  suffix?: React.ReactNode;
+  prefix?: React.ReactNode;
   suffixIcon?: keyof Icons;
   prefixIcon?: keyof Icons;
+  suffixElement?: React.ReactNode;
 }
 const FormControl = ({
   sx,
@@ -42,6 +43,7 @@ const FormControl = ({
   prefix,
   suffixIcon,
   prefixIcon,
+  suffixElement,
 }: FormControlProps) => {
   const id = React.useId();
   const { t } = useTranslation();
@@ -55,6 +57,12 @@ const FormControl = ({
       return (
         <InputLeftElement pointerEvents="none">
           {icons[suffixIcon]}
+        </InputLeftElement>
+      );
+    else if (suffixElement)
+      return (
+        <InputLeftElement pointerEvents="none">
+          {suffixElement}
         </InputLeftElement>
       );
     else return <></>;
