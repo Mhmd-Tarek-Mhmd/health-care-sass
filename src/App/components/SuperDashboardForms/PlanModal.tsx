@@ -117,7 +117,7 @@ const PlanModal = ({ data, onClose, refetchList }: PlanModalProps) => {
       </Flex>
       <FormInput
         isRequired
-        prefix="mb"
+        suffix="mb"
         label={t("plan-form.storage-label")}
         placeholder={t("plan-form.storage-placeholder")}
         error={errors.storage?.message as "required"}
@@ -126,7 +126,7 @@ const PlanModal = ({ data, onClose, refetchList }: PlanModalProps) => {
       <Flex columnGap={3} mt={2}>
         <FormInput
           isRequired
-          suffixIcon="money"
+          prefixIcon="money"
           label={t("plan-form.price-label")}
           placeholder={t("plan-form.price-placeholder")}
           error={errors.price?.message as "required"}
@@ -134,7 +134,7 @@ const PlanModal = ({ data, onClose, refetchList }: PlanModalProps) => {
         />
         <FormSelect
           isRequired
-          suffixIcon="dollar"
+          prefixIcon="dollar"
           options={priceUnits}
           label={t("plan-form.currency-label")}
           placeholder={t("plan-form.currency-placeholder")}

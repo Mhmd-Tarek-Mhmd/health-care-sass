@@ -66,8 +66,8 @@ const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
         {...formControlProps}
         sx={{
           select: {
-            paddingInlineEnd: prefixIcon ? "2rem" : undefined,
-            paddingInlineStart: suffixIcon ? "2rem" : undefined,
+            paddingInlineEnd: suffixIcon ? "2rem" : undefined,
+            paddingInlineStart: prefixIcon ? "2rem" : undefined,
           },
         }}
       >

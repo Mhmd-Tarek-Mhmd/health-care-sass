@@ -30,6 +30,7 @@ export interface FormControlProps {
   suffixIcon?: keyof Icons;
   prefixIcon?: keyof Icons;
   suffixElement?: React.ReactNode;
+  prefixElement?: React.ReactNode;
 }
 const FormControl = ({
   sx,
@@ -44,6 +45,7 @@ const FormControl = ({
   suffixIcon,
   prefixIcon,
   suffixElement,
+  prefixElement,
 }: FormControlProps) => {
   const id = React.useId();
   const { t } = useTranslation();
@@ -52,30 +54,36 @@ const FormControl = ({
 
   const renderSuffix = (() => {
     if (suffix)
-      return <InputLeftAddon userSelect="none">{suffix}</InputLeftAddon>;
+      return <InputRightAddon userSelect="none">{suffix}</InputRightAddon>;
     else if (suffixIcon)
       return (
-        <InputLeftElement pointerEvents="none">
+        <InputRightElement pointerEvents="none">
           {icons[suffixIcon]}
-        </InputLeftElement>
+        </InputRightElement>
       );
     else if (suffixElement)
       return (
-        <InputLeftElement pointerEvents="none">
+        <InputRightElement pointerEvents="none">
           {suffixElement}
-        </InputLeftElement>
+        </InputRightElement>
       );
     else return <></>;
   })();
 
   const renderPrefix = (() => {
     if (prefix)
-      return <InputRightAddon userSelect="none">{prefix}</InputRightAddon>;
+      return <InputLeftAddon userSelect="none">{prefix}</InputLeftAddon>;
     else if (prefixIcon)
       return (
-        <InputRightElement pointerEvents="none">
+        <InputLeftElement pointerEvents="none">
           {icons[prefixIcon]}
-        </InputRightElement>
+        </InputLeftElement>
+      );
+    else if (prefixElement)
+      return (
+        <InputLeftElement pointerEvents="none">
+          {prefixElement}
+        </InputLeftElement>
       );
     else return <></>;
   })();
@@ -90,9 +98,9 @@ const FormControl = ({
         <FormLabel color={error ? "red.300" : undefined}>{t(label)}</FormLabel>
       )}
       <InputGroup sx={sx}>
-        {renderSuffix}
-        {children}
         {renderPrefix}
+        {children}
+        {renderSuffix}
       </InputGroup>
       {helperText && <FormHelperText>{t(helperText)}</FormHelperText>}
       {error && <FormErrorMessage>{t(errors?.[error])}</FormErrorMessage>}
