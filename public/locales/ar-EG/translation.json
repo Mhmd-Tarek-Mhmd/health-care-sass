@@ -52,6 +52,8 @@
     "per-page-select-label": "اختر عدد الصفوف لكل صفحة"
   },
   "forms": {
+    "name-label": "الاسم",
+    "name-placeholder": "أدخل اسمك",
     "firstName-label": "الاسم الأول",
     "firstName-placeholder": "أدخل اسمك الأول",
     "lastName-label": "اسم العائلة",
@@ -59,7 +61,9 @@
     "email-label": "عنوان البريد الإلكتروني",
     "email-placeholder": "أدخل عنوان بريدك الالكتروني",
     "password-label": "كلمة المرور",
-    "password-placeholder": "أدخل رقمك السري"
+    "password-placeholder": "أدخل رقمك السري",
+    "phone-label": "رقم الهاتف",
+    "phone-placeholder": "أدخل رقم الهاتف"
   },
   "validations": {
     "required": "هذا الحقل مطلوب",
@@ -128,5 +132,21 @@
     "price-placeholder": "أدخل السعر",
     "currency-label": "العملة",
     "currency-placeholder": "أدخل العملة"
+  },
+
+  "hospitals-list": {
+    "add-hospital": "إضافة مستشفي",
+    "name-cell-label": "الاسم",
+    "createdAt-cell-label": "تم إنشاؤها في",
+    "updatedAt-cell-label": "تم تعديلها في",
+    "plan-cell-label": "نظام الإشتراك",
+    "email-cell-label": "عنوان البريد الإلكتروني",
+    "phone-cell-label": "رقم الهاتف"
+  },
+  "hospital-form": {
+    "create-title": "إنشاء مستشفي",
+    "edit-title": "تعديل مستشفي",
+    "plan-label": "اسم نظام الإشتراك",
+    "plan-placeholder": "أدخل اسم نظام الإشتراك"
   }
 }

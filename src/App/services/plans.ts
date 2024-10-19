@@ -11,7 +11,7 @@ import { db } from "./firebase";
 import paginator from "./paginator";
 import { PaginatorResponse, Plan } from "@types";
 
-const COLLECTION_NAME = "plans";
+export const COLLECTION_NAME = "plans";
 
 export interface GetPlansArgs {
   pageSize: number;

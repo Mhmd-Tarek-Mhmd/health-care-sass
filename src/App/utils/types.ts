@@ -1,8 +1,8 @@
 import { To } from "react-router-dom";
 import { IconType } from "react-icons";
-import { Timestamp } from "firebase/firestore";
 import ns from "public/locales/en-US/translation.json";
 export type { Column } from "src/App/components/DataTable";
+import { DocumentReference, Timestamp } from "firebase/firestore";
 export type { Pagination } from "src/App/components/ServerPagination";
 
 type NestedKeyOf<ObjectType extends object> = {
@@ -49,14 +49,25 @@ export type Auth = {
   user: User | null;
 };
 
-export type Plan = {
+export interface Model {
   id: string;
   name: string;
   createdAt: Timestamp;
-  updatedAt?: Timestamp;
+  updatedAt: Timestamp | null;
+}
+
+export type ModelMenu = Pick<Model, "id" | "name">;
+
+export interface Plan extends Model {
   users: number;
   price: number;
   storage: number;
   currency: string;
   isInfiniteUsers: boolean;
-};
+}
+
+export interface Hospital extends Model {
+  email: string;
+  phone: string;
+  plan: DocumentReference | string;
+}

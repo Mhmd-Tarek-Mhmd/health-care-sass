@@ -5,11 +5,15 @@ import { TranslationKeys } from "@types";
 import { Select, SelectProps } from "@chakra-ui/react";
 import FormControl, { FormControlProps } from "./FormControl";
 
-type Option = { value: string | number; label: TranslationKeys };
+type Option = {
+  value: string | number;
+  label: TranslationKeys | string;
+};
 
 interface FormSelectProps
   extends Omit<FormControlProps, "children">,
     Omit<SelectProps, "sx" | "prefix"> {
+  skipOptionsTranslation?: boolean;
   options: [] | string[] | Option[];
 }
 
@@ -17,6 +21,7 @@ const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
   (
     {
       options,
+      skipOptionsTranslation = false,
 
       // Form Control Props
       label,
@@ -48,15 +53,18 @@ const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
     };
     const renderOptions = (() =>
       options.map((opt) => {
+        type Label<T extends boolean> = T extends true
+          ? string
+          : TranslationKeys;
         let value: string | number = "",
-          label: TranslationKeys | string = "";
+          label: Label<typeof skipOptionsTranslation> = "";
 
         if (typeof opt === "string") (value = opt), (label = opt);
         else if ("value" in opt) (value = opt.value), (label = opt.label);
 
         return (
           <option key={value} value={value}>
-            {t(label as TranslationKeys)}
+            {skipOptionsTranslation ? label : t(label)}
           </option>
         );
       }))();

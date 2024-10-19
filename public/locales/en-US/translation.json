@@ -51,6 +51,8 @@
     "per-page-select-label": "select per page count"
   },
   "forms": {
+    "name-label": "Name",
+    "name-placeholder": "Enter your name",
     "firstName-label": "First Name",
     "firstName-placeholder": "Enter your first name",
     "lastName-label": "Last Name",
@@ -58,7 +60,9 @@
     "email-label": "Email address",
     "email-placeholder": "Enter your email address",
     "password-label": "Password",
-    "password-placeholder": "Enter your password"
+    "password-placeholder": "Enter your password",
+    "phone-label": "Phone",
+    "phone-placeholder": "Enter your phone"
   },
   "validations": {
     "required": "This field is required",
@@ -127,5 +131,21 @@
     "price-placeholder": "Enter price",
     "currency-label": "Currency",
     "currency-placeholder": "Enter currency"
+  },
+
+  "hospitals-list": {
+    "add-hospital": "Add Hospital",
+    "name-cell-label": "Name",
+    "createdAt-cell-label": "Created at",
+    "updatedAt-cell-label": "Updated at",
+    "plan-cell-label": "Plan",
+    "email-cell-label": "Email",
+    "phone-cell-label": "Phone"
+  },
+  "hospital-form": {
+    "create-title": "Create Hospital",
+    "edit-title": "Edit Hospital",
+    "plan-label": "Plan",
+    "plan-placeholder": "Enter plan name"
   }
 }
