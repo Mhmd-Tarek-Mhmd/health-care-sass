@@ -71,3 +71,10 @@ export interface Hospital extends Model {
   phone: string;
   plan: DocumentReference | string;
 }
+
+export interface Bed extends Model {
+  width: number;
+  height: number;
+  length: number;
+  details?: string;
+}

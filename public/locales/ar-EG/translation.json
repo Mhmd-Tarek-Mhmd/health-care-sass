@@ -100,6 +100,11 @@
     "save-label-default": "حفظ",
     "cancel-label-default": "إلغاء"
   },
+  "show-more": {
+    "more-label": "إظهار المزيد",
+    "less-label": "إظهار أقل"
+  },
+
   "actions": "الإجراءات",
   "loader-label": "جار التحميل",
   "logup-btn-label": "قم بالتسجيل",
@@ -148,5 +153,30 @@
     "edit-title": "تعديل مستشفي",
     "plan-label": "اسم نظام الإشتراك",
     "plan-placeholder": "أدخل اسم نظام الإشتراك"
+  },
+
+  "beds-list": {
+    "add-bed": "إضافة سرير",
+    "name-cell-label": "الاسم",
+    "width-cell-label": "العرض",
+    "length-cell-label": "الطول",
+    "height-cell-label": "الإرتفاع",
+    "details-cell-label": "تفاصيل إضافية",
+    "dimensions-unit": "سم"
+  },
+  "bed-form": {
+    "create-title": "إنشاء سرير",
+    "edit-title": "تعديل سرير",
+    "name-label": "الاسم",
+    "name-placeholder": "أدخل اسم نظام الإشتراك",
+    "width-label": "العرض",
+    "width-placeholder": "أدخل عرض السرير",
+    "length-label": "الطول",
+    "length-placeholder": "أدخل طول السرير",
+    "height-label": "الإرتفاع",
+    "height-placeholder": "أدخل إرتفاع السرير",
+    "details-label": "تفاصيل إضافية",
+    "details-placeholder": "أدخل تفاصيل إضافية",
+    "dimensions-unit": "سم"
   }
 }

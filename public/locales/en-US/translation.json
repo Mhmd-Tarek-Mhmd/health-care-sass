@@ -99,6 +99,11 @@
     "save-label-default": "Save",
     "cancel-label-default": "Cancel"
   },
+  "show-more": {
+    "more-label": "Show More",
+    "less-label": "Show Less"
+  },
+
   "actions": "actions",
   "loader-label": "loading",
   "logup-btn-label": "Logup",
@@ -147,5 +152,30 @@
     "edit-title": "Edit Hospital",
     "plan-label": "Plan",
     "plan-placeholder": "Enter plan name"
+  },
+
+  "beds-list": {
+    "add-bed": "Add Bed",
+    "name-cell-label": "Name",
+    "width-cell-label": "Width",
+    "length-cell-label": "Length",
+    "height-cell-label": "Height",
+    "details-cell-label": "Additional Details",
+    "dimensions-unit": "cm"
+  },
+  "bed-form": {
+    "create-title": "Add Bed",
+    "edit-title": "Edit bed",
+    "name-label": "Name",
+    "name-placeholder": "Enter plan name",
+    "width-label": "Width",
+    "width-placeholder": "Enter bed's width",
+    "length-label": "Length",
+    "length-placeholder": "Enter bed's length",
+    "height-label": "Height",
+    "height-placeholder": "Enter bed's height",
+    "details-label": "Additional Details",
+    "details-placeholder": "Enter additional details",
+    "dimensions-unit": "cm"
   }
 }
