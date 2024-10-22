@@ -67,18 +67,17 @@ export const useServiceRequest = <Args, Response, Error = FirebaseError>(
       successToastOptions = {},
       errorToastOptions = {},
     } = mergedOptions;
-
     try {
       setError(null);
       const data = await service(args as Args);
       setData(data as Response);
-      options?.isShowSuccessToast &&
+      mergedOptions?.isShowSuccessToast &&
         showToast({ status: "success", ...successToastOptions });
       mergedOptions?.onSuccess?.(data as Response);
     } catch (error) {
       setData(null);
       setError(error as Error);
-      options?.isShowErrorToast &&
+      mergedOptions?.isShowErrorToast &&
         showToast({
           status: "error",
           description: t("toast." + (error as Error)?.code),
