@@ -78,3 +78,11 @@ export interface Bed extends Model {
   length: number;
   details?: string;
 }
+
+export interface Room extends Model {
+  floor: number;
+  width: number;
+  length: number;
+  beds: [DocumentReference | string];
+  details?: string;
+}

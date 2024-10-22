@@ -178,5 +178,33 @@
     "details-label": "تفاصيل إضافية",
     "details-placeholder": "أدخل تفاصيل إضافية",
     "dimensions-unit": "سم"
+  },
+
+  "rooms-list": {
+    "add-room": "إضافة غرفة",
+    "name-cell-label": "الاسم",
+    "floor-cell-label": "الطابق",
+    "width-cell-label": "العرض",
+    "length-cell-label": "الطول",
+    "beds-cell-label": "الآسرة",
+    "details-cell-label": "تفاصيل إضافية",
+    "dimensions-unit": "سم"
+  },
+  "room-form": {
+    "create-title": "إنشاء غرفة",
+    "edit-title": "تعديل غرفة",
+    "name-label": "الاسم",
+    "name-placeholder": "أدخل اسم نظام الإشتراك",
+    "floor-label": "الطابق",
+    "floor-placeholder": "أدخل الطابق",
+    "width-label": "العرض",
+    "width-placeholder": "أدخل عرض الغرفة",
+    "length-label": "الطول",
+    "length-placeholder": "أدخل طول الغرفة",
+    "beds-label": "الآسرة",
+    "beds-placeholder": "أدخل آسرة الغرفة",
+    "details-label": "تفاصيل إضافية",
+    "details-placeholder": "أدخل تفاصيل إضافية",
+    "dimensions-unit": "سم"
   }
 }

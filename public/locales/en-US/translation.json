@@ -165,7 +165,7 @@
   },
   "bed-form": {
     "create-title": "Add Bed",
-    "edit-title": "Edit bed",
+    "edit-title": "Edit Bed",
     "name-label": "Name",
     "name-placeholder": "Enter plan name",
     "width-label": "Width",
@@ -174,6 +174,34 @@
     "length-placeholder": "Enter bed's length",
     "height-label": "Height",
     "height-placeholder": "Enter bed's height",
+    "details-label": "Additional Details",
+    "details-placeholder": "Enter additional details",
+    "dimensions-unit": "cm"
+  },
+
+  "rooms-list": {
+    "add-room": "Add Room",
+    "name-cell-label": "Name",
+    "floor-cell-label": "Floor",
+    "width-cell-label": "Width",
+    "length-cell-label": "Length",
+    "beds-cell-label": "Beds",
+    "details-cell-label": "Additional Details",
+    "dimensions-unit": "cm"
+  },
+  "room-form": {
+    "create-title": "Add Room",
+    "edit-title": "Edit Room",
+    "name-label": "Name",
+    "name-placeholder": "Enter room name",
+    "floor-label": "Floor",
+    "floor-placeholder": "Enter Floor",
+    "width-label": "Width",
+    "width-placeholder": "Enter room's width",
+    "length-label": "Length",
+    "length-placeholder": "Enter room's length",
+    "beds-label": "Beds",
+    "beds-placeholder": "Enter beds",
     "details-label": "Additional Details",
     "details-placeholder": "Enter additional details",
     "dimensions-unit": "cm"
