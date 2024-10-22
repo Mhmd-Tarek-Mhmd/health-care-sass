@@ -44,7 +44,18 @@ const Beds = () => {
   // Constants
   const columns = React.useMemo<Column<Bed>[]>(
     () => [
-      { name: t("beds-list.name-cell-label"), selector: "name" },
+      { name: t("lists.name-cell-label"), selector: "name" },
+      {
+        name: t("lists.createdAt-cell-label"),
+        cell: (row) => dayjs.unix(row.createdAt.seconds).format(datTimeFormat),
+      },
+      {
+        name: t("lists.updatedAt-cell-label"),
+        cell: (row) =>
+          row?.updatedAt
+            ? dayjs.unix(row?.updatedAt.seconds).format(datTimeFormat)
+            : "",
+      },
       {
         name: t("beds-list.width-cell-label"),
         cell: (row) => row.width + t("beds-list.dimensions-unit"),

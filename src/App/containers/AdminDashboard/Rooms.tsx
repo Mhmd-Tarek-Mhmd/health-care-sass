@@ -2,8 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
+import dayjs from "dayjs";
 import { confirm } from "@helpers";
-import { paginationInitState } from "@constants";
+import { datTimeFormat, paginationInitState } from "@constants";
 import { AnyObject, Column, PaginatorResponse, Room } from "@types";
 import { getRooms, GetRoomsArgs, removeRoom, RemoveRoomArgs } from "@services";
 
@@ -44,7 +45,18 @@ const Rooms = () => {
   // Constants
   const columns = React.useMemo<Column<Room>[]>(
     () => [
-      { name: t("rooms-list.name-cell-label"), selector: "name" },
+      { name: t("lists.name-cell-label"), selector: "name" },
+      {
+        name: t("lists.createdAt-cell-label"),
+        cell: (row) => dayjs.unix(row.createdAt.seconds).format(datTimeFormat),
+      },
+      {
+        name: t("lists.updatedAt-cell-label"),
+        cell: (row) =>
+          row?.updatedAt
+            ? dayjs.unix(row?.updatedAt.seconds).format(datTimeFormat)
+            : "",
+      },
       { name: t("rooms-list.floor-cell-label"), selector: "floor" },
       {
         name: t("rooms-list.width-cell-label"),

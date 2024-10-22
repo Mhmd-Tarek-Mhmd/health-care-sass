@@ -49,13 +49,13 @@ const Hospitals = () => {
   // Constants
   const columns = React.useMemo<Column<Hospital>[]>(
     () => [
-      { name: t("hospitals-list.name-cell-label"), selector: "name" },
+      { name: t("lists.name-cell-label"), selector: "name" },
       {
-        name: t("hospitals-list.createdAt-cell-label"),
+        name: t("lists.createdAt-cell-label"),
         cell: (row) => dayjs.unix(row.createdAt.seconds).format(datTimeFormat),
       },
       {
-        name: t("hospitals-list.updatedAt-cell-label"),
+        name: t("lists.updatedAt-cell-label"),
         cell: (row) =>
           row?.updatedAt
             ? dayjs.unix(row?.updatedAt.seconds).format(datTimeFormat)

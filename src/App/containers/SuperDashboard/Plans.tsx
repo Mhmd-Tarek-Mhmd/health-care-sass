@@ -44,10 +44,17 @@ const Plans = () => {
   // Constants
   const columns = React.useMemo<Column<Plan>[]>(
     () => [
-      { name: t("plans-list.name-cell-label"), selector: "name" },
+      { name: t("lists.name-cell-label"), selector: "name" },
       {
-        name: t("plans-list.createdAt-cell-label"),
+        name: t("lists.createdAt-cell-label"),
         cell: (row) => dayjs.unix(row.createdAt.seconds).format(datTimeFormat),
+      },
+      {
+        name: t("lists.updatedAt-cell-label"),
+        cell: (row) =>
+          row?.updatedAt
+            ? dayjs.unix(row?.updatedAt.seconds).format(datTimeFormat)
+            : "",
       },
       {
         name: t("plans-list.users-cell-label"),

@@ -129,8 +129,6 @@
 
   "plans-list": {
     "add-plan": "إضافة نظام إشتراك",
-    "name-cell-label": "الاسم",
-    "createdAt-cell-label": "تم إنشاؤها في",
     "users-cell-label": "عدد المستخدمين",
     "storage-cell-label": "مساحة تخزين البيانات",
     "price-cell-label": "السعر",
@@ -154,9 +152,6 @@
 
   "hospitals-list": {
     "add-hospital": "إضافة مستشفي",
-    "name-cell-label": "الاسم",
-    "createdAt-cell-label": "تم إنشاؤها في",
-    "updatedAt-cell-label": "تم تعديلها في",
     "plan-cell-label": "نظام الإشتراك",
     "email-cell-label": "عنوان البريد الإلكتروني",
     "phone-cell-label": "رقم الهاتف"
@@ -170,7 +165,6 @@
 
   "beds-list": {
     "add-bed": "إضافة سرير",
-    "name-cell-label": "الاسم",
     "width-cell-label": "العرض",
     "length-cell-label": "الطول",
     "height-cell-label": "الإرتفاع",
@@ -195,7 +189,6 @@
 
   "rooms-list": {
     "add-room": "إضافة غرفة",
-    "name-cell-label": "الاسم",
     "floor-cell-label": "الطابق",
     "width-cell-label": "العرض",
     "length-cell-label": "الطول",

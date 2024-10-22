@@ -128,8 +128,6 @@
 
   "plans-list": {
     "add-plan": "Add Plan",
-    "name-cell-label": "Name",
-    "createdAt-cell-label": "created at",
     "users-cell-label": "Users",
     "storage-cell-label": "Storage",
     "price-cell-label": "Price",
@@ -153,9 +151,6 @@
 
   "hospitals-list": {
     "add-hospital": "Add Hospital",
-    "name-cell-label": "Name",
-    "createdAt-cell-label": "Created at",
-    "updatedAt-cell-label": "Updated at",
     "plan-cell-label": "Plan",
     "email-cell-label": "Email",
     "phone-cell-label": "Phone"
@@ -169,7 +164,6 @@
 
   "beds-list": {
     "add-bed": "Add Bed",
-    "name-cell-label": "Name",
     "width-cell-label": "Width",
     "length-cell-label": "Length",
     "height-cell-label": "Height",
@@ -194,7 +188,6 @@
 
   "rooms-list": {
     "add-room": "Add Room",
-    "name-cell-label": "Name",
     "floor-cell-label": "Floor",
     "width-cell-label": "Width",
     "length-cell-label": "Length",
