@@ -5,16 +5,16 @@ import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
 import {
   getPlans,
-  getDoctor,
+  getNurse,
   GetPlansArgs,
-  saveDoctor,
-  updateDoctor,
-  GetDoctorArgs,
+  saveNurse,
+  updateNurse,
+  GetNurseArgs,
 } from "@services";
 import { emailPattern } from "@constants";
 import { buildOptionModel } from "@helpers";
 import { SubmitHandler } from "react-hook-form";
-import { Plan, Doctor, AnyObject, PaginatorResponse } from "@types";
+import { Plan, Nurse, AnyObject, PaginatorResponse } from "@types";
 
 import Loader from "../Loader";
 import FormModal from "../FormModal";
@@ -27,17 +27,16 @@ type Inputs = {
   gender: string;
   email: string;
   phone: string;
-  specialty: string;
-  patients: string[];
+  doctors: string[];
 };
 
-type DoctorModalProps = {
+type NurseModalProps = {
   data: AnyObject;
   onClose: VoidFunction;
   refetchList: VoidFunction;
 };
 
-const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
+const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
   const { t } = useTranslation();
   const {
     reset,
@@ -47,22 +46,22 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
   } = useForm<Inputs>();
 
   // Local State
-  const [options, setOptions] = React.useState({ patients: [], genders: ["Male", "Female"] });
+  const [options, setOptions] = React.useState({ doctors: [], genders: ["Male", "Female"] });
 
   // Server State
   const [getPlansOptions, { isLoading: isPlansOptionsLoading }] =
     useServiceRequest<GetPlansArgs, PaginatorResponse<Plan>>(getPlans);
-  const [getDoctorData, { isLoading: isDataLoading }] = useServiceRequest<
-    GetDoctorArgs,
-    Doctor
-  >(getDoctor);
-  const [save, { isLoading: isSaveLoading }] = useServiceRequest<Doctor, void>(
-    saveDoctor
+  const [getNurseData, { isLoading: isDataLoading }] = useServiceRequest<
+    GetNurseArgs,
+    Nurse
+  >(getNurse);
+  const [save, { isLoading: isSaveLoading }] = useServiceRequest<Nurse, void>(
+    saveNurse
   );
   const [update, { isLoading: isUpdateLoading }] = useServiceRequest<
-    Doctor,
+    Nurse,
     void
-  >(updateDoctor);
+  >(updateNurse);
 
   /* ↓ State Effects ↓ */
 
@@ -78,10 +77,10 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
     });
 
     data?.id &&
-      getDoctorData({
+      getNurseData({
         args: { id: data?.id },
         onSuccess(response) {
-          reset({ ...response, patients: [] });
+          reset({ ...response, doctors: [] });
         },
       });
   }, []);
@@ -96,7 +95,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        patients: [],
+        doctors: [],
       },
       onSuccess() {
         onClose();
@@ -112,7 +111,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
       onSave={handleSubmit(onSubmit)}
       isLoading={isSaveLoading || isUpdateLoading}
       title={
-        data?.isEdit ? "doctor-form.edit-title" : "doctor-form.create-title"
+        data?.isEdit ? "nurse-form.edit-title" : "nurse-form.create-title"
       }
     >
       <Loader fixed isLoading={isDataLoading || isPlansOptionsLoading} />
@@ -145,13 +144,6 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
       </Flex>
       <FormInput
         isRequired
-        label={t("doctor-form.specialty-label")}
-        placeholder={t("doctor-form.specialty-placeholder")}
-        error={errors.specialty?.message as "required"}
-        {...register("specialty", { required: "required" })}
-      />
-      <FormInput
-        isRequired
         type="email"
         label={t("forms.email-label")}
         placeholder={t("forms.email-placeholder")}
@@ -171,14 +163,14 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
       {/* <FormSelect
         isRequired
         skipOptionsTranslation
-        options={options?.patients || []}
-        label={t("doctor-form.patients-label")}
-        placeholder={t("doctor-form.patients-placeholder")}
-        error={errors.patients?.message as "required"}
-        {...register("patients", { required: "required" })}
+        options={options?.doctors || []}
+        label={t("nurse-form.doctors-label")}
+        placeholder={t("nurse-form.doctors-placeholder")}
+        error={errors.doctors?.message as "required"}
+        {...register("doctors", { required: "required" })}
       /> */}
     </FormModal>
   );
 };
 
-export default DoctorModal;
+export default NurseModal;

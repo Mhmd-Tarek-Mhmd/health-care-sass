@@ -232,5 +232,16 @@
     "specialty-placeholder": "Enter doctor's specialty",
     "patients-label": "patients",
     "patients-placeholder": "Enter doctor's patients"
+  },
+
+  "nurses-list": {
+    "add-nurse": "Add Nurse",
+    "doctors-cell-label": "Doctors"
+  },
+  "nurse-form": {
+    "create-title": "Add Nurse",
+    "edit-title": "Edit Nurse",
+    "doctors-label": "doctors",
+    "doctors-placeholder": "Enter nurse's doctors"
   }
 }

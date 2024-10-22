@@ -233,5 +233,16 @@
     "specialty-placeholder": "أدخل تخصص الطبيب",
     "patients-label": "المرضي",
     "patients-placeholder": "أدخل مرضي الطبيب"
+  },
+
+  "nurses-list": {
+    "add-nurse": "إنشاء ممرضة",
+    "doctors-cell-label": "الأطباء"
+  },
+  "nurse-form": {
+    "create-title": "إنشاء ممرضة",
+    "edit-title": "تعديل ممرضة",
+    "doctors-label": "الأطباء",
+    "doctors-placeholder": "أدخل مرضي الممرضة"
   }
 }

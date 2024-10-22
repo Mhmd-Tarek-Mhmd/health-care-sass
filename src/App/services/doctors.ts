@@ -14,7 +14,7 @@ import { PaginatorResponse, Doctor, Patient } from "@types";
 // import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
 
 let PATIENTS_COLLECTION_NAME = "patients";
-const COLLECTION_NAME = "doctors";
+export const COLLECTION_NAME = "doctors";
 
 export interface GetDoctorsArgs {
   pageSize: number;
@@ -75,9 +75,7 @@ export const saveDoctor = async ({
   ...doctor
 }: Doctor): Promise<void> => {
   let patientsArr = [] as Patient[];
-  console.log(patients,patientsArr)
   if (patients.length) {
-    console.log('first')
     patientsArr = await Promise.all(
       patients.map(async (patient) => {
         const patientDoc = await getDoc(
