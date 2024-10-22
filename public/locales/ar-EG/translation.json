@@ -244,5 +244,16 @@
     "edit-title": "تعديل ممرضة",
     "doctors-label": "الأطباء",
     "doctors-placeholder": "أدخل مرضي الممرضة"
+  },
+
+  "patients-list": {
+    "add-patient": "إنشاء مريض",
+    "doctors-cell-label": "الأطباء"
+  },
+  "patient-form": {
+    "create-title": "إنشاء مريض",
+    "edit-title": "تعديل مريض",
+    "doctors-label": "الأطباء",
+    "doctors-placeholder": "أدخل مرضي المريض"
   }
 }

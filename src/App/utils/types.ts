@@ -105,4 +105,10 @@ export interface Nurse extends Model {
   doctors: Doctor[];
 }
 
-export interface Patient extends Model {}
+export interface Patient extends Model {
+  age: string;
+  gender: string;
+  email: string;
+  phone: string;
+  doctors: Doctor[];
+}

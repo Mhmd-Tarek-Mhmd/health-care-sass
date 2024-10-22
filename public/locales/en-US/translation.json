@@ -243,5 +243,16 @@
     "edit-title": "Edit Nurse",
     "doctors-label": "doctors",
     "doctors-placeholder": "Enter nurse's doctors"
+  },
+
+  "patients-list": {
+    "add-patient": "Add Patient",
+    "doctors-cell-label": "Doctors"
+  },
+  "patient-form": {
+    "create-title": "Add Patient",
+    "edit-title": "Edit Patient",
+    "doctors-label": "doctors",
+    "doctors-placeholder": "Enter patient's doctors"
   }
 }
