@@ -85,7 +85,11 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
       getPatientData({
         args: { id: data?.id },
         onSuccess(response) {
-          reset({ ...response, doctors: [] });
+          reset({
+            ...response,
+            doctors: response?.doctors[0].id,
+            // doctors: response?.doctors.map((p) => p.id),
+          });
         },
       });
   }, []);

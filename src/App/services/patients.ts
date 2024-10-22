@@ -37,7 +37,7 @@ export const getPatients = async ({
             doc(db, DOCTORS_COLLECTION_NAME, doctor?.id)
           );
 
-          return doctorDoc?.data() as Doctor;
+          return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
         })
       );
       return { ...patient, doctors };
@@ -61,7 +61,7 @@ export const getPatient = async ({ id }: GetPatientArgs): Promise<Patient> => {
           doc(db, DOCTORS_COLLECTION_NAME, doctor?.id)
         );
 
-        return doctorDoc?.data() as Doctor;
+        return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
       })
     );
     return { ...patient, doctors };
@@ -109,13 +109,18 @@ export const updatePatient = async ({
   doctors,
   ...patient
 }: UpsertPatientArgs): Promise<void> => {
-  const doctorsArr = await Promise.all(
-    doctors.map(async (doctor) => {
-      const doctorDoc = await getDoc(doc(db, DOCTORS_COLLECTION_NAME, doctor));
+  let doctorsArr = [] as DocumentReference[];
+  if (doctors.length) {
+    doctorsArr = await Promise.all(
+      doctors.map(async (doctor) => {
+        const doctorDoc = await getDoc(
+          doc(db, DOCTORS_COLLECTION_NAME, doctor)
+        );
 
-      return doctorDoc?.data() as Doctor;
-    })
-  );
+        return doctorDoc?.ref;
+      })
+    );
+  }
   await updateDoc(doc(db, COLLECTION_NAME, id), {
     ...patient,
     doctors: doctorsArr,

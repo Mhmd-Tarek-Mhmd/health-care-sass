@@ -84,8 +84,8 @@ export interface Room extends Model {
   floor: number;
   width: number;
   length: number;
-  beds: [DocumentReference | string];
-  details?: string;
+  beds: Bed[];
+  details: string;
 }
 
 export interface Doctor extends Model {

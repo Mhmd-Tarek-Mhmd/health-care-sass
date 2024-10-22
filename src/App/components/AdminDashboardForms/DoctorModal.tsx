@@ -4,17 +4,18 @@ import { useTranslation } from "react-i18next";
 import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
 import {
-  getPlans,
+  getPatients,
   getDoctor,
-  GetPlansArgs,
+  GetPatientsArgs,
   saveDoctor,
   updateDoctor,
   GetDoctorArgs,
+  UpsertDoctorArgs,
 } from "@services";
 import { emailPattern } from "@constants";
 import { buildOptionModel } from "@helpers";
 import { SubmitHandler } from "react-hook-form";
-import { Plan, Doctor, AnyObject, PaginatorResponse } from "@types";
+import { Patient, Doctor, AnyObject, PaginatorResponse } from "@types";
 
 import Loader from "../Loader";
 import FormModal from "../FormModal";
@@ -47,43 +48,51 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
   } = useForm<Inputs>();
 
   // Local State
-  const [options, setOptions] = React.useState({ patients: [], genders: ["Male", "Female"] });
+  const [options, setOptions] = React.useState({
+    patients: [],
+    genders: ["Male", "Female"],
+  });
 
   // Server State
-  const [getPlansOptions, { isLoading: isPlansOptionsLoading }] =
-    useServiceRequest<GetPlansArgs, PaginatorResponse<Plan>>(getPlans);
+  const [getPatientsOptions, { isLoading: isPatientsOptionsLoading }] =
+    useServiceRequest<GetPatientsArgs, PaginatorResponse<Patient>>(getPatients);
   const [getDoctorData, { isLoading: isDataLoading }] = useServiceRequest<
     GetDoctorArgs,
     Doctor
   >(getDoctor);
-  const [save, { isLoading: isSaveLoading }] = useServiceRequest<Doctor, void>(
-    saveDoctor
-  );
+  const [save, { isLoading: isSaveLoading }] = useServiceRequest<
+    UpsertDoctorArgs,
+    void
+  >(saveDoctor);
   const [update, { isLoading: isUpdateLoading }] = useServiceRequest<
-    Doctor,
+    UpsertDoctorArgs,
     void
   >(updateDoctor);
 
   /* ↓ State Effects ↓ */
 
   useDidUpdateEffect(() => {
-    getPlansOptions({
+    getPatientsOptions({
       args: { pageSize: 999, pageNumber: 1 },
       onSuccess(response) {
-        const plans = (
+        const patients = (
           response?.items?.length ? response?.items?.map(buildOptionModel) : []
         ) as [];
-        setOptions((prev) => ({ ...prev, plans }));
+        setOptions((prev) => ({ ...prev, patients }));
+
+        data?.id &&
+          getDoctorData({
+            args: { id: data?.id },
+            onSuccess(response) {
+              reset({
+                ...response,
+                patients: response?.patients[0].id,
+                // patients: response?.patients.map((p) => p.id),
+              });
+            },
+          });
       },
     });
-
-    data?.id &&
-      getDoctorData({
-        args: { id: data?.id },
-        onSuccess(response) {
-          reset({ ...response, patients: [] });
-        },
-      });
   }, []);
 
   /* ↓ Helpers ↓ */
@@ -96,7 +105,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        patients: [],
+        patients: [args?.patients],
       },
       onSuccess() {
         onClose();
@@ -115,7 +124,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
         data?.isEdit ? "doctor-form.edit-title" : "doctor-form.create-title"
       }
     >
-      <Loader fixed isLoading={isDataLoading || isPlansOptionsLoading} />
+      <Loader fixed isLoading={isDataLoading || isPatientsOptionsLoading} />
 
       <FormInput
         isRequired
@@ -168,7 +177,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
         error={errors.phone?.message as "required"}
         {...register("phone", { required: "required" })}
       />
-      {/* <FormSelect
+      <FormSelect
         isRequired
         skipOptionsTranslation
         options={options?.patients || []}
@@ -176,7 +185,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
         placeholder={t("doctor-form.patients-placeholder")}
         error={errors.patients?.message as "required"}
         {...register("patients", { required: "required" })}
-      /> */}
+      />
     </FormModal>
   );
 };

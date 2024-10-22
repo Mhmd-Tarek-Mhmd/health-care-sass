@@ -10,6 +10,7 @@ import {
   updateRoom,
   GetRoomArgs,
   GetBedsArgs,
+  UpsertRoomArgs,
 } from "@services";
 import { buildOptionModel } from "@helpers";
 import { SubmitHandler } from "react-hook-form";
@@ -26,7 +27,7 @@ type Inputs = {
   width: number;
   length: number;
   beds: string[];
-  details?: string;
+  details: string;
 };
 
 type RoomModalProps = {
@@ -54,11 +55,12 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
     GetRoomArgs,
     Room
   >(getRoom);
-  const [save, { isLoading: isSaveLoading }] = useServiceRequest<Room, void>(
-    saveRoom
-  );
+  const [save, { isLoading: isSaveLoading }] = useServiceRequest<
+    UpsertRoomArgs,
+    void
+  >(saveRoom);
   const [update, { isLoading: isUpdateLoading }] = useServiceRequest<
-    Room,
+    UpsertRoomArgs,
     void
   >(updateRoom);
 
@@ -79,19 +81,18 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
       getRoomData({
         args: { id: data?.id },
         onSuccess(response) {
-          reset({ ...response, beds: response?.beds as string[] });
+          reset({
+            ...response,
+            beds: response?.beds[0].id,
+            // beds: response?.beds.map((p) => p.id),
+          });
         },
       });
   }, []);
 
   /* ↓ Helpers ↓ */
 
-  const onSubmit: SubmitHandler<Inputs> = ({
-    width,
-    length,
-    beds,
-    ...args
-  }) => {
+  const onSubmit: SubmitHandler<Inputs> = (args) => {
     const upsert = data?.isEdit ? update : save;
     upsert({
       isShowErrorToast: true,
@@ -99,9 +100,9 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        width: +width,
-        length: +length,
-        beds: [],
+        width: +args.width,
+        length: +args.length,
+        beds: [args.beds],
       },
       onSuccess() {
         onClose();
@@ -155,14 +156,14 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
           {...register("length", { required: "required", valueAsNumber: true })}
         />
       </Flex>
-      {/* <FormSelect
+      <FormSelect
         skipOptionsTranslation
         options={options?.beds || []}
         label={t("room-form.beds-label")}
         placeholder={t("room-form.beds-placeholder")}
         error={errors.beds?.message as "required"}
         {...register("beds", { required: "required" })}
-      /> */}
+      />
       <FormTextarea
         label={t("room-form.details-label")}
         placeholder={t("room-form.details-placeholder")}

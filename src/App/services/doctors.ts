@@ -6,6 +6,7 @@ import {
   Timestamp,
   deleteDoc,
   collection,
+  DocumentReference,
 } from "firebase/firestore";
 import { logUp } from "./auth";
 import { db } from "./firebase";
@@ -37,7 +38,7 @@ export const getDoctors = async ({
             doc(db, PATIENTS_COLLECTION_NAME, patient?.id)
           );
 
-          return patientDoc?.data() as Patient;
+          return { id: patientDoc.id, ...patientDoc?.data() } as Patient;
         })
       );
       return { ...doctor, patients };
@@ -61,7 +62,7 @@ export const getDoctor = async ({ id }: GetDoctorArgs): Promise<Doctor> => {
           doc(db, PATIENTS_COLLECTION_NAME, patient?.id)
         );
 
-        return patientDoc?.data() as Patient;
+        return { id: patientDoc.id, ...patientDoc?.data() } as Patient;
       })
     );
     return { ...doctor, patients };
@@ -70,19 +71,23 @@ export const getDoctor = async ({ id }: GetDoctorArgs): Promise<Doctor> => {
   }
 };
 
+export interface UpsertDoctorArgs extends Omit<Doctor, "patients"> {
+  patients: string[];
+}
+
 export const saveDoctor = async ({
   patients,
   ...doctor
-}: Doctor): Promise<void> => {
-  let patientsArr = [] as Patient[];
+}: UpsertDoctorArgs): Promise<void> => {
+  let patientsArr = [] as DocumentReference[];
   if (patients.length) {
     patientsArr = await Promise.all(
       patients.map(async (patient) => {
         const patientDoc = await getDoc(
-          doc(db, PATIENTS_COLLECTION_NAME, patient?.id)
+          doc(db, PATIENTS_COLLECTION_NAME, patient)
         );
 
-        return patientDoc?.data() as Patient;
+        return patientDoc?.ref;
       })
     );
   }
@@ -104,14 +109,14 @@ export const updateDoctor = async ({
   id,
   patients,
   ...doctor
-}: Doctor): Promise<void> => {
+}: UpsertDoctorArgs): Promise<void> => {
   const patientsArr = await Promise.all(
     patients.map(async (patient) => {
       const patientDoc = await getDoc(
-        doc(db, PATIENTS_COLLECTION_NAME, patient?.id)
+        doc(db, PATIENTS_COLLECTION_NAME, patient)
       );
 
-      return patientDoc?.data() as Patient;
+      return patientDoc?.ref;
     })
   );
   await updateDoc(doc(db, COLLECTION_NAME, id), {

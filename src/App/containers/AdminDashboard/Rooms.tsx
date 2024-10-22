@@ -34,6 +34,7 @@ const Rooms = () => {
     GetRoomsArgs,
     PaginatorResponse<Room>
   >(getRooms, {
+    isShowErrorToast: true,
     onSuccess(response) {
       setPagination((prev) => ({ ...prev, ...response?.pagination }));
     },
@@ -55,7 +56,7 @@ const Rooms = () => {
       },
       {
         name: t("rooms-list.beds-cell-label"),
-        cell: (row) => row?.beds?.join(", ") as string,
+        cell: (row) => row?.beds?.map((bed) => bed.name)?.join(", "),
       },
       {
         name: t("rooms-list.details-cell-label"),

@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 import paginator from "./paginator";
-import { PaginatorResponse, Room } from "@types";
+import { Bed, PaginatorResponse, Room } from "@types";
 import { COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
 
 const COLLECTION_NAME = "rooms";
@@ -33,10 +33,8 @@ export const getRooms = async ({
       if (room.beds.length) {
         const beds = await Promise.all(
           room.beds.map(async (bed) => {
-            const bedDoc = await getDoc(
-              doc(db, BEDS_COLLECTION_NAME, (bed as DocumentReference)?.id)
-            );
-            return bedDoc?.data()?.name as string;
+            const bedDoc = await getDoc(doc(db, BEDS_COLLECTION_NAME, bed?.id));
+            return { id: bedDoc.id, ...bedDoc?.data() } as Bed;
           })
         );
         return { ...room, beds };
@@ -55,21 +53,41 @@ export interface GetRoomArgs {
 
 export const getRoom = async ({ id }: GetRoomArgs): Promise<Room> => {
   const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  return { id, ...docRef?.data(), beds: docRef?.data()?.beds?.id } as Room;
+  const room = { id, ...docRef?.data() } as Room;
+  if (room.beds.length) {
+    const beds = await Promise.all(
+      room.beds.map(async (bed) => {
+        const doctorDoc = await getDoc(doc(db, BEDS_COLLECTION_NAME, bed.id));
+
+        return { id: doctorDoc.id, ...doctorDoc?.data() } as Bed;
+      })
+    );
+    return { ...room, beds };
+  } else {
+    return room;
+  }
 };
 
-export const saveRoom = async ({ beds, ...room }: Room): Promise<void> => {
-  const bedsDocs = await Promise.all(
-    beds.map(async (bed) => {
-      const bedDoc = await getDoc(
-        doc(db, BEDS_COLLECTION_NAME, bed as unknown as string)
-      );
-      return bedDoc.ref;
-    })
-  );
+export interface UpsertRoomArgs extends Omit<Room, "beds"> {
+  beds: string[];
+}
+
+export const saveRoom = async ({
+  beds,
+  ...room
+}: UpsertRoomArgs): Promise<void> => {
+  let bedsArr = [] as DocumentReference[];
+  if (beds.length) {
+    bedsArr = await Promise.all(
+      beds.map(async (bed) => {
+        const doctorDoc = await getDoc(doc(db, BEDS_COLLECTION_NAME, bed));
+        return doctorDoc?.ref;
+      })
+    );
+  }
   await addDoc(collection(db, COLLECTION_NAME), {
     ...room,
-    beds: bedsDocs,
+    beds: bedsArr,
     createdAt: Timestamp.now(),
   });
 };
@@ -78,18 +96,19 @@ export const updateRoom = async ({
   id,
   beds,
   ...room
-}: Room): Promise<void> => {
-  const bedsDocs = await Promise.all(
-    beds.map(async (bed) => {
-      const bedDoc = await getDoc(
-        doc(db, BEDS_COLLECTION_NAME, bed as unknown as string)
-      );
-      return bedDoc.ref;
-    })
-  );
+}: UpsertRoomArgs): Promise<void> => {
+  let bedsArr = [] as DocumentReference[];
+  if (beds.length) {
+    bedsArr = await Promise.all(
+      beds.map(async (bed) => {
+        const doctorDoc = await getDoc(doc(db, BEDS_COLLECTION_NAME, bed));
+        return doctorDoc?.ref;
+      })
+    );
+  }
   await updateDoc(doc(db, COLLECTION_NAME, id), {
     ...room,
-    beds: bedsDocs,
+    beds: bedsArr,
     updatedAt: Timestamp.now(),
   });
 };

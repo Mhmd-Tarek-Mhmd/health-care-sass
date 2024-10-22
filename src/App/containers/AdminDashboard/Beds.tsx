@@ -34,6 +34,7 @@ const Beds = () => {
     GetBedsArgs,
     PaginatorResponse<Bed>
   >(getBeds, {
+    isShowErrorToast: true,
     onSuccess(response) {
       setPagination((prev) => ({ ...prev, ...response?.pagination }));
     },

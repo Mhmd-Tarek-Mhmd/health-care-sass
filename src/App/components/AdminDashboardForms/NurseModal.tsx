@@ -4,17 +4,18 @@ import { useTranslation } from "react-i18next";
 import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
 import {
-  getPlans,
+  getDoctors,
   getNurse,
-  GetPlansArgs,
   saveNurse,
   updateNurse,
+  GetDoctorsArgs,
   GetNurseArgs,
+  UpsertNurseArgs,
 } from "@services";
 import { emailPattern } from "@constants";
 import { buildOptionModel } from "@helpers";
 import { SubmitHandler } from "react-hook-form";
-import { Plan, Nurse, AnyObject, PaginatorResponse } from "@types";
+import { Doctor, Nurse, AnyObject, PaginatorResponse } from "@types";
 
 import Loader from "../Loader";
 import FormModal from "../FormModal";
@@ -46,43 +47,51 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
   } = useForm<Inputs>();
 
   // Local State
-  const [options, setOptions] = React.useState({ doctors: [], genders: ["Male", "Female"] });
+  const [options, setOptions] = React.useState({
+    doctors: [],
+    genders: ["Male", "Female"],
+  });
 
   // Server State
-  const [getPlansOptions, { isLoading: isPlansOptionsLoading }] =
-    useServiceRequest<GetPlansArgs, PaginatorResponse<Plan>>(getPlans);
+  const [getDoctorsOptions, { isLoading: isDoctorsOptionsLoading }] =
+    useServiceRequest<GetDoctorsArgs, PaginatorResponse<Doctor>>(getDoctors);
   const [getNurseData, { isLoading: isDataLoading }] = useServiceRequest<
     GetNurseArgs,
     Nurse
   >(getNurse);
-  const [save, { isLoading: isSaveLoading }] = useServiceRequest<Nurse, void>(
-    saveNurse
-  );
+  const [save, { isLoading: isSaveLoading }] = useServiceRequest<
+    UpsertNurseArgs,
+    void
+  >(saveNurse);
   const [update, { isLoading: isUpdateLoading }] = useServiceRequest<
-    Nurse,
+    UpsertNurseArgs,
     void
   >(updateNurse);
 
   /* ↓ State Effects ↓ */
 
   useDidUpdateEffect(() => {
-    getPlansOptions({
+    getDoctorsOptions({
       args: { pageSize: 999, pageNumber: 1 },
       onSuccess(response) {
-        const plans = (
+        const doctors = (
           response?.items?.length ? response?.items?.map(buildOptionModel) : []
         ) as [];
-        setOptions((prev) => ({ ...prev, plans }));
+        setOptions((prev) => ({ ...prev, doctors }));
+
+        data?.id &&
+          getNurseData({
+            args: { id: data?.id },
+            onSuccess(response) {
+              reset({
+                ...response,
+                doctors: response?.doctors[0].id,
+                // doctors: response?.doctors.map((p) => p.id),
+              });
+            },
+          });
       },
     });
-
-    data?.id &&
-      getNurseData({
-        args: { id: data?.id },
-        onSuccess(response) {
-          reset({ ...response, doctors: [] });
-        },
-      });
   }, []);
 
   /* ↓ Helpers ↓ */
@@ -95,7 +104,7 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        doctors: [],
+        doctors: [args?.doctors],
       },
       onSuccess() {
         onClose();
@@ -110,11 +119,9 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
       onClose={onClose}
       onSave={handleSubmit(onSubmit)}
       isLoading={isSaveLoading || isUpdateLoading}
-      title={
-        data?.isEdit ? "nurse-form.edit-title" : "nurse-form.create-title"
-      }
+      title={data?.isEdit ? "nurse-form.edit-title" : "nurse-form.create-title"}
     >
-      <Loader fixed isLoading={isDataLoading || isPlansOptionsLoading} />
+      <Loader fixed isLoading={isDataLoading || isDoctorsOptionsLoading} />
 
       <FormInput
         isRequired
@@ -160,7 +167,7 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
         error={errors.phone?.message as "required"}
         {...register("phone", { required: "required" })}
       />
-      {/* <FormSelect
+      <FormSelect
         isRequired
         skipOptionsTranslation
         options={options?.doctors || []}
@@ -168,7 +175,7 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
         placeholder={t("nurse-form.doctors-placeholder")}
         error={errors.doctors?.message as "required"}
         {...register("doctors", { required: "required" })}
-      /> */}
+      />
     </FormModal>
   );
 };

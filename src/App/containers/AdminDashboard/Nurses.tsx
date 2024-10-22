@@ -39,6 +39,7 @@ const Nurses = () => {
     GetNursesArgs,
     PaginatorResponse<Nurse>
   >(getNurses, {
+    isShowErrorToast: true,
     onSuccess(response) {
       setPagination((prev) => ({ ...prev, ...response?.pagination }));
     },

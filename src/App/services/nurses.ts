@@ -6,6 +6,7 @@ import {
   Timestamp,
   deleteDoc,
   collection,
+  DocumentReference,
 } from "firebase/firestore";
 import { logUp } from "./auth";
 import { db } from "./firebase";
@@ -36,7 +37,7 @@ export const getNurses = async ({
             doc(db, DOCTORS_COLLECTION_NAME, doctor?.id)
           );
 
-          return doctorDoc?.data() as Doctor;
+          return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
         })
       );
       return { ...nurse, doctors };
@@ -60,7 +61,7 @@ export const getNurse = async ({ id }: GetNurseArgs): Promise<Nurse> => {
           doc(db, DOCTORS_COLLECTION_NAME, doctor?.id)
         );
 
-        return doctorDoc?.data() as Doctor;
+        return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
       })
     );
     return { ...nurse, doctors };
@@ -69,19 +70,22 @@ export const getNurse = async ({ id }: GetNurseArgs): Promise<Nurse> => {
   }
 };
 
+export interface UpsertNurseArgs extends Omit<Nurse, "doctors"> {
+  doctors: string[];
+}
+
 export const saveNurse = async ({
   doctors,
   ...nurse
-}: Nurse): Promise<void> => {
-  let doctorsArr = [] as Doctor[];
+}: UpsertNurseArgs): Promise<void> => {
+  let doctorsArr = [] as DocumentReference[];
   if (doctors.length) {
     doctorsArr = await Promise.all(
       doctors.map(async (doctor) => {
         const doctorDoc = await getDoc(
-          doc(db, DOCTORS_COLLECTION_NAME, doctor?.id)
+          doc(db, DOCTORS_COLLECTION_NAME, doctor)
         );
-
-        return doctorDoc?.data() as Doctor;
+        return doctorDoc?.ref;
       })
     );
   }
@@ -103,16 +107,18 @@ export const updateNurse = async ({
   id,
   doctors,
   ...nurse
-}: Nurse): Promise<void> => {
-  const doctorsArr = await Promise.all(
-    doctors.map(async (doctor) => {
-      const doctorDoc = await getDoc(
-        doc(db, DOCTORS_COLLECTION_NAME, doctor?.id)
-      );
-
-      return doctorDoc?.data() as Doctor;
-    })
-  );
+}: UpsertNurseArgs): Promise<void> => {
+  let doctorsArr = [] as DocumentReference[];
+  if (doctors.length) {
+    doctorsArr = await Promise.all(
+      doctors.map(async (doctor) => {
+        const doctorDoc = await getDoc(
+          doc(db, DOCTORS_COLLECTION_NAME, doctor)
+        );
+        return doctorDoc?.ref;
+      })
+    );
+  }
   await updateDoc(doc(db, COLLECTION_NAME, id), {
     ...nurse,
     doctors: doctorsArr,

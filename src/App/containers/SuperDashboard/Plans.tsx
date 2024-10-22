@@ -34,6 +34,7 @@ const Plans = () => {
     GetPlansArgs,
     PaginatorResponse<Plan>
   >(getPlans, {
+    isShowErrorToast: true,
     onSuccess(response) {
       setPagination((prev) => ({ ...prev, ...response?.pagination }));
     },
