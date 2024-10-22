@@ -50,9 +50,22 @@
     "per-page-label": "rows per page",
     "per-page-select-label": "select per page count"
   },
+  "lists": {
+    "name-cell-label": "Name",
+    "email-cell-label": "Email address",
+    "phone-cell-label": "Phone",
+    "age-cell-label": "Age",
+    "gender-cell-label": "Gender",
+    "createdAt-cell-label": "Created at",
+    "updatedAt-cell-label": "Updated at"
+  },
   "forms": {
     "name-label": "Name",
     "name-placeholder": "Enter your name",
+    "age-label": "Age",
+    "age-placeholder": "Enter age",
+    "gender-label": "Gender",
+    "gender-placeholder": "Enter gender",
     "firstName-label": "First Name",
     "firstName-placeholder": "Enter your first name",
     "lastName-label": "Last Name",
@@ -205,5 +218,19 @@
     "details-label": "Additional Details",
     "details-placeholder": "Enter additional details",
     "dimensions-unit": "cm"
+  },
+
+  "doctors-list": {
+    "add-doctor": "Add Doctor",
+    "specialty-cell-label": "Specialty",
+    "patients-cell-label": "Patients"
+  },
+  "doctor-form": {
+    "create-title": "Add Doctor",
+    "edit-title": "Edit Doctor",
+    "specialty-label": "Specialty",
+    "specialty-placeholder": "Enter doctor's specialty",
+    "patients-label": "patients",
+    "patients-placeholder": "Enter doctor's patients"
   }
 }

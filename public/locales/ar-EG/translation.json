@@ -8,7 +8,7 @@
     "features": {
       "title-1": "إغاثة",
       "text-1": "لكن يجب أن أشرح لك كيف ولدت كل هذه الفكرة الخاطئة المتمثلة في إدانة السرور ومدح الألم ، وسأقدم لك وصفًا كاملاً للنظام",
-      "title-2": "جّد دكتورك",
+      "title-2": "جّد طبيبك",
       "text-2": "لكن يجب أن أشرح لك كيف ولدت كل هذه الفكرة الخاطئة المتمثلة في إدانة السرور ومدح الألم ، وسأقدم لك وصفًا كاملاً للنظام",
       "title-3": "ميعاد",
       "text-3": "لكن يجب أن أشرح لك كيف ولدت كل هذه الفكرة الخاطئة المتمثلة في إدانة السرور ومدح الألم ، وسأقدم لك وصفًا كاملاً للنظام"
@@ -51,9 +51,22 @@
     "per-page-label": "صفوف لكل صفحة",
     "per-page-select-label": "اختر عدد الصفوف لكل صفحة"
   },
+  "lists": {
+    "name-cell-label": "الاسم",
+    "email-cell-label": "عنوان البريد الإلكتروني",
+    "phone-cell-label": "رقم الهاتف",
+    "age-cell-label": "السن",
+    "gender-cell-label": "النوع",
+    "createdAt-cell-label": "تم إنشاؤها في",
+    "updatedAt-cell-label": "تم تعديلها في"
+  },
   "forms": {
     "name-label": "الاسم",
     "name-placeholder": "أدخل اسمك",
+    "age-label": "السن",
+    "age-placeholder": "أدخل السن",
+    "gender-label": "النوع",
+    "gender-placeholder": "أدخل النوع",
     "firstName-label": "الاسم الأول",
     "firstName-placeholder": "أدخل اسمك الأول",
     "lastName-label": "اسم العائلة",
@@ -206,5 +219,19 @@
     "details-label": "تفاصيل إضافية",
     "details-placeholder": "أدخل تفاصيل إضافية",
     "dimensions-unit": "سم"
+  },
+
+  "doctors-list": {
+    "add-doctor": "إنشاء طبيب",
+    "specialty-cell-label": "التخصص",
+    "patients-cell-label": "المرضي"
+  },
+  "doctor-form": {
+    "create-title": "إنشاء طبيب",
+    "edit-title": "تعديل طبيب",
+    "specialty-label": "التخصص",
+    "specialty-placeholder": "أدخل تخصص الطبيب",
+    "patients-label": "المرضي",
+    "patients-placeholder": "أدخل مرضي الطبيب"
   }
 }

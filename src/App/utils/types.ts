@@ -42,6 +42,7 @@ export type User = {
   firstName: string;
   lastName: string;
   photoURL: string;
+  isNewAcc: boolean;
 };
 
 export type Auth = {
@@ -86,3 +87,14 @@ export interface Room extends Model {
   beds: [DocumentReference | string];
   details?: string;
 }
+
+export interface Doctor extends Model {
+  age: string;
+  gender: string;
+  email: string;
+  phone: string;
+  specialty: string;
+  patients: Patient[];
+}
+
+export interface Patient extends Model {}
