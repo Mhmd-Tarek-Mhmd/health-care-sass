@@ -73,8 +73,19 @@ const Patients = () => {
       },
       {
         name: t("patients-list.doctors-cell-label"),
-        cell: (row) =>
-          row?.doctors?.map((doctor) => doctor.name)?.join(", "),
+        cell: (row) => row?.doctors?.map((doctor) => doctor.name)?.join(", "),
+      },
+      {
+        name: t("patients-list.doctors-cell-label"),
+        cell: (row) => row?.doctors?.map((doctor) => doctor.name)?.join(", "),
+      },
+      {
+        name: t("patients-list.room-cell-label"),
+        cell: (row) => row?.room?.name,
+      },
+      {
+        name: t("patients-list.bed-cell-label"),
+        cell: (row) => row?.bed?.name,
       },
       {
         name: t("actions"),

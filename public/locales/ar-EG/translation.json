@@ -248,12 +248,18 @@
 
   "patients-list": {
     "add-patient": "إنشاء مريض",
-    "doctors-cell-label": "الأطباء"
+    "doctors-cell-label": "الأطباء",
+    "room-cell-label": "الغرفة",
+    "bed-cell-label": "السرير"
   },
   "patient-form": {
     "create-title": "إنشاء مريض",
     "edit-title": "تعديل مريض",
     "doctors-label": "الأطباء",
-    "doctors-placeholder": "أدخل مرضي المريض"
+    "doctors-placeholder": "أدخل مرضي المريض",
+    "room-label": "الغرفة",
+    "room-placeholder": "أدخل غرفة المريض",
+    "bed-label": "السرير",
+    "bed-placeholder": "أدخل سرير المريض"
   }
 }

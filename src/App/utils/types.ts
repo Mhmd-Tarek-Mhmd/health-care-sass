@@ -111,4 +111,6 @@ export interface Patient extends Model {
   email: string;
   phone: string;
   doctors: Doctor[];
+  room?: Room;
+  bed?: Bed;
 }

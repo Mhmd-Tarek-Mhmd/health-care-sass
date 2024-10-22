@@ -241,18 +241,24 @@
   "nurse-form": {
     "create-title": "Add Nurse",
     "edit-title": "Edit Nurse",
-    "doctors-label": "doctors",
+    "doctors-label": "Doctors",
     "doctors-placeholder": "Enter nurse's doctors"
   },
 
   "patients-list": {
     "add-patient": "Add Patient",
-    "doctors-cell-label": "Doctors"
+    "doctors-cell-label": "Doctors",
+    "room-cell-label": "Room",
+    "bed-cell-label": "Bed"
   },
   "patient-form": {
     "create-title": "Add Patient",
     "edit-title": "Edit Patient",
-    "doctors-label": "doctors",
-    "doctors-placeholder": "Enter patient's doctors"
+    "doctors-label": "Doctors",
+    "doctors-placeholder": "Enter patient's doctors",
+    "room-label": "Room",
+    "room-placeholder": "Enter patient's room",
+    "bed-label": "Bed",
+    "bed-placeholder": "Enter patient's bed"
   }
 }

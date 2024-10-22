@@ -13,7 +13,7 @@ import paginator from "./paginator";
 import { Bed, PaginatorResponse, Room } from "@types";
 import { COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
 
-const COLLECTION_NAME = "rooms";
+export const COLLECTION_NAME = "rooms";
 
 export interface GetRoomsArgs {
   pageSize: number;
