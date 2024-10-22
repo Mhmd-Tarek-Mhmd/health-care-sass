@@ -73,7 +73,7 @@ export const saveHospital = async ({
     createdAt: Timestamp.now(),
   });
   await logUp({
-    type: "Admin",
+    type: "admin",
     password: "123456",
     email: hospital?.email,
     firstName: hospital?.name,
