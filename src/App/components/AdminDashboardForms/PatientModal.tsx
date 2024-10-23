@@ -72,9 +72,9 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
             onSuccess(response) {
               reset({
                 ...response,
-                bed: response?.bed.id,
-                room: response?.room.id,
-                doctors: response?.doctors[0].id,
+                bed: response?.bed?.id || null,
+                room: response?.room?.id || null,
+                doctors: response?.doctors?.[0]?.id || null,
                 // doctors: response?.doctors.map((p) => p.id),
               });
             },

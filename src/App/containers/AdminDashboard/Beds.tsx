@@ -2,8 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
+import dayjs from "dayjs";
 import { confirm } from "@helpers";
-import { paginationInitState } from "@constants";
+import { datTimeFormat, paginationInitState } from "@constants";
 import { AnyObject, Column, PaginatorResponse, Bed } from "@types";
 import { getBeds, GetBedsArgs, removeBed, RemoveBedArgs } from "@services";
 

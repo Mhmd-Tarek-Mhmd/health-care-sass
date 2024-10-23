@@ -76,10 +76,6 @@ const Patients = () => {
         cell: (row) => row?.doctors?.map((doctor) => doctor.name)?.join(", "),
       },
       {
-        name: t("patients-list.doctors-cell-label"),
-        cell: (row) => row?.doctors?.map((doctor) => doctor.name)?.join(", "),
-      },
-      {
         name: t("patients-list.room-cell-label"),
         cell: (row) => row?.room?.name,
       },
