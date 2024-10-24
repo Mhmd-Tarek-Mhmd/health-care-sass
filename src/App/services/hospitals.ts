@@ -11,7 +11,7 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
-import { PaginatorResponse, Hospital } from "@types";
+import { PaginatorResponse, Hospital, Plan } from "@types";
 import { COLLECTION_NAME as PLANS_COLLECTION_NAME } from "./plans";
 
 const COLLECTION_NAME = "hospitals";
@@ -29,23 +29,17 @@ export const getHospitals = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const items = await Promise.all(
-    hospitals.items.map(async (hospital) => {
-      const planDoc = await getDoc(
-        doc(
-          db,
-          PLANS_COLLECTION_NAME,
-          (hospital?.plan as DocumentReference)?.id
-        )
-      );
+  const hospitalsPromises = hospitals.items.map(async (hospital) => {
+    const planDoc = await getDoc(
+      hospital?.plan as unknown as DocumentReference
+    );
+    return {
+      ...hospital,
+      plan: { id: planDoc.id, ...planDoc?.data() } as Plan,
+    };
+  });
 
-      return {
-        ...hospital,
-        plan: planDoc?.data()?.name,
-      };
-    })
-  );
-
+  const items = await Promise.all(hospitalsPromises);
   return { ...hospitals, items };
 };
 
@@ -56,8 +50,10 @@ export interface GetHospitalArgs {
 export const getHospital = async ({
   id,
 }: GetHospitalArgs): Promise<Hospital> => {
-  const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  return { id, ...docRef?.data(), plan: docRef?.data()?.plan?.id } as Hospital;
+  const docDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  const planDoc = await getDoc(docDoc?.data()?.plan);
+  const plan = { id: planDoc.id, ...planDoc?.data() } as Plan;
+  return { id, ...docDoc?.data(), plan } as Hospital;
 };
 
 export const saveHospital = async ({

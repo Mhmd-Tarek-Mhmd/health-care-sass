@@ -12,7 +12,6 @@ import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { PaginatorResponse, Nurse, Doctor } from "@types";
-import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
 
 const COLLECTION_NAME = "nurses";
 
@@ -29,21 +28,17 @@ export const getNurses = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const items = await Promise.all(
-    nurses.items.map(async (nurse) => {
-      const doctors = await Promise.all(
-        nurse.doctors.map(async (doctor) => {
-          const doctorDoc = await getDoc(
-            doc(db, DOCTORS_COLLECTION_NAME, doctor?.id)
-          );
+  const nursesPromises = nurses.items.map(async (nurse) => {
+    const doctorsPromises = nurse.doctors.map(async (doctor) => {
+      const doctorDoc = await getDoc(doctor as unknown as DocumentReference);
+      return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
+    });
 
-          return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
-        })
-      );
-      return { ...nurse, doctors };
-    })
-  );
+    const doctors = await Promise.all(doctorsPromises);
+    return { ...nurse, doctors };
+  });
 
+  const items = await Promise.all(nursesPromises);
   return { ...nurses, items };
 };
 
@@ -55,15 +50,12 @@ export const getNurse = async ({ id }: GetNurseArgs): Promise<Nurse> => {
   const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
   const nurse = { id, ...docRef?.data() } as Nurse;
   if (nurse.doctors.length) {
-    const doctors = await Promise.all(
-      nurse.doctors.map(async (doctor) => {
-        const doctorDoc = await getDoc(
-          doc(db, DOCTORS_COLLECTION_NAME, doctor?.id)
-        );
+    const doctorsPromises = nurse.doctors.map(async (doctor) => {
+      const doctorDoc = await getDoc(doctor as unknown as DocumentReference);
+      return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
+    });
 
-        return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
-      })
-    );
+    const doctors = await Promise.all(doctorsPromises);
     return { ...nurse, doctors };
   } else {
     return nurse;
@@ -74,56 +66,38 @@ export interface UpsertNurseArgs extends Omit<Nurse, "doctors"> {
   doctors: string[];
 }
 
-export const saveNurse = async ({
-  doctors,
-  ...nurse
-}: UpsertNurseArgs): Promise<void> => {
-  let doctorsArr = [] as DocumentReference[];
-  if (doctors.length) {
-    doctorsArr = await Promise.all(
-      doctors.map(async (doctor) => {
-        const doctorDoc = await getDoc(
-          doc(db, DOCTORS_COLLECTION_NAME, doctor)
-        );
-        return doctorDoc?.ref;
-      })
-    );
-  }
-  await addDoc(collection(db, COLLECTION_NAME), {
-    ...nurse,
-    doctors: doctorsArr,
-    createdAt: Timestamp.now(),
-  });
-  await logUp({
-    type: "nurse",
-    password: "123456",
-    email: nurse?.email,
-    firstName: nurse?.name,
-    lastName: "",
-  });
-};
+export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
+  const isEdit = Boolean(nurse?.id);
+  let doctorsRefs = [] as DocumentReference[];
 
-export const updateNurse = async ({
-  id,
-  doctors,
-  ...nurse
-}: UpsertNurseArgs): Promise<void> => {
-  let doctorsArr = [] as DocumentReference[];
-  if (doctors.length) {
-    doctorsArr = await Promise.all(
-      doctors.map(async (doctor) => {
-        const doctorDoc = await getDoc(
-          doc(db, DOCTORS_COLLECTION_NAME, doctor)
-        );
-        return doctorDoc?.ref;
-      })
-    );
+  if (nurse?.doctors?.length) {
+    const doctorsPromises = nurse.doctors.map(async (doctor) => {
+      const doctorDoc = await getDoc(doctor as unknown as DocumentReference);
+      return doctorDoc?.ref;
+    });
+    doctorsRefs = await Promise.all(doctorsPromises);
   }
-  await updateDoc(doc(db, COLLECTION_NAME, id), {
-    ...nurse,
-    doctors: doctorsArr,
-    updatedAt: Timestamp.now(),
-  });
+
+  if (isEdit) {
+    await updateDoc(doc(db, COLLECTION_NAME, nurse?.id), {
+      ...nurse,
+      doctors: doctorsRefs,
+      updatedAt: Timestamp.now(),
+    });
+  } else {
+    await addDoc(collection(db, COLLECTION_NAME), {
+      ...nurse,
+      doctors: doctorsRefs,
+      createdAt: Timestamp.now(),
+    });
+    await logUp({
+      type: "nurse",
+      password: "123456",
+      email: nurse?.email,
+      firstName: nurse?.name,
+      lastName: "",
+    });
+  }
 };
 
 export type RemoveNurseArgs = {

@@ -4,8 +4,7 @@ import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
 import {
   getPatient,
-  savePatient,
-  updatePatient,
+  upsertPatient,
   GetPatientArgs,
   UpsertPatientArgs,
   getPatientModalOptions,
@@ -52,14 +51,10 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
     GetPatientArgs,
     Patient
   >(getPatient);
-  const [save, { isLoading: isSaveLoading }] = useServiceRequest<
+  const [upsert, { isLoading: isUpsertLoading }] = useServiceRequest<
     UpsertPatientArgs,
     void
-  >(savePatient);
-  const [update, { isLoading: isUpdateLoading }] = useServiceRequest<
-    UpsertPatientArgs,
-    void
-  >(updatePatient);
+  >(upsertPatient);
 
   /* ↓ State Effects ↓ */
 
@@ -86,7 +81,6 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
   /* ↓ Helpers ↓ */
 
   const onSubmit: SubmitHandler<Inputs> = (args) => {
-    const upsert = data?.isEdit ? update : save;
     upsert({
       isShowErrorToast: true,
       isShowSuccessToast: true,
@@ -107,7 +101,7 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
       isOpen
       onClose={onClose}
       onSave={handleSubmit(onSubmit)}
-      isLoading={isSaveLoading || isUpdateLoading}
+      isLoading={isUpsertLoading}
       title={
         data?.isEdit ? "patient-form.edit-title" : "patient-form.create-title"
       }

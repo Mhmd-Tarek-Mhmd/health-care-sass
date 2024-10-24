@@ -4,10 +4,9 @@ import { useTranslation } from "react-i18next";
 import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
 import {
-  getDoctors,
   getNurse,
-  saveNurse,
-  updateNurse,
+  getDoctors,
+  upsertNurse,
   GetDoctorsArgs,
   GetNurseArgs,
   UpsertNurseArgs,
@@ -59,14 +58,10 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
     GetNurseArgs,
     Nurse
   >(getNurse);
-  const [save, { isLoading: isSaveLoading }] = useServiceRequest<
+  const [upsert, { isLoading: isUpsertLoading }] = useServiceRequest<
     UpsertNurseArgs,
     void
-  >(saveNurse);
-  const [update, { isLoading: isUpdateLoading }] = useServiceRequest<
-    UpsertNurseArgs,
-    void
-  >(updateNurse);
+  >(upsertNurse);
 
   /* ↓ State Effects ↓ */
 
@@ -85,7 +80,7 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
             onSuccess(response) {
               reset({
                 ...response,
-                doctors: response?.doctors[0].id,
+                doctors: response?.doctors?.[0]?.id,
                 // doctors: response?.doctors.map((p) => p.id),
               });
             },
@@ -97,7 +92,6 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
   /* ↓ Helpers ↓ */
 
   const onSubmit: SubmitHandler<Inputs> = (args) => {
-    const upsert = data?.isEdit ? update : save;
     upsert({
       isShowErrorToast: true,
       isShowSuccessToast: true,
@@ -118,7 +112,7 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
       isOpen
       onClose={onClose}
       onSave={handleSubmit(onSubmit)}
-      isLoading={isSaveLoading || isUpdateLoading}
+      isLoading={isUpsertLoading}
       title={data?.isEdit ? "nurse-form.edit-title" : "nurse-form.create-title"}
     >
       <Loader fixed isLoading={isDataLoading || isDoctorsOptionsLoading} />

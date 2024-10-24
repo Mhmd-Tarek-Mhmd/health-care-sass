@@ -1,20 +1,20 @@
 import {
   doc,
   getDoc,
-  addDoc,
-  updateDoc,
+  getDocs,
   Timestamp,
-  deleteDoc,
   collection,
+  writeBatch,
+  arrayUnion,
+  arrayRemove,
   DocumentReference,
 } from "firebase/firestore";
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { PaginatorResponse, Doctor, Patient } from "@types";
-// import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
+import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
 
-let PATIENTS_COLLECTION_NAME = "patients";
 export const COLLECTION_NAME = "doctors";
 
 export interface GetDoctorsArgs {
@@ -30,21 +30,19 @@ export const getDoctors = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const items = await Promise.all(
-    doctors.items.map(async (doctor) => {
-      const patients = await Promise.all(
-        doctor.patients.map(async (patient) => {
-          const patientDoc = await getDoc(
-            doc(db, PATIENTS_COLLECTION_NAME, patient?.id)
-          );
-
-          return { id: patientDoc.id, ...patientDoc?.data() } as Patient;
-        })
+  const doctorsPromises = doctors.items.map(async (doctor) => {
+    const patientsPromises = doctor.patients.map(async (patientRef) => {
+      const patientDoc = await getDoc(
+        patientRef as unknown as DocumentReference
       );
-      return { ...doctor, patients };
-    })
-  );
+      return { id: patientDoc.id, ...patientDoc?.data() } as Patient;
+    });
 
+    const patients = await Promise.all(patientsPromises);
+    return { ...doctor, patients };
+  });
+
+  const items = await Promise.all(doctorsPromises);
   return { ...doctors, items };
 };
 
@@ -57,11 +55,10 @@ export const getDoctor = async ({ id }: GetDoctorArgs): Promise<Doctor> => {
   const doctor = { id, ...docRef?.data() } as Doctor;
   if (doctor.patients.length) {
     const patients = await Promise.all(
-      doctor.patients.map(async (patient) => {
+      doctor.patients.map(async (patientRef) => {
         const patientDoc = await getDoc(
-          doc(db, PATIENTS_COLLECTION_NAME, patient?.id)
+          patientRef as unknown as DocumentReference
         );
-
         return { id: patientDoc.id, ...patientDoc?.data() } as Patient;
       })
     );
@@ -75,60 +72,64 @@ export interface UpsertDoctorArgs extends Omit<Doctor, "patients"> {
   patients: string[];
 }
 
-export const saveDoctor = async ({
-  patients,
-  ...doctor
-}: UpsertDoctorArgs): Promise<void> => {
-  let patientsArr = [] as DocumentReference[];
-  if (patients.length) {
-    patientsArr = await Promise.all(
-      patients.map(async (patient) => {
-        const patientDoc = await getDoc(
-          doc(db, PATIENTS_COLLECTION_NAME, patient)
-        );
-
-        return patientDoc?.ref;
-      })
-    );
-  }
-  await addDoc(collection(db, COLLECTION_NAME), {
-    ...doctor,
-    patients: patientsArr,
-    createdAt: Timestamp.now(),
-  });
-  await logUp({
-    type: "doctor",
-    password: "123456",
-    email: doctor?.email,
-    firstName: doctor?.name,
-    lastName: "",
-  });
-};
-
-export const updateDoctor = async ({
-  id,
-  patients,
-  ...doctor
-}: UpsertDoctorArgs): Promise<void> => {
-  const patientsArr = await Promise.all(
-    patients.map(async (patient) => {
-      const patientDoc = await getDoc(
-        doc(db, PATIENTS_COLLECTION_NAME, patient)
-      );
-
-      return patientDoc?.ref;
-    })
+export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
+  const isEdit = Boolean(doctor?.id);
+  const batch = writeBatch(db);
+  const patients = doctor.patients.map((patient) =>
+    doc(db, PATIENTS_COLLECTION_NAME, patient)
   );
-  await updateDoc(doc(db, COLLECTION_NAME, id), {
+  const doctorRef = doc(collection(db, COLLECTION_NAME));
+  const doctorData = {
     ...doctor,
-    patients: patientsArr,
-    updatedAt: Timestamp.now(),
+    patients,
+    ...(isEdit
+      ? { updatedAt: Timestamp.now() }
+      : { createdAt: Timestamp.now() }),
+  };
+
+  isEdit
+    ? batch.update(doctorRef, doctorData)
+    : batch.set(doctorRef, doctorData);
+  patients.forEach((patient) => {
+    batch.update(patient, {
+      doctors: arrayUnion(doctorRef),
+    });
   });
+
+  try {
+    await batch.commit();
+    if (!isEdit) {
+      await logUp({
+        type: "doctor",
+        password: "123456",
+        email: doctor?.email,
+        firstName: doctor?.name,
+        lastName: "",
+      });
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 export type RemoveDoctorArgs = {
   id: string;
 };
 export const removeDoctor = async ({ id }: RemoveDoctorArgs) => {
-  await deleteDoc(doc(db, COLLECTION_NAME, id));
+  const batch = writeBatch(db);
+  const doctorRef = doc(db, COLLECTION_NAME, id);
+  const patients = await getDocs(collection(db, PATIENTS_COLLECTION_NAME));
+
+  batch.delete(doctorRef);
+  patients.docs.forEach((doc) =>
+    batch.update(doc.ref, {
+      doctors: arrayRemove(doctorRef),
+    })
+  );
+
+  try {
+    await batch.commit();
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };

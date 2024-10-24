@@ -63,7 +63,7 @@ const Hospitals = () => {
       },
       {
         name: t("hospitals-list.plan-cell-label"),
-        cell: (row) => row?.plan as string,
+        cell: (row) => row?.plan?.name,
       },
       {
         name: t("hospitals-list.email-cell-label"),

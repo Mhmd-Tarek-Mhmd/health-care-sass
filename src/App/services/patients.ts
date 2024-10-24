@@ -1,11 +1,12 @@
 import {
   doc,
   getDoc,
-  addDoc,
-  updateDoc,
+  getDocs,
   Timestamp,
-  deleteDoc,
   collection,
+  writeBatch,
+  arrayUnion,
+  arrayRemove,
   DocumentReference,
 } from "firebase/firestore";
 import {
@@ -20,7 +21,7 @@ import { PaginatorResponse, Patient, Doctor, Room, Bed } from "@types";
 import { COLLECTION_NAME as BEDS_COLLECTION_NAME, getBeds } from "./beds";
 import { getRooms, COLLECTION_NAME as ROOMS_COLLECTION_NAME } from "./rooms";
 
-const COLLECTION_NAME = "patients";
+export const COLLECTION_NAME = "patients";
 
 export interface GetPatientsArgs {
   pageSize: number;
@@ -35,39 +36,32 @@ export const getPatients = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const items = await Promise.all(
-    patients.items.map(async (patient) => {
-      let bed,
-        room,
-        doctors: Doctor[] = [];
+  const patientsPromises = patients.items.map(async (patient) => {
+    let bed,
+      room,
+      doctors: Doctor[] = [];
 
-      if (patient.doctors.length) {
-        doctors = await Promise.all(
-          patient.doctors.map(async (doctor) => {
-            const doctorDoc = await getDoc(
-              doc(db, DOCTORS_COLLECTION_NAME, doctor?.id)
-            );
+    if (patient.doctors.length) {
+      const doctorsPromises = patient.doctors.map(async (doctor) => {
+        const doctorDoc = await getDoc(doctor as unknown as DocumentReference);
+        return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
+      });
+      doctors = await Promise.all(doctorsPromises);
+    }
+    if (patient.room) {
+      const roomDoc = await getDoc(
+        patient.room as unknown as DocumentReference
+      );
+      room = { id: roomDoc.id, ...roomDoc?.data() } as Room;
+    }
+    if (patient.bed) {
+      const bedDoc = await getDoc(patient.bed as unknown as DocumentReference);
+      bed = { id: bedDoc.id, ...bedDoc?.data() } as Bed;
+    }
+    return { ...patient, room, bed, doctors };
+  });
 
-            return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
-          })
-        );
-      }
-      if (patient.room) {
-        const roomDoc = await getDoc(
-          doc(db, ROOMS_COLLECTION_NAME, patient.room.id)
-        );
-        room = { id: roomDoc.id, ...roomDoc?.data() } as Room;
-      }
-      if (patient.bed) {
-        const bedDoc = await getDoc(
-          doc(db, BEDS_COLLECTION_NAME, patient.bed.id)
-        );
-        bed = { id: bedDoc.id, ...bedDoc?.data() } as Bed;
-      }
-      return { ...patient, room, bed, doctors };
-    })
-  );
-
+  const items = await Promise.all(patientsPromises);
   return { ...patients, items };
 };
 
@@ -128,87 +122,79 @@ export interface UpsertPatientArgs
   doctors: string[];
 }
 
-export const savePatient = async ({
-  doctors,
-  ...patient
-}: UpsertPatientArgs): Promise<void> => {
+export const upsertPatient = async (
+  patient: UpsertPatientArgs
+): Promise<void> => {
+  const batch = writeBatch(db);
+  const isEdit = Boolean(patient?.id);
   let room: string | DocumentReference = "",
     bed: string | DocumentReference = "",
-    doctorsArr = [] as DocumentReference[];
-  if (doctors.length) {
-    doctorsArr = await Promise.all(
-      doctors.map(async (doctor) => {
-        const doctorDoc = await getDoc(
-          doc(db, DOCTORS_COLLECTION_NAME, doctor)
-        );
+    doctorsRefs = [] as DocumentReference[];
 
-        return doctorDoc?.ref;
-      })
+  if (patient.doctors?.length) {
+    doctorsRefs = patient.doctors.map((doctor) =>
+      doc(db, DOCTORS_COLLECTION_NAME, doctor)
     );
   }
-  if (patient.room) {
-    const roomDoc = await getDoc(doc(db, ROOMS_COLLECTION_NAME, patient.room));
-    room = roomDoc?.ref;
+  if (patient?.room) {
+    room = doc(db, ROOMS_COLLECTION_NAME, patient.room);
   }
-  if (patient.bed) {
-    const bedDoc = await getDoc(doc(db, BEDS_COLLECTION_NAME, patient.bed));
-    bed = bedDoc?.ref;
+  if (patient?.bed) {
+    bed = doc(db, BEDS_COLLECTION_NAME, patient.bed);
   }
-  await addDoc(collection(db, COLLECTION_NAME), {
+
+  const patientRef = doc(collection(db, COLLECTION_NAME));
+  const patientData = {
     ...patient,
     room,
     bed,
-    doctors: doctorsArr,
-    createdAt: Timestamp.now(),
-  });
-  await logUp({
-    type: "patient",
-    password: "123456",
-    email: patient?.email,
-    firstName: patient?.name,
-    lastName: "",
-  });
-};
+    doctors: doctorsRefs,
+    ...(isEdit
+      ? { updatedAt: Timestamp.now() }
+      : { createdAt: Timestamp.now() }),
+  };
 
-export const updatePatient = async ({
-  id,
-  doctors,
-  ...patient
-}: UpsertPatientArgs): Promise<void> => {
-  let room: string | DocumentReference = "",
-    bed: string | DocumentReference = "",
-    doctorsArr = [] as DocumentReference[];
-  if (doctors.length) {
-    doctorsArr = await Promise.all(
-      doctors.map(async (doctor) => {
-        const doctorDoc = await getDoc(
-          doc(db, DOCTORS_COLLECTION_NAME, doctor)
-        );
-
-        return doctorDoc?.ref;
-      })
-    );
-  }
-  if (patient.room) {
-    const roomDoc = await getDoc(doc(db, ROOMS_COLLECTION_NAME, patient.room));
-    room = roomDoc?.ref;
-  }
-  if (patient.bed) {
-    const bedDoc = await getDoc(doc(db, BEDS_COLLECTION_NAME, patient.bed));
-    bed = bedDoc?.ref;
-  }
-  await updateDoc(doc(db, COLLECTION_NAME, id), {
-    ...patient,
-    room,
-    bed,
-    doctors: doctorsArr,
-    updatedAt: Timestamp.now(),
+  isEdit
+    ? batch.update(patientRef, patientData)
+    : batch.set(patientRef, patientData);
+  doctorsRefs.forEach((ref) => {
+    batch.update(ref, {
+      patients: arrayUnion(patientRef),
+    });
   });
+
+  try {
+    await batch.commit();
+    await logUp({
+      type: "patient",
+      password: "123456",
+      email: patient?.email,
+      firstName: patient?.name,
+      lastName: "",
+    });
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 export type RemovePatientArgs = {
   id: string;
 };
 export const removePatient = async ({ id }: RemovePatientArgs) => {
-  await deleteDoc(doc(db, COLLECTION_NAME, id));
+  const batch = writeBatch(db);
+  const patientRef = doc(db, COLLECTION_NAME, id);
+  const doctors = await getDocs(collection(db, DOCTORS_COLLECTION_NAME));
+
+  batch.delete(patientRef);
+  doctors.docs.forEach((doc) =>
+    batch.update(doc.ref, {
+      patients: arrayRemove(patientRef),
+    })
+  );
+
+  try {
+    await batch.commit();
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };

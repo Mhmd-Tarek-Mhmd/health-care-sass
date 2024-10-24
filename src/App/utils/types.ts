@@ -70,7 +70,7 @@ export interface Plan extends Model {
 export interface Hospital extends Model {
   email: string;
   phone: string;
-  plan: DocumentReference | string;
+  plan: Plan;
 }
 
 export interface Bed extends Model {

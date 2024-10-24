@@ -80,7 +80,7 @@ const HospitalModal = ({ data, onClose, refetchList }: HospitalModalProps) => {
         onSuccess(response) {
           reset({
             name: response?.name,
-            plan: response?.plan as string,
+            plan: response?.plan?.id,
             email: response?.email,
             phone: response?.phone,
           });
