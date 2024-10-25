@@ -10,8 +10,8 @@ import {
 } from "@services";
 import dayjs from "dayjs";
 import { confirm } from "@helpers";
-import { datTimeFormat, paginationInitState } from "@constants";
 import { AnyObject, Column, PaginatorResponse, Nurse } from "@types";
+import { datTimeFormat, paginationInitState, userTypes } from "@constants";
 
 import {
   DataTable,
@@ -19,6 +19,7 @@ import {
   EditIconButton,
   RemoveIconButton,
 } from "@components";
+import { ShowIfUserType } from "@hoc";
 import { BiPlus } from "react-icons/bi";
 import { Button, Flex, Link } from "@chakra-ui/react";
 
@@ -73,8 +74,7 @@ const Nurses = () => {
       },
       {
         name: t("nurses-list.doctors-cell-label"),
-        cell: (row) =>
-          row?.doctors?.map((doctor) => doctor.name)?.join(", "),
+        cell: (row) => row?.doctors?.map((doctor) => doctor.name)?.join(", "),
       },
       {
         name: t("actions"),
@@ -84,7 +84,9 @@ const Nurses = () => {
               size="sm"
               onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
             />
-            <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
+            <ShowIfUserType types={[userTypes.ADMIN]}>
+              <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
+            </ShowIfUserType>
           </Flex>
         ),
       },
@@ -135,15 +137,17 @@ const Nurses = () => {
 
   return (
     <section>
-      <Flex mb={4} justifyContent="flex-end">
-        <Button
-          size="sm"
-          leftIcon={<BiPlus />}
-          onClick={() => handleOpenModal({ isEdit: false })}
-        >
-          {t("nurses-list.add-nurse")}
-        </Button>
-      </Flex>
+      <ShowIfUserType types={[userTypes.ADMIN]}>
+        <Flex mb={4} justifyContent="flex-end">
+          <Button
+            size="sm"
+            leftIcon={<BiPlus />}
+            onClick={() => handleOpenModal({ isEdit: false })}
+          >
+            {t("nurses-list.add-nurse")}
+          </Button>
+        </Flex>
+      </ShowIfUserType>
 
       <DataTable<Nurse>
         size="sm"

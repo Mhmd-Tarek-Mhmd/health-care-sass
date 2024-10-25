@@ -10,7 +10,7 @@ import {
 } from "@services";
 import dayjs from "dayjs";
 import { confirm } from "@helpers";
-import { datTimeFormat, paginationInitState } from "@constants";
+import { datTimeFormat, paginationInitState, userTypes } from "@constants";
 import { AnyObject, Column, PaginatorResponse, Patient } from "@types";
 
 import {
@@ -19,6 +19,7 @@ import {
   EditIconButton,
   RemoveIconButton,
 } from "@components";
+import { ShowIfUserType } from "@hoc";
 import { BiPlus } from "react-icons/bi";
 import { Button, Flex, Link } from "@chakra-ui/react";
 
@@ -91,7 +92,9 @@ const Patients = () => {
               size="sm"
               onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
             />
-            <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
+            <ShowIfUserType types={[userTypes.ADMIN]}>
+              <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
+            </ShowIfUserType>
           </Flex>
         ),
       },
@@ -142,15 +145,17 @@ const Patients = () => {
 
   return (
     <section>
-      <Flex mb={4} justifyContent="flex-end">
-        <Button
-          size="sm"
-          leftIcon={<BiPlus />}
-          onClick={() => handleOpenModal({ isEdit: false })}
-        >
-          {t("patients-list.add-patient")}
-        </Button>
-      </Flex>
+      <ShowIfUserType types={[userTypes.ADMIN]}>
+        <Flex mb={4} justifyContent="flex-end">
+          <Button
+            size="sm"
+            leftIcon={<BiPlus />}
+            onClick={() => handleOpenModal({ isEdit: false })}
+          >
+            {t("patients-list.add-patient")}
+          </Button>
+        </Flex>
+      </ShowIfUserType>
 
       <DataTable<Patient>
         size="sm"

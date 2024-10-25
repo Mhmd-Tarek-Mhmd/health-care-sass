@@ -1,3 +1,4 @@
+export * from "./SharedForms";
 export * from "./FormBuilder";
 export * from "./ConfirmDialog";
 export * from "./AdminDashboardForms";
