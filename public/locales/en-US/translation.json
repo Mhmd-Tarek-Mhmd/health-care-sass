@@ -94,6 +94,7 @@
     "default-loading-title": "",
     "default-loading-desc": "",
     "reset-password-success": "We've send you a message to your email to reset your password",
+    "auth/no-user": "This user doesn't exits",
     "auth/invalid-credential": "Invalid email or password",
     "auth/weak-password": "Password should be at least 6 characters",
     "logup-success": "Account created successfully."

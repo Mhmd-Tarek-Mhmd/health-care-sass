@@ -1,10 +1,11 @@
 import Store from "@store";
 
+import { userTypes } from "@constants";
 import adminDashboardRoutes from "./AdminDashboard";
 import superDashboardRoutes from "./SuperDashboard";
 
-type Type = "super" | "admin";
-const type = Store.auth?.user?.type as Type;
+type Type = Lowercase<(typeof userTypes)[keyof typeof userTypes]>;
+const type = Store.auth?.user?.type?.toLowerCase() as Type;
 
 const routes = {
   super: superDashboardRoutes,

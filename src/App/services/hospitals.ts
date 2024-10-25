@@ -2,6 +2,7 @@ import {
   doc,
   getDoc,
   addDoc,
+  getDocs,
   updateDoc,
   Timestamp,
   deleteDoc,
@@ -11,6 +12,7 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
+import { userTypes } from "@constants";
 import { PaginatorResponse, Hospital, Plan } from "@types";
 import { COLLECTION_NAME as PLANS_COLLECTION_NAME } from "./plans";
 
@@ -63,18 +65,20 @@ export const saveHospital = async ({
   const planDoc = await getDoc(
     doc(db, PLANS_COLLECTION_NAME, plan as unknown as string)
   );
-  await addDoc(collection(db, COLLECTION_NAME), {
-    ...hospital,
-    plan: planDoc.ref,
-    createdAt: Timestamp.now(),
-  });
-  await logUp({
-    type: "admin",
-    password: "123456",
-    email: hospital?.email,
-    firstName: hospital?.name,
-    lastName: "",
-  });
+  await Promise.all([
+    addDoc(collection(db, COLLECTION_NAME), {
+      ...hospital,
+      plan: planDoc.ref,
+      createdAt: Timestamp.now(),
+    }),
+    logUp({
+      type: userTypes.ADMIN,
+      password: "123456",
+      email: hospital?.email,
+      firstName: hospital?.name,
+      lastName: "",
+    }),
+  ]);
 };
 
 export const updateHospital = async ({
@@ -96,5 +100,8 @@ export type RemoveHospitalArgs = {
   id: string;
 };
 export const removeHospital = async ({ id }: RemoveHospitalArgs) => {
-  await deleteDoc(doc(db, COLLECTION_NAME, id));
+  await Promise.all([
+    deleteDoc(doc(db, "users", id)),
+    deleteDoc(doc(db, COLLECTION_NAME, id)),
+  ]);
 };

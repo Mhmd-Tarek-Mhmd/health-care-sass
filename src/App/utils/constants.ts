@@ -6,6 +6,14 @@ export const datTimeFormat = "DD/MM/YYYY hh:mm A";
 
 export const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+export const userTypes = {
+  SUPER: "SUPER",
+  ADMIN: "ADMIN",
+  DOCTOR: "DOCTOR",
+  NURSE: "NURSE",
+  PATIENT: "PATIENT",
+} as const;
+
 export const paginationInitState: Pagination = {
   page: 1,
   perPage: 1,

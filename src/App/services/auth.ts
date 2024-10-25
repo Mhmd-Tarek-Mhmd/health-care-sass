@@ -19,6 +19,7 @@ export const logUp = async ({ email, password, ...args }: LogUpArgs) => {
   await setDoc(doc(db, "users", res.user.uid), {
     photoURL: "",
     id: res.user.uid,
+    phone: res.user?.phoneNumber,
     displayName: `${args.firstName} ${args?.lastName}`.trim(),
     ...args,
   });
@@ -31,9 +32,13 @@ export type LogInArgs = {
 export const login = async ({ email, password }: LogInArgs): Promise<Auth> => {
   const res = await signInWithEmailAndPassword(auth, email, password);
   const userRes = await getDoc(doc(db, "users", res.user.uid));
-  const token = await res.user.getIdToken();
-  const user = userRes?.data() as User;
-  return { token, user };
+  if (userRes.data()) {
+    const token = await res.user.getIdToken();
+    const user = userRes?.data() as User;
+    return { token, user };
+  } else {
+    throw new Error("toast.auth/no-user");
+  }
 };
 
 export type ForgetPasswordArgs = {

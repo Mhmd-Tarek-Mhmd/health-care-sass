@@ -80,7 +80,7 @@ export const useServiceRequest = <Args, Response, Error = FirebaseError>(
       mergedOptions?.isShowErrorToast &&
         showToast({
           status: "error",
-          description: error?.code ? t("toast." + (error as Error)?.code) : error?.message,
+          description: error?.code ? t("toast." + (error as Error)?.code) : t(error?.message),
           ...errorToastOptions,
         });
       mergedOptions?.onError?.(error as Error);

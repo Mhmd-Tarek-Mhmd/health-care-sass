@@ -12,6 +12,7 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
+import { userTypes } from "@constants";
 import { PaginatorResponse, Doctor, Patient } from "@types";
 import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
 
@@ -97,16 +98,20 @@ export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
   });
 
   try {
-    await batch.commit();
-    if (!isEdit) {
-      await logUp({
-        type: "doctor",
-        password: "123456",
-        email: doctor?.email,
-        firstName: doctor?.name,
-        lastName: "",
-      });
-    }
+    Promise.all([
+      batch.commit(),
+      ...(isEdit
+        ? []
+        : [
+            logUp({
+              type: userTypes.DOCTOR,
+              password: "123456",
+              email: doctor?.email,
+              firstName: doctor?.name,
+              lastName: "",
+            }),
+          ]),
+    ]);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -118,9 +123,11 @@ export type RemoveDoctorArgs = {
 export const removeDoctor = async ({ id }: RemoveDoctorArgs) => {
   const batch = writeBatch(db);
   const doctorRef = doc(db, COLLECTION_NAME, id);
+  const userDoc = await getDoc(doc(db, "users", id));
   const patients = await getDocs(collection(db, PATIENTS_COLLECTION_NAME));
 
   batch.delete(doctorRef);
+  batch.delete(userDoc.ref);
   patients.docs.forEach((doc) =>
     batch.update(doc.ref, {
       doctors: arrayRemove(doctorRef),

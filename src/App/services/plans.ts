@@ -3,9 +3,9 @@ import {
   getDoc,
   addDoc,
   updateDoc,
+  deleteDoc,
   Timestamp,
   collection,
-  deleteDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import paginator from "./paginator";

@@ -1,7 +1,8 @@
 import {
   doc,
-  getDoc,
   addDoc,
+  getDoc,
+  getDocs,
   updateDoc,
   Timestamp,
   deleteDoc,
@@ -11,6 +12,7 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
+import { userTypes } from "@constants";
 import { PaginatorResponse, Nurse, Doctor } from "@types";
 
 const COLLECTION_NAME = "nurses";
@@ -85,18 +87,21 @@ export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
       updatedAt: Timestamp.now(),
     });
   } else {
-    await addDoc(collection(db, COLLECTION_NAME), {
-      ...nurse,
-      doctors: doctorsRefs,
-      createdAt: Timestamp.now(),
-    });
-    await logUp({
-      type: "nurse",
-      password: "123456",
-      email: nurse?.email,
-      firstName: nurse?.name,
-      lastName: "",
-    });
+    const nurseRef = collection(db, COLLECTION_NAME);
+    await Promise.all([
+      addDoc(nurseRef, {
+        ...nurse,
+        doctors: doctorsRefs,
+        createdAt: Timestamp.now(),
+      }),
+      logUp({
+        type: userTypes.NURSE,
+        password: "123456",
+        email: nurse?.email,
+        firstName: nurse?.name,
+        lastName: "",
+      }),
+    ]);
   }
 };
 
@@ -104,5 +109,8 @@ export type RemoveNurseArgs = {
   id: string;
 };
 export const removeNurse = async ({ id }: RemoveNurseArgs) => {
-  await deleteDoc(doc(db, COLLECTION_NAME, id));
+  await Promise.all([
+    deleteDoc(doc(db, "users", id)),
+    deleteDoc(doc(db, COLLECTION_NAME, id)),
+  ]);
 };

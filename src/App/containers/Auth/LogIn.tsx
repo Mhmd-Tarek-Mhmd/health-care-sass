@@ -33,14 +33,14 @@ const LogIn = () => {
     formState: { errors },
   } = useForm<Inputs>();
   const { t } = useTranslation();
-  const login = useAppStore((state) => state.login);
+  const loginStoreAction = useAppStore((state) => state.login);
   const [trigger, { isLoading }] = useServiceRequest<LogInArgs, Auth>(
     loginService,
     {
       isShowErrorToast: true,
       isShowSuccessToast: true,
       onSuccess: (res) => {
-        login(res as Auth);
+        loginStoreAction(res as Auth);
         window.location.pathname = "/dashboard";
       },
     }

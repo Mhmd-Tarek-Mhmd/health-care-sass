@@ -95,6 +95,7 @@
     "default-loading-title": "",
     "default-loading-desc": "",
     "reset-password-success": "لقد أرسلنا لك رسالة على بريدك الإلكتروني لإعادة تعيين كلمة المرور الخاصة بك",
+    "auth/no-user": "هذا الحساب لا وجود له",
     "auth/invalid-credential": "البريد الإلكتروني أو كلمة السر خاطئة",
     "auth/weak-password": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
     "logup-success": "تم إنشاء الحساب بنجاح."
