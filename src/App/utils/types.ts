@@ -38,10 +38,12 @@ export type PaginatorResponse<T> = {
 export type User = {
   id: string;
   type: string;
+  userTypeID: string;
   displayName: string;
   firstName: string;
   lastName: string;
-  photoURL: string;
+  photoURL?: string;
+  phoneNumber?: string;
   isNewAcc: boolean;
 };
 

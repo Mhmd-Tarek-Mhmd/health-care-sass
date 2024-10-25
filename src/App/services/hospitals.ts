@@ -2,7 +2,6 @@ import {
   doc,
   getDoc,
   addDoc,
-  getDocs,
   updateDoc,
   Timestamp,
   deleteDoc,
@@ -12,6 +11,7 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
+import { removeUser } from "./users";
 import { userTypes } from "@constants";
 import { PaginatorResponse, Hospital, Plan } from "@types";
 import { COLLECTION_NAME as PLANS_COLLECTION_NAME } from "./plans";
@@ -65,20 +65,29 @@ export const saveHospital = async ({
   const planDoc = await getDoc(
     doc(db, PLANS_COLLECTION_NAME, plan as unknown as string)
   );
-  await Promise.all([
-    addDoc(collection(db, COLLECTION_NAME), {
-      ...hospital,
-      plan: planDoc.ref,
-      createdAt: Timestamp.now(),
-    }),
-    logUp({
+  const newDoc = await addDoc(collection(db, COLLECTION_NAME), {
+    ...hospital,
+    plan: planDoc.ref,
+    createdAt: Timestamp.now(),
+  });
+
+  if (!newDoc.id) {
+    throw new Error("toast.default-error-desc");
+  }
+
+  try {
+    await logUp({
       type: userTypes.ADMIN,
+      userTypeID: newDoc.id,
       password: "123456",
       email: hospital?.email,
       firstName: hospital?.name,
       lastName: "",
-    }),
-  ]);
+    });
+  } catch (error) {
+    await deleteDoc(doc(db, COLLECTION_NAME, newDoc.id));
+    throw new Error("toast.default-error-desc");
+  }
 };
 
 export const updateHospital = async ({
@@ -101,7 +110,7 @@ export type RemoveHospitalArgs = {
 };
 export const removeHospital = async ({ id }: RemoveHospitalArgs) => {
   await Promise.all([
-    deleteDoc(doc(db, "users", id)),
+    removeUser({ userTypeID: id }),
     deleteDoc(doc(db, COLLECTION_NAME, id)),
   ]);
 };

@@ -1,4 +1,5 @@
 import {
+  deleteUser,
   updatePassword,
   User as AuthUser,
   sendPasswordResetEmail,
@@ -8,9 +9,11 @@ import {
 import { Auth, User } from "@types";
 import { db, auth } from "./firebase";
 import { setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { createUser } from "./users";
 
 export type LogUpArgs = {
   type: string;
+  userTypeID: string;
   email: string;
   password: string;
   lastName: string;
@@ -18,14 +21,10 @@ export type LogUpArgs = {
 };
 export const logUp = async ({ email, password, ...args }: LogUpArgs) => {
   const res = await createUserWithEmailAndPassword(auth, email, password);
-  await setDoc(doc(db, "users", res.user.uid), {
-    photoURL: "",
-    isNewAcc: true,
-    id: res.user.uid,
-    phone: res.user?.phoneNumber,
-    displayName: `${args.firstName} ${args?.lastName}`.trim(),
-    ...args,
-  });
+  if (!res.user) {
+    throw new Error("toast.default-error-desc");
+  }
+  await createUser({ id: res.user.uid, ...args });
 };
 
 export type LogInArgs = {
@@ -44,6 +43,11 @@ export const login = async ({ email, password }: LogInArgs): Promise<Auth> => {
   }
 };
 
+export const removeAuth = async () => {
+  const user = auth.currentUser as AuthUser;
+  await deleteUser(user);
+};
+
 export type ForgetPasswordArgs = {
   email: string;
 };
@@ -57,7 +61,6 @@ export type ResetPasswordArgs = {
 };
 export const resetPassword = async ({ password }: ResetPasswordArgs) => {
   const user = auth.currentUser as AuthUser;
-  console.log(user);
   await Promise.all([
     updatePassword(user, password),
     updateDoc(doc(db, "users", user.uid), { isNewAcc: false }),

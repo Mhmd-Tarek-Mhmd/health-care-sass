@@ -28,7 +28,7 @@ type Inputs = {
   email: string;
   phone: string;
   specialty: string;
-  patients: string[];
+  patients?: string[];
 };
 
 type DoctorModalProps = {
@@ -81,7 +81,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
             onSuccess(response) {
               reset({
                 ...response,
-                patients: response?.patients[0].id,
+                patients: response?.patients?.[0]?.id || null,
                 // patients: response?.patients.map((p) => p.id),
               });
             },
@@ -99,7 +99,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        patients: [args?.patients],
+        patients: args?.patients ? [args?.patients] : [],
       },
       onSuccess() {
         onClose();
@@ -177,8 +177,8 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
         options={options?.patients || []}
         label={t("doctor-form.patients-label")}
         placeholder={t("doctor-form.patients-placeholder")}
-        error={errors.patients?.message as "required"}
-        {...register("patients", { required: "required" })}
+        // error={errors.patients?.message as "required"}
+        {...register("patients")}
       />
     </FormModal>
   );

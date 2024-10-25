@@ -2,6 +2,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  deleteDoc,
   Timestamp,
   collection,
   writeBatch,
@@ -16,6 +17,7 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
+import { removeUser } from "./users";
 import { userTypes } from "@constants";
 import { buildOptionModel } from "@helpers";
 import { PaginatorResponse, Patient, Doctor, Room, Bed } from "@types";
@@ -128,14 +130,22 @@ export const upsertPatient = async (
 ): Promise<void> => {
   const batch = writeBatch(db);
   const isEdit = Boolean(patient?.id);
+  const patientDoc = isEdit
+    ? doc(db, COLLECTION_NAME, patient?.id)
+    : doc(collection(db, COLLECTION_NAME));
   let room: string | DocumentReference = "",
     bed: string | DocumentReference = "",
-    doctorsRefs = [] as DocumentReference[];
+    doctors = [] as DocumentReference[];
 
   if (patient.doctors?.length) {
-    doctorsRefs = patient.doctors.map((doctor) =>
+    doctors = patient.doctors.map((doctor) =>
       doc(db, DOCTORS_COLLECTION_NAME, doctor)
     );
+    doctors.forEach((doctor) => {
+      batch.update(doctor, {
+        patients: arrayUnion(patientDoc),
+      });
+    });
   }
   if (patient?.room) {
     room = doc(db, ROOMS_COLLECTION_NAME, patient.room);
@@ -144,43 +154,27 @@ export const upsertPatient = async (
     bed = doc(db, BEDS_COLLECTION_NAME, patient.bed);
   }
 
-  const patientRef = doc(collection(db, COLLECTION_NAME));
-  const patientData = {
-    ...patient,
-    room,
-    bed,
-    doctors: doctorsRefs,
-    ...(isEdit
-      ? { updatedAt: Timestamp.now() }
-      : { createdAt: Timestamp.now() }),
-  };
+  const patientData = { ...patient, room, bed, doctors };
 
-  isEdit
-    ? batch.update(patientRef, patientData)
-    : batch.set(patientRef, patientData);
-  doctorsRefs.forEach((ref) => {
-    batch.update(ref, {
-      patients: arrayUnion(patientRef),
-    });
-  });
-
-  try {
-    await Promise.all([
-      batch.commit(),
-      ...(isEdit
-        ? []
-        : [
-            logUp({
-              type: userTypes.PATIENT,
-              password: "123456",
-              email: patient?.email,
-              firstName: patient?.name,
-              lastName: "",
-            }),
-          ]),
-    ]);
-  } catch (error) {
-    throw new Error(error.message);
+  if (isEdit) {
+    batch.update(patientDoc, { ...patientData, updatedAt: Timestamp.now() });
+    await batch.commit();
+  } else {
+    batch.set(patientDoc, { ...patientData, createdAt: Timestamp.now() });
+    await batch.commit();
+    try {
+      await logUp({
+        type: userTypes.PATIENT,
+        userTypeID: patientDoc.id,
+        password: "123456",
+        email: patient?.email,
+        firstName: patient?.name,
+        lastName: "",
+      });
+    } catch (error) {
+      await deleteDoc(doc(db, COLLECTION_NAME, patientDoc.id));
+      throw new Error(error.message);
+    }
   }
 };
 
@@ -190,11 +184,9 @@ export type RemovePatientArgs = {
 export const removePatient = async ({ id }: RemovePatientArgs) => {
   const batch = writeBatch(db);
   const patientRef = doc(db, COLLECTION_NAME, id);
-  const userDoc = await getDoc(doc(db, "users", id));
   const doctors = await getDocs(collection(db, DOCTORS_COLLECTION_NAME));
 
   batch.delete(patientRef);
-  batch.delete(userDoc.ref);
   doctors.docs.forEach((doc) =>
     batch.update(doc.ref, {
       patients: arrayRemove(patientRef),
@@ -202,7 +194,7 @@ export const removePatient = async ({ id }: RemovePatientArgs) => {
   );
 
   try {
-    await batch.commit();
+    await Promise.all([removeUser({ userTypeID: id }), batch.commit()]);
   } catch (error) {
     throw new Error(error.message);
   }

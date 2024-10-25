@@ -24,9 +24,9 @@ type Inputs = {
   gender: string;
   email: string;
   phone: string;
-  bed: string;
-  room: string;
-  doctors: string[];
+  bed?: string;
+  room?: string;
+  doctors?: string[];
 };
 
 type PatientModalProps = {
@@ -70,7 +70,7 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
                 bed: response?.bed?.id || null,
                 room: response?.room?.id || null,
                 doctors: response?.doctors?.[0]?.id || null,
-                // doctors: response?.doctors.map((p) => p.id),
+                // doctors: response?.doctors?.map((p) => p.id),
               });
             },
           });
@@ -87,7 +87,7 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        doctors: [args?.doctors],
+        doctors: args?.doctors ? [args?.doctors] : [],
       },
       onSuccess() {
         onClose();
@@ -158,8 +158,8 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
         options={options?.doctors || []}
         label={t("patient-form.doctors-label")}
         placeholder={t("patient-form.doctors-placeholder")}
-        error={errors.doctors?.message as "required"}
-        {...register("doctors", { required: "required" })}
+        // error={errors.doctors?.message as "required"}
+        {...register("doctors")}
       />
       <FormSelect
         isRequired

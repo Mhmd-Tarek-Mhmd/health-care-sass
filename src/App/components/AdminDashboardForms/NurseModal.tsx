@@ -27,7 +27,7 @@ type Inputs = {
   gender: string;
   email: string;
   phone: string;
-  doctors: string[];
+  doctors?: string[];
 };
 
 type NurseModalProps = {
@@ -80,8 +80,8 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
             onSuccess(response) {
               reset({
                 ...response,
-                doctors: response?.doctors?.[0]?.id,
-                // doctors: response?.doctors.map((p) => p.id),
+                doctors: response?.doctors?.[0]?.id || null,
+                // doctors: response?.doctors?.map((p) => p.id),
               });
             },
           });
@@ -98,7 +98,7 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        doctors: [args?.doctors],
+        doctors: args?.doctors ? [args?.doctors] : [],
       },
       onSuccess() {
         onClose();
@@ -167,8 +167,8 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
         options={options?.doctors || []}
         label={t("nurse-form.doctors-label")}
         placeholder={t("nurse-form.doctors-placeholder")}
-        error={errors.doctors?.message as "required"}
-        {...register("doctors", { required: "required" })}
+        // error={errors.doctors?.message as "required"}
+        {...register("doctors")}
       />
     </FormModal>
   );

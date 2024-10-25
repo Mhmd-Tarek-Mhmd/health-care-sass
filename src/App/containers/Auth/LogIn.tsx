@@ -33,7 +33,6 @@ const LogIn = () => {
     formState: { errors },
   } = useForm<Inputs>();
   const { t } = useTranslation();
-  const user = useAppStore((state) => state.auth?.user);
   const loginStoreAction = useAppStore((state) => state.login);
   const [trigger, { isLoading }] = useServiceRequest<LogInArgs, Auth>(
     loginService,
@@ -42,11 +41,9 @@ const LogIn = () => {
       isShowSuccessToast: true,
       onSuccess: (res) => {
         loginStoreAction(res as Auth);
-        setTimeout(() => {
-          window.location.pathname = user?.isNewAcc
-            ? "/reset-password"
-            : "/dashboard";
-        }, 0);
+        window.location.pathname = res?.user?.isNewAcc
+          ? "/reset-password"
+          : "/dashboard";
       },
     }
   );

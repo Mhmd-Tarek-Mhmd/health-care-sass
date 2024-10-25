@@ -2,7 +2,6 @@ import {
   doc,
   addDoc,
   getDoc,
-  getDocs,
   updateDoc,
   Timestamp,
   deleteDoc,
@@ -12,8 +11,10 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
+import { removeUser } from "./users";
 import { userTypes } from "@constants";
 import { PaginatorResponse, Nurse, Doctor } from "@types";
+import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
 
 const COLLECTION_NAME = "nurses";
 
@@ -70,38 +71,41 @@ export interface UpsertNurseArgs extends Omit<Nurse, "doctors"> {
 
 export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
   const isEdit = Boolean(nurse?.id);
-  let doctorsRefs = [] as DocumentReference[];
+  let doctors = [] as DocumentReference[];
 
   if (nurse?.doctors?.length) {
-    const doctorsPromises = nurse.doctors.map(async (doctor) => {
-      const doctorDoc = await getDoc(doctor as unknown as DocumentReference);
-      return doctorDoc?.ref;
-    });
-    doctorsRefs = await Promise.all(doctorsPromises);
+    doctors = nurse.doctors.map((doctor) =>
+      doc(db, DOCTORS_COLLECTION_NAME, doctor)
+    );
   }
+
+  const nurseData = { ...nurse, doctors };
 
   if (isEdit) {
     await updateDoc(doc(db, COLLECTION_NAME, nurse?.id), {
-      ...nurse,
-      doctors: doctorsRefs,
+      ...nurseData,
       updatedAt: Timestamp.now(),
     });
   } else {
     const nurseRef = collection(db, COLLECTION_NAME);
-    await Promise.all([
-      addDoc(nurseRef, {
-        ...nurse,
-        doctors: doctorsRefs,
-        createdAt: Timestamp.now(),
-      }),
-      logUp({
-        type: userTypes.NURSE,
+    await addDoc(nurseRef, {
+      ...nurseData,
+      createdAt: Timestamp.now(),
+    });
+
+    try {
+      await logUp({
+        type: userTypes.DOCTOR,
+        userTypeID: nurseRef.id,
         password: "123456",
         email: nurse?.email,
         firstName: nurse?.name,
         lastName: "",
-      }),
-    ]);
+      });
+    } catch (error) {
+      await deleteDoc(doc(db, COLLECTION_NAME, nurseRef.id));
+      throw new Error(error.message);
+    }
   }
 };
 
@@ -110,7 +114,7 @@ export type RemoveNurseArgs = {
 };
 export const removeNurse = async ({ id }: RemoveNurseArgs) => {
   await Promise.all([
-    deleteDoc(doc(db, "users", id)),
+    removeUser({ userTypeID: id }),
     deleteDoc(doc(db, COLLECTION_NAME, id)),
   ]);
 };

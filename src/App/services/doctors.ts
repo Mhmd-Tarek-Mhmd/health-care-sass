@@ -2,6 +2,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  deleteDoc,
   Timestamp,
   collection,
   writeBatch,
@@ -12,6 +13,7 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
+import { removeUser } from "./users";
 import { userTypes } from "@constants";
 import { PaginatorResponse, Doctor, Patient } from "@types";
 import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
@@ -52,8 +54,8 @@ export interface GetDoctorArgs {
 }
 
 export const getDoctor = async ({ id }: GetDoctorArgs): Promise<Doctor> => {
-  const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  const doctor = { id, ...docRef?.data() } as Doctor;
+  const docDocs = await getDoc(doc(db, COLLECTION_NAME, id));
+  const doctor = { id, ...docDocs?.data() } as Doctor;
   if (doctor.patients.length) {
     const patients = await Promise.all(
       doctor.patients.map(async (patientRef) => {
@@ -74,46 +76,53 @@ export interface UpsertDoctorArgs extends Omit<Doctor, "patients"> {
 }
 
 export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
-  const isEdit = Boolean(doctor?.id);
   const batch = writeBatch(db);
-  const patients = doctor.patients.map((patient) =>
-    doc(db, PATIENTS_COLLECTION_NAME, patient)
-  );
-  const doctorRef = doc(collection(db, COLLECTION_NAME));
-  const doctorData = {
-    ...doctor,
-    patients,
-    ...(isEdit
-      ? { updatedAt: Timestamp.now() }
-      : { createdAt: Timestamp.now() }),
-  };
+  const isEdit = Boolean(doctor?.id);
+  let patients: DocumentReference[] = [];
+  const doctorDoc = isEdit
+    ? doc(db, COLLECTION_NAME, doctor?.id)
+    : doc(collection(db, COLLECTION_NAME));
 
-  isEdit
-    ? batch.update(doctorRef, doctorData)
-    : batch.set(doctorRef, doctorData);
-  patients.forEach((patient) => {
-    batch.update(patient, {
-      doctors: arrayUnion(doctorRef),
+  if (doctor?.patients?.length) {
+    patients = doctor.patients.map((patient) =>
+      doc(db, PATIENTS_COLLECTION_NAME, patient)
+    );
+    patients.forEach((patient) => {
+      batch.update(patient, {
+        doctors: arrayUnion(doctorDoc),
+      });
     });
-  });
+  }
 
-  try {
-    Promise.all([
-      batch.commit(),
-      ...(isEdit
-        ? []
-        : [
-            logUp({
-              type: userTypes.DOCTOR,
-              password: "123456",
-              email: doctor?.email,
-              firstName: doctor?.name,
-              lastName: "",
-            }),
-          ]),
-    ]);
-  } catch (error) {
-    throw new Error(error.message);
+  const doctorData = { ...doctor, patients };
+
+  if (isEdit) {
+    batch.update(doctorDoc, {
+      ...doctorData,
+      updatedAt: Timestamp.now(),
+    });
+    try {
+      await batch.commit();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  } else {
+    batch.set(doctorDoc, { ...doctorData, createdAt: Timestamp.now() });
+    await batch.commit();
+
+    try {
+      await logUp({
+        type: userTypes.DOCTOR,
+        userTypeID: doctorDoc.id,
+        password: "123456",
+        email: doctor?.email,
+        firstName: doctor?.name,
+        lastName: "",
+      });
+    } catch (error) {
+      await deleteDoc(doc(db, COLLECTION_NAME, doctorDoc.id));
+      throw new Error(error.message);
+    }
   }
 };
 
@@ -123,11 +132,9 @@ export type RemoveDoctorArgs = {
 export const removeDoctor = async ({ id }: RemoveDoctorArgs) => {
   const batch = writeBatch(db);
   const doctorRef = doc(db, COLLECTION_NAME, id);
-  const userDoc = await getDoc(doc(db, "users", id));
   const patients = await getDocs(collection(db, PATIENTS_COLLECTION_NAME));
 
   batch.delete(doctorRef);
-  batch.delete(userDoc.ref);
   patients.docs.forEach((doc) =>
     batch.update(doc.ref, {
       doctors: arrayRemove(doctorRef),
@@ -135,7 +142,7 @@ export const removeDoctor = async ({ id }: RemoveDoctorArgs) => {
   );
 
   try {
-    await batch.commit();
+    await Promise.all([batch.commit(), removeUser({ userTypeID: id })]);
   } catch (error) {
     throw new Error(error.message);
   }
