@@ -4,13 +4,13 @@ import { StateCreator } from "zustand";
 export interface AuthSlice {
   auth: Auth | null;
   logout: () => void;
-  login: (payload: {}) => void;
+  login: (payload: Auth) => void;
 }
 
 const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
   auth: null,
   logout: () => set((state) => ({ ...state, auth: null })),
-  login: (payload) => set((state) => ({ ...state, auth: payload as Auth })),
+  login: (auth) => set((state) => ({ ...state, auth })),
 });
 
 export default createAuthSlice;

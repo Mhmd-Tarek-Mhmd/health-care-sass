@@ -75,12 +75,15 @@
     "email-placeholder": "أدخل عنوان بريدك الالكتروني",
     "password-label": "كلمة المرور",
     "password-placeholder": "أدخل رقمك السري",
+    "passwordConfirm-label": "تأكيد كلمة المرور",
+    "passwordConfirm-placeholder": "أكد رقمك السري",
     "phone-label": "رقم الهاتف",
     "phone-placeholder": "أدخل رقم الهاتف"
   },
   "validations": {
     "required": "هذا الحقل مطلوب",
     "email": "من فضلك أدخل بريد إلكتروني صحيح.",
+    "passwordConfirm": "الأرقام السرية لا تتطابق",
     "default": "هناك خطأ ما. حاول ثانية!"
   },
   "toast": {

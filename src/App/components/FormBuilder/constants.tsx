@@ -7,12 +7,14 @@ import { Icon as SVGIcon } from "@chakra-ui/react";
 export type Errors = {
   required: TranslationKeys;
   email: TranslationKeys;
+  passwordConfirm: TranslationKeys;
   default: TranslationKeys;
 };
 
 export const errors: Errors = {
   required: "validations.required",
   email: "validations.email",
+  passwordConfirm: "validations.passwordConfirm",
   default: "validations.default",
 };
 
