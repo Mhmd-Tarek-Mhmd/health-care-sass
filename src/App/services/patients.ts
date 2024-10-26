@@ -1,6 +1,7 @@
 import {
   doc,
   where,
+  addDoc,
   getDoc,
   getDocs,
   deleteDoc,
@@ -16,11 +17,11 @@ import {
   COLLECTION_NAME as DOCTORS_COLLECTION_NAME,
 } from "./doctors";
 import Store from "@store";
-import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { removeUser } from "./users";
 import { userTypes } from "@constants";
+import { logUp, LogUpArgs } from "./auth";
 import { buildOptionModel, checkUserTypes } from "@helpers";
 import { PaginatorResponse, Patient, Doctor, Room, Bed } from "@types";
 import { getBeds, COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
@@ -188,13 +189,42 @@ export const upsertPatient = async (
         userTypeID: patientDoc.id,
         password: "123456",
         email: patient?.email,
-        firstName: patient?.name,
-        lastName: "",
+        phone: patient?.phone,
+        name: patient?.name,
       });
     } catch (error) {
       await deleteDoc(doc(db, COLLECTION_NAME, patientDoc.id));
       throw new Error(error.message);
     }
+  }
+};
+
+export interface QuickPatientLogupArgs
+  extends Omit<LogUpArgs, "type" | "userTypeID"> {}
+export const quickPatientLogup = async ({
+  password,
+  ...patient
+}: QuickPatientLogupArgs) => {
+  const patientDoc = await addDoc(collection(db, COLLECTION_NAME), {
+    ...patient,
+    createdAt: Timestamp.now(),
+  });
+  if (patientDoc?.id) {
+    try {
+      await logUp({
+        isTempPassword: false,
+        type: userTypes.PATIENT,
+        userTypeID: patientDoc.id,
+        password,
+        email: patient?.email,
+        name: patient?.name,
+      });
+    } catch (error) {
+      await deleteDoc(doc(db, COLLECTION_NAME, patientDoc.id));
+      throw new Error(error.message);
+    }
+  } else {
+    throw new Error("toast.default-error-desc");
   }
 };
 

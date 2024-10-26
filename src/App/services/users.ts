@@ -12,19 +12,15 @@ import { db } from "./firebase";
 
 export const COLLECTION_NAME = "users";
 
-interface CreateUserArgs extends Omit<User, "displayName" | "isNewAcc"> {
-  isNewAcc?: boolean;
-  displayName?: string;
+interface CreateUserArgs
+  extends Omit<User, "userTypeID" | "isTempPassword" | "isActive"> {
+  userTypeID?: string;
 }
-export const createUser = async ({
-  firstName,
-  lastName,
-  ...user
-}: CreateUserArgs) => {
+export const createUser = async ({ ...user }: CreateUserArgs) => {
   await setDoc(doc(db, COLLECTION_NAME, user.id), {
     photoURL: "",
-    isNewAcc: true,
-    displayName: `${firstName} ${lastName}`.trim(),
+    isActive: true,
+    isTempPassword: true,
     ...user,
   });
 };

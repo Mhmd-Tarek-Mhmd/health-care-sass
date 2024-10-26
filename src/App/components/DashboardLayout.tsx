@@ -235,7 +235,7 @@ const Header = ({ onOpen }: HeaderProps) => {
                   alignItems="flex-start"
                   display={{ base: "none", md: "flex" }}
                 >
-                  <Text fontSize="sm">{user?.displayName}</Text>
+                  <Text fontSize="sm">{user?.name}</Text>
                   <Text
                     fontSize="xs"
                     color={useColorModeValue("gray.600", "gray.300")}

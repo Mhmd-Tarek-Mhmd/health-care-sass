@@ -120,8 +120,8 @@ export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
         userTypeID: nurseRef.id,
         password: "123456",
         email: nurse?.email,
-        firstName: nurse?.name,
-        lastName: "",
+        phone: nurse?.phone,
+        name: nurse?.name,
       });
     } catch (error) {
       await deleteDoc(doc(db, COLLECTION_NAME, nurseRef.id));

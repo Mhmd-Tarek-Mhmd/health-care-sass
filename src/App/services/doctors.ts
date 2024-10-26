@@ -54,8 +54,8 @@ export interface GetDoctorArgs {
 }
 
 export const getDoctor = async ({ id }: GetDoctorArgs): Promise<Doctor> => {
-  const docDocs = await getDoc(doc(db, COLLECTION_NAME, id));
-  const doctor = { id, ...docDocs?.data() } as Doctor;
+  const doctorDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  const doctor = { id, ...doctorDoc?.data() } as Doctor;
   if (doctor.patients.length) {
     const patients = await Promise.all(
       doctor.patients.map(async (patientRef) => {
@@ -107,7 +107,11 @@ export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
       throw new Error(error.message);
     }
   } else {
-    batch.set(doctorDoc, { ...doctorData, createdAt: Timestamp.now() });
+    batch.set(doctorDoc, {
+      ...doctorData,
+      isActive: true,
+      createdAt: Timestamp.now(),
+    });
     await batch.commit();
 
     try {
@@ -116,8 +120,8 @@ export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
         userTypeID: doctorDoc.id,
         password: "123456",
         email: doctor?.email,
-        firstName: doctor?.name,
-        lastName: "",
+        phone: doctor?.phone,
+        name: doctor?.name,
       });
     } catch (error) {
       await deleteDoc(doc(db, COLLECTION_NAME, doctorDoc.id));

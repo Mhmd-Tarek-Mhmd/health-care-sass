@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useColorModeValue } from "@chakra-ui/react";
 
 import { emailPattern } from "@constants";
-import { logUp, LogUpArgs } from "@services";
 import { SubmitHandler } from "react-hook-form";
+import { quickPatientLogup, QuickPatientLogupArgs } from "@services";
 
 import {
   Box,
@@ -20,8 +20,7 @@ import { FormInput } from "@components";
 import { Link as LinkRouter } from "react-router-dom";
 
 type Inputs = {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   password: string;
 };
@@ -34,14 +33,20 @@ const LogUp = () => {
   } = useForm<Inputs>();
   const { t } = useTranslation();
 
-  const [trigger, { isLoading }] = useServiceRequest<LogUpArgs, void>(logUp, {
+  const [trigger, { isLoading }] = useServiceRequest<
+    QuickPatientLogupArgs,
+    void
+  >(quickPatientLogup, {
     isShowErrorToast: true,
     isShowSuccessToast: true,
     successToastOptions: { description: t("toast.logup-success") },
+    onSuccess() {
+      window.location.pathname = "/login";
+    },
   });
 
-  const onSubmit: SubmitHandler<Inputs> = ({ email, password, ...data }) =>
-    trigger({ args: { email, password, ...data, type: "patient" } });
+  const onSubmit: SubmitHandler<Inputs> = ({ ...data }) =>
+    trigger({ args: { ...data } });
 
   return (
     <Flex
@@ -73,16 +78,10 @@ const LogUp = () => {
           >
             <FormInput
               isRequired
-              label={t("forms.firstName-label")}
-              placeholder={t("forms.firstName-placeholder")}
-              error={errors.firstName?.message as "required"}
-              {...register("firstName", { required: "required" })}
-            />
-            <FormInput
-              label={t("forms.lastName-label")}
-              placeholder={t("forms.lastName-placeholder")}
-              error={errors.lastName?.message as undefined}
-              {...register("lastName")}
+              label={t("forms.name-label")}
+              placeholder={t("forms.name-placeholder")}
+              error={errors.name?.message as "required"}
+              {...register("name", { required: "required" })}
             />
 
             <FormInput

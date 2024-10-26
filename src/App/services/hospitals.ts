@@ -81,8 +81,8 @@ export const saveHospital = async ({
       userTypeID: newDoc.id,
       password: "123456",
       email: hospital?.email,
-      firstName: hospital?.name,
-      lastName: "",
+      phone: hospital?.phone,
+      name: hospital?.name,
     });
   } catch (error) {
     await deleteDoc(doc(db, COLLECTION_NAME, newDoc.id));

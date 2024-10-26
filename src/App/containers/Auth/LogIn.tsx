@@ -41,7 +41,7 @@ const LogIn = () => {
       isShowSuccessToast: true,
       onSuccess: (res) => {
         loginStoreAction(res as Auth);
-        window.location.pathname = res?.user?.isNewAcc
+        window.location.pathname = res?.user?.isTempPassword
           ? "/reset-password"
           : "/dashboard";
       },

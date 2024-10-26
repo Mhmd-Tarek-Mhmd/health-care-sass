@@ -36,31 +36,29 @@ export type PaginatorResponse<T> = {
   pagination: PaginationBase;
 };
 
+export interface Model {
+  id: string;
+  name: string;
+  createdAt: Timestamp;
+  updatedAt?: Timestamp;
+}
+
 export type UserType = (typeof userTypes)[keyof typeof userTypes];
 
-export type User = {
-  id: string;
+export interface User extends Model {
   type: UserType;
   userTypeID: string;
-  displayName: string;
-  firstName: string;
-  lastName: string;
+  email: string;
+  phone?: string;
   photoURL?: string;
-  phoneNumber?: string;
-  isNewAcc: boolean;
+  isTempPassword: boolean;
+  isActive: boolean;
 };
 
 export type Auth = {
   token: string | null;
   user: User | null;
 };
-
-export interface Model {
-  id: string;
-  name: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp | null;
-}
 
 export type ModelMenu = Pick<Model, "id" | "name">;
 
@@ -72,9 +70,7 @@ export interface Plan extends Model {
   isInfiniteUsers: boolean;
 }
 
-export interface Hospital extends Model {
-  email: string;
-  phone: string;
+export interface Hospital extends User {
   plan: Plan;
 }
 
@@ -98,29 +94,23 @@ export interface Room extends Model {
   details: string;
 }
 
-export interface Doctor extends Model {
+export interface Doctor extends User {
   age: string;
   gender: string;
-  email: string;
-  phone: string;
   specialty: string;
-  patients: Patient[];
+  patients: [] | Patient[];
 }
 
-export interface Nurse extends Model {
+export interface Nurse extends User {
   age: string;
   gender: string;
-  email: string;
-  phone: string;
-  doctors: Doctor[];
+  doctors: [] | Doctor[];
 }
 
-export interface Patient extends Model {
+export interface Patient extends User {
   age: string;
   gender: string;
-  email: string;
-  phone: string;
-  doctors: Doctor[];
+  doctors: [] | Doctor[];
   room?: Room;
   bed?: Bed;
 }

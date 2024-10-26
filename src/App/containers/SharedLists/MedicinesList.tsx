@@ -65,14 +65,14 @@ const Medicines = () => {
         name: t("lists.createdBy-cell-label"),
         cell: (row) =>
           row?.createdBy
-            ? row.createdBy?.displayName + " - " + row.createdBy?.type
+            ? row.createdBy?.name + " - " + row.createdBy?.type
             : "",
       },
       {
         name: t("lists.updatedBy-cell-label"),
         cell: (row) =>
           row?.updatedBy
-            ? row?.updatedBy?.displayName + " - " + row?.updatedBy?.type
+            ? row?.updatedBy?.name + " - " + row?.updatedBy?.type
             : "",
       },
       {
