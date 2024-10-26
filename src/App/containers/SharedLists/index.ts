@@ -1,3 +1,3 @@
-export { default as Nurses } from "./Nurses";
-export { default as Patients } from "./Patients";
-export { default as Medicines } from "./Medicines";
+export { default as NursesList } from "./NursesList";
+export { default as PatientsList } from "./PatientsList";
+export { default as MedicinesList } from "./MedicinesList";

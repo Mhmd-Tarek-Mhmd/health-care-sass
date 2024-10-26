@@ -9,7 +9,7 @@ import {
   RemovePatientArgs,
 } from "@services";
 import dayjs from "dayjs";
-import { confirm } from "@helpers";
+import { checkUserTypes, confirm } from "@helpers";
 import { datTimeFormat, paginationInitState, userTypes } from "@constants";
 import { AnyObject, Column, PaginatorResponse, Patient } from "@types";
 
@@ -74,6 +74,7 @@ const Patients = () => {
       },
       {
         name: t("patients-list.doctors-cell-label"),
+        omit: checkUserTypes([userTypes.DOCTOR]),
         cell: (row) => row?.doctors?.map((doctor) => doctor.name)?.join(", "),
       },
       {

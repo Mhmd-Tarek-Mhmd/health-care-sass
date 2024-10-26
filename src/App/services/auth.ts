@@ -6,13 +6,13 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { Auth, User } from "@types";
-import { db, auth } from "./firebase";
-import { setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { createUser } from "./users";
+import { db, auth } from "./firebase";
+import { Auth, User, UserType } from "@types";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 export type LogUpArgs = {
-  type: string;
+  type: UserType;
   userTypeID: string;
   email: string;
   password: string;

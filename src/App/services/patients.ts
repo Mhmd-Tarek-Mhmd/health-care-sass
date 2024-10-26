@@ -1,5 +1,6 @@
 import {
   doc,
+  where,
   getDoc,
   getDocs,
   deleteDoc,
@@ -14,12 +15,13 @@ import {
   getDoctors,
   COLLECTION_NAME as DOCTORS_COLLECTION_NAME,
 } from "./doctors";
+import Store from "@store";
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { removeUser } from "./users";
 import { userTypes } from "@constants";
-import { buildOptionModel } from "@helpers";
+import { buildOptionModel, checkUserTypes } from "@helpers";
 import { PaginatorResponse, Patient, Doctor, Room, Bed } from "@types";
 import { getBeds, COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
 import { getRooms, COLLECTION_NAME as ROOMS_COLLECTION_NAME } from "./rooms";
@@ -34,7 +36,25 @@ export const getPatients = async ({
   pageSize,
   pageNumber,
 }: GetPatientsArgs): Promise<PaginatorResponse<Patient>> => {
+  const isDoctor = checkUserTypes([userTypes.DOCTOR]);
+  const filters = [
+    ...(isDoctor
+      ? [
+          where(
+            "doctors",
+            "array-contains",
+            doc(
+              db,
+              DOCTORS_COLLECTION_NAME,
+              Store.auth?.user?.userTypeID as string
+            )
+          ),
+        ]
+      : []),
+  ];
+
   const patients = await paginator<Patient>({
+    filters,
     pageSize,
     pageNumber,
     collectionName: COLLECTION_NAME,

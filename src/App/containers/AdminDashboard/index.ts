@@ -1,8 +1,9 @@
 import Root from "./Root";
 import Beds from "./Beds";
 import Rooms from "./Rooms";
+import Nurses from "./Nurses";
 import Doctors from "./Doctors";
-import { Nurses, Patients } from "../SharedLists";
+import Patients from "./Patients";
 
 export default {
   Root,

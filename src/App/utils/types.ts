@@ -1,8 +1,9 @@
 import { To } from "react-router-dom";
 import { IconType } from "react-icons";
+import { userTypes } from "@constants";
+import { Timestamp } from "firebase/firestore";
 import ns from "public/locales/en-US/translation.json";
 export type { Column } from "src/App/components/DataTable";
-import { DocumentReference, Timestamp } from "firebase/firestore";
 export type { Pagination } from "src/App/components/ServerPagination";
 
 type NestedKeyOf<ObjectType extends object> = {
@@ -35,9 +36,11 @@ export type PaginatorResponse<T> = {
   pagination: PaginationBase;
 };
 
+export type UserType = (typeof userTypes)[keyof typeof userTypes];
+
 export type User = {
   id: string;
-  type: string;
+  type: UserType;
   userTypeID: string;
   displayName: string;
   firstName: string;

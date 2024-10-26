@@ -1,8 +1,6 @@
 import { ReactNode } from "react";
+import { UserType } from "@types";
 import { useAppStore } from "@store";
-import { userTypes } from "@constants";
-
-type UserType = (typeof userTypes)[keyof typeof userTypes];
 
 type ShowIfUserTypeProps = {
   types: UserType[];
@@ -15,7 +13,7 @@ export const ShowIfUserType = ({
   children,
   altChildren,
 }: ShowIfUserTypeProps) => {
-  const userType = useAppStore((store) => store.auth?.user?.type) as UserType;
+  const userType = useAppStore((store) => store.auth?.user?.type);
 
   if (!userType) return (window.location.pathname = "/login");
 

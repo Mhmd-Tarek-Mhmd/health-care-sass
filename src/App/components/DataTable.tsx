@@ -1,3 +1,4 @@
+import React from "react";
 import { useTranslation } from "react-i18next";
 
 import ServerPagination, { ServerPaginationProps } from "./ServerPagination";
@@ -16,6 +17,7 @@ import Loader from "./Loader";
 
 export type Column<T> = {
   name?: string;
+  omit?: boolean;
   selector?: keyof T;
   cell?: (row: T) => React.ReactNode;
 };
@@ -60,19 +62,27 @@ const DataTable = <T,>({
           <Table size={size}>
             <Thead>
               <Tr>
-                {columns?.map((col) => (
-                  <Th key={`${col?.name}-head`}>{col?.name}</Th>
-                ))}
+                {columns?.map((col) =>
+                  col.omit ? (
+                    <React.Fragment key={`${col?.name}-head`} />
+                  ) : (
+                    <Th key={`${col?.name}-head`}>{col?.name}</Th>
+                  )
+                )}
               </Tr>
             </Thead>
             <Tbody>
               {data?.map((d, i) => (
                 <Tr key={`row-${i}`}>
-                  {columns?.map((col) => (
-                    <Td key={`${col?.name}-cell`}>
-                      {getSelectorOrCell(d, col)}
-                    </Td>
-                  ))}
+                  {columns?.map((col) =>
+                    col.omit ? (
+                      <React.Fragment key={`${col?.name}-cell`} />
+                    ) : (
+                      <Td key={`${col?.name}-cell`}>
+                        {getSelectorOrCell(d, col)}
+                      </Td>
+                    )
+                  )}
                 </Tr>
               ))}
             </Tbody>

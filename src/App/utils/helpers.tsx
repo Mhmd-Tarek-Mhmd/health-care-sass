@@ -1,6 +1,7 @@
+import Store from "@store";
 import i18next from "i18next";
 import ReactDOM from "react-dom/client";
-import { Model, TranslationKeys } from "@types";
+import { Model, TranslationKeys, UserType } from "@types";
 import { ConfirmDialog, ConfirmDialogOptions } from "@components";
 import { createStandaloneToast, UseToastOptions } from "@chakra-ui/react";
 
@@ -9,6 +10,11 @@ export const buildOptionModel = (model: Model) => {
     value: model.id,
     label: model.name,
   };
+};
+
+export const checkUserTypes = (types: UserType[]) => {
+  const userType = Store.auth?.user?.type;
+  return userType && types.includes(userType);
 };
 
 /**

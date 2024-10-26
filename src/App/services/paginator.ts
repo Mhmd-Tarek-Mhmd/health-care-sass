@@ -6,6 +6,7 @@ import {
   startAfter,
   collection,
   getCountFromServer,
+  QueryFieldFilterConstraint,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { PaginatorResponse } from "@types";
@@ -15,6 +16,7 @@ type Args = {
   pageNumber: number;
   orderByField?: string;
   collectionName: string;
+  filters?: QueryFieldFilterConstraint[];
 };
 
 async function paginator<T>({
@@ -22,6 +24,7 @@ async function paginator<T>({
   pageNumber,
   collectionName,
   orderByField = "createdAt",
+  filters = [],
 }: Args): Promise<PaginatorResponse<T>> {
   const coll = collection(db, collectionName);
   const snapshot = await getCountFromServer(coll);
@@ -32,7 +35,8 @@ async function paginator<T>({
     let q = query(
       collection(db, collectionName),
       orderBy(orderByField),
-      limit(pageSize)
+      limit(pageSize),
+      ...filters
     );
 
     if (pageNumber > 1) {

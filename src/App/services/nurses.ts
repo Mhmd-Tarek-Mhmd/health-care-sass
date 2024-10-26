@@ -1,5 +1,6 @@
 import {
   doc,
+  where,
   addDoc,
   getDoc,
   updateDoc,
@@ -8,11 +9,13 @@ import {
   collection,
   DocumentReference,
 } from "firebase/firestore";
+import Store from "@store";
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { removeUser } from "./users";
 import { userTypes } from "@constants";
+import { checkUserTypes } from "@helpers";
 import { PaginatorResponse, Nurse, Doctor } from "@types";
 import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
 
@@ -26,7 +29,25 @@ export const getNurses = async ({
   pageSize,
   pageNumber,
 }: GetNursesArgs): Promise<PaginatorResponse<Nurse>> => {
+  const isDoctor = checkUserTypes([userTypes.DOCTOR]);
+  const filters = [
+    ...(isDoctor
+      ? [
+          where(
+            "doctors",
+            "array-contains",
+            doc(
+              db,
+              DOCTORS_COLLECTION_NAME,
+              Store.auth?.user?.userTypeID as string
+            )
+          ),
+        ]
+      : []),
+  ];
+
   const nurses = await paginator<Nurse>({
+    filters,
     pageSize,
     pageNumber,
     collectionName: COLLECTION_NAME,

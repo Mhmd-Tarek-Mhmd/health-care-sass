@@ -9,7 +9,7 @@ import {
   RemoveNurseArgs,
 } from "@services";
 import dayjs from "dayjs";
-import { confirm } from "@helpers";
+import { checkUserTypes, confirm } from "@helpers";
 import { AnyObject, Column, PaginatorResponse, Nurse } from "@types";
 import { datTimeFormat, paginationInitState, userTypes } from "@constants";
 
@@ -74,19 +74,19 @@ const Nurses = () => {
       },
       {
         name: t("nurses-list.doctors-cell-label"),
+        omit: checkUserTypes([userTypes.DOCTOR]),
         cell: (row) => row?.doctors?.map((doctor) => doctor.name)?.join(", "),
       },
       {
         name: t("actions"),
+        omit: checkUserTypes([userTypes.DOCTOR]),
         cell: (row) => (
           <Flex columnGap={1}>
             <EditIconButton
               size="sm"
               onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
             />
-            <ShowIfUserType types={[userTypes.ADMIN]}>
-              <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
-            </ShowIfUserType>
+            <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
           </Flex>
         ),
       },
