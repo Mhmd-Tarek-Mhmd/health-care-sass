@@ -6,6 +6,7 @@ import {
   getDocs,
   deleteDoc,
   collection,
+  writeBatch,
 } from "firebase/firestore";
 import { User } from "@types";
 import { db } from "./firebase";
@@ -23,6 +24,33 @@ export const createUser = async ({ ...user }: CreateUserArgs) => {
     isTempPassword: true,
     ...user,
   });
+};
+
+export type ToggleActiveStatusArgs = {
+  id: string;
+  collectionName: string;
+};
+export const toggleActiveStatus = async ({
+  id,
+  collectionName,
+}: ToggleActiveStatusArgs) => {
+  const usersSnapshot = await getDocs(
+    query(collection(db, COLLECTION_NAME), where("userTypeID", "==", id))
+  );
+  const userDoc = usersSnapshot?.docs?.[0];
+
+  if (userDoc?.id) {
+    const batch = writeBatch(db);
+    batch.update(doc(db, COLLECTION_NAME, userDoc.id), {
+      isActive: !userDoc.data()?.isActive,
+    });
+    batch.update(doc(db, collectionName, id), {
+      isActive: !userDoc.data()?.isActive,
+    });
+    await batch.commit();
+  } else {
+    throw new Error("toast.default-error-desc");
+  }
 };
 
 type RemoveUserArgs = {

@@ -11,8 +11,8 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
-import { removeUser } from "./users";
 import { userTypes } from "@constants";
+import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Hospital, Plan } from "@types";
 import { COLLECTION_NAME as PLANS_COLLECTION_NAME } from "./plans";
 
@@ -67,6 +67,7 @@ export const saveHospital = async ({
   );
   const newDoc = await addDoc(collection(db, COLLECTION_NAME), {
     ...hospital,
+    isActive: true,
     plan: planDoc.ref,
     createdAt: Timestamp.now(),
   });
@@ -104,6 +105,14 @@ export const updateHospital = async ({
     updatedAt: Timestamp.now(),
   });
 };
+
+export type ToggleHospitalStatusArgs = {
+  id: string;
+};
+export const toggleHospitalStatus = async ({ id }: ToggleHospitalStatusArgs) => {
+  await toggleActiveStatus({ id, collectionName: COLLECTION_NAME });
+};
+
 
 export type RemoveHospitalArgs = {
   id: string;

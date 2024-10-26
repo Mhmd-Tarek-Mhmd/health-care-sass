@@ -7,17 +7,22 @@ import {
   removeDoctor,
   GetDoctorsArgs,
   RemoveDoctorArgs,
+  toggleDoctorStatus,
+  ToggleDoctorStatusArgs,
 } from "@services";
 import dayjs from "dayjs";
 import { confirm } from "@helpers";
-import { datTimeFormat, paginationInitState } from "@constants";
+import { ShowIfUserType } from "@hoc";
 import { AnyObject, Column, PaginatorResponse, Doctor } from "@types";
+import { datTimeFormat, paginationInitState, userTypes } from "@constants";
 
 import {
   DataTable,
   DoctorModal,
   EditIconButton,
   RemoveIconButton,
+  ActivateIconButton,
+  InactivateIconButton,
 } from "@components";
 import { BiPlus } from "react-icons/bi";
 import { Button, Flex, Link } from "@chakra-ui/react";
@@ -45,11 +50,23 @@ const Doctors = () => {
     },
   });
   const [remove] = useServiceRequest<RemoveDoctorArgs, void>(removeDoctor);
+  const [toggleStatus] = useServiceRequest<ToggleDoctorStatusArgs, void>(
+    toggleDoctorStatus
+  );
 
   // Constants
   const columns = React.useMemo<Column<Doctor>[]>(
     () => [
       { name: t("lists.name-cell-label"), selector: "name" },
+      {
+        name: t("lists.status-cell-label"),
+        cell: (row) =>
+          t(
+            row?.isActive
+              ? "lists.active-status-cell-label"
+              : "lists.inactive-status-cell-label"
+          ),
+      },
       {
         name: t("lists.createdAt-cell-label"),
         cell: (row) => dayjs.unix(row.createdAt.seconds).format(datTimeFormat),
@@ -81,11 +98,24 @@ const Doctors = () => {
         name: t("actions"),
         cell: (row) => (
           <Flex columnGap={1}>
-            <EditIconButton
-              size="sm"
-              onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
-            />
-            <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
+            <ShowIfUserType types={[userTypes.ADMIN]}>
+              {row?.isActive ? (
+                <InactivateIconButton
+                  size="sm"
+                  onClick={() => handleToggleStatus(row)}
+                />
+              ) : (
+                <ActivateIconButton
+                  size="sm"
+                  onClick={() => handleToggleStatus(row)}
+                />
+              )}
+              <EditIconButton
+                size="sm"
+                onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
+              />
+              <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
+            </ShowIfUserType>
           </Flex>
         ),
       },
@@ -105,6 +135,25 @@ const Doctors = () => {
 
   const handleOpenModal = (data: AnyObject = {}) => {
     setModalState({ isOpen: true, data });
+  };
+
+  const handleToggleStatus = (doctor: Doctor) => {
+    confirm({ showLoaderOnConfirm: true }).then(({ isConfirmed, cleanup }) => {
+      if (isConfirmed) {
+        toggleStatus({
+          args: { id: doctor.id },
+          onSuccess() {
+            getData({
+              args: {
+                pageNumber: pagination.page,
+                pageSize: pagination.perPage,
+              },
+            });
+            cleanup();
+          },
+        });
+      }
+    });
   };
 
   const handleDelete = (doctor: Doctor) => {

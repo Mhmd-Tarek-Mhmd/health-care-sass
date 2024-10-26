@@ -13,8 +13,8 @@ import {
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
-import { removeUser } from "./users";
 import { userTypes } from "@constants";
+import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Doctor, Patient } from "@types";
 import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
 
@@ -128,6 +128,13 @@ export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
       throw new Error(error.message);
     }
   }
+};
+
+export type ToggleDoctorStatusArgs = {
+  id: string;
+};
+export const toggleDoctorStatus = async ({ id }: ToggleDoctorStatusArgs) => {
+  await toggleActiveStatus({ id, collectionName: COLLECTION_NAME });
 };
 
 export type RemoveDoctorArgs = {

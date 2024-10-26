@@ -13,9 +13,9 @@ import Store from "@store";
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
-import { removeUser } from "./users";
 import { userTypes } from "@constants";
 import { checkUserTypes } from "@helpers";
+import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Nurse, Doctor } from "@types";
 import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
 
@@ -109,15 +109,16 @@ export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
     });
   } else {
     const nurseRef = collection(db, COLLECTION_NAME);
-    await addDoc(nurseRef, {
+    const nursesDoc = await addDoc(nurseRef, {
       ...nurseData,
+      isActive: true,
       createdAt: Timestamp.now(),
     });
 
     try {
       await logUp({
-        type: userTypes.DOCTOR,
-        userTypeID: nurseRef.id,
+        type: userTypes.NURSE,
+        userTypeID: nursesDoc.id,
         password: "123456",
         email: nurse?.email,
         phone: nurse?.phone,
@@ -128,6 +129,13 @@ export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
       throw new Error(error.message);
     }
   }
+};
+
+export type ToggleNurseStatusArgs = {
+  id: string;
+};
+export const toggleNurseStatus = async ({ id }: ToggleNurseStatusArgs) => {
+  await toggleActiveStatus({ id, collectionName: COLLECTION_NAME });
 };
 
 export type RemoveNurseArgs = {

@@ -7,6 +7,8 @@ import {
   removeNurse,
   GetNursesArgs,
   RemoveNurseArgs,
+  toggleNurseStatus,
+  ToggleNurseStatusArgs,
 } from "@services";
 import dayjs from "dayjs";
 import { checkUserTypes, confirm } from "@helpers";
@@ -18,6 +20,8 @@ import {
   NurseModal,
   EditIconButton,
   RemoveIconButton,
+  ActivateIconButton,
+  InactivateIconButton,
 } from "@components";
 import { ShowIfUserType } from "@hoc";
 import { BiPlus } from "react-icons/bi";
@@ -46,11 +50,23 @@ const Nurses = () => {
     },
   });
   const [remove] = useServiceRequest<RemoveNurseArgs, void>(removeNurse);
+  const [toggleStatus] = useServiceRequest<ToggleNurseStatusArgs, void>(
+    toggleNurseStatus
+  );
 
   // Constants
   const columns = React.useMemo<Column<Nurse>[]>(
     () => [
       { name: t("lists.name-cell-label"), selector: "name" },
+      {
+        name: t("lists.status-cell-label"),
+        cell: (row) =>
+          t(
+            row?.isActive
+              ? "lists.active-status-cell-label"
+              : "lists.inactive-status-cell-label"
+          ),
+      },
       {
         name: t("lists.createdAt-cell-label"),
         cell: (row) => dayjs.unix(row.createdAt.seconds).format(datTimeFormat),
@@ -82,6 +98,19 @@ const Nurses = () => {
         omit: checkUserTypes([userTypes.DOCTOR]),
         cell: (row) => (
           <Flex columnGap={1}>
+            <ShowIfUserType types={[userTypes.ADMIN]}>
+              {row?.isActive ? (
+                <InactivateIconButton
+                  size="sm"
+                  onClick={() => handleToggleStatus(row)}
+                />
+              ) : (
+                <ActivateIconButton
+                  size="sm"
+                  onClick={() => handleToggleStatus(row)}
+                />
+              )}
+            </ShowIfUserType>
             <EditIconButton
               size="sm"
               onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
@@ -106,6 +135,25 @@ const Nurses = () => {
 
   const handleOpenModal = (data: AnyObject = {}) => {
     setModalState({ isOpen: true, data });
+  };
+
+  const handleToggleStatus = (nurse: Nurse) => {
+    confirm({ showLoaderOnConfirm: true }).then(({ isConfirmed, cleanup }) => {
+      if (isConfirmed) {
+        toggleStatus({
+          args: { id: nurse.id },
+          onSuccess() {
+            getData({
+              args: {
+                pageNumber: pagination.page,
+                pageSize: pagination.perPage,
+              },
+            });
+            cleanup();
+          },
+        });
+      }
+    });
   };
 
   const handleDelete = (nurse: Nurse) => {

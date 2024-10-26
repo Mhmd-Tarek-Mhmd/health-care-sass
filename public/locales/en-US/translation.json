@@ -62,9 +62,7 @@
     "createdAt-cell-label": "Created at",
     "updatedAt-cell-label": "Updated at",
     "createdBy-cell-label": "Created by",
-    "updatedBy-cell-label": "Updated by",
-    "activate-label": "Activate",
-    "inactivate-label": "Inactivate"
+    "updatedBy-cell-label": "Updated by"
   },
   "forms": {
     "name-label": "Name",
@@ -114,7 +112,9 @@
   },
   "icon-button": {
     "edit-button-default": "Edit",
-    "remove-button-default": "Remove"
+    "remove-button-default": "Remove",
+    "activate-button-default": "Activate",
+    "inactivate-button-default": "Inactivate"
   },
   "form-modal": {
     "save-label-default": "Save",

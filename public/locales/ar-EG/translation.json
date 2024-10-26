@@ -63,9 +63,7 @@
     "createdAt-cell-label": "تم إنشاؤها في",
     "updatedAt-cell-label": "تم تعديلها في",
     "createdBy-cell-label": "تم إنشاؤها بواسطة",
-    "updatedBy-cell-label": "تم تعديلها بواسطة",
-    "inactivate-label": "تعطيل",
-    "activate-label": "تنشيط"
+    "updatedBy-cell-label": "تم تعديلها بواسطة"
   },
   "forms": {
     "name-label": "الاسم",
@@ -115,7 +113,9 @@
   },
   "icon-button": {
     "edit-button-default": "تعديل",
-    "remove-button-default": "حذف"
+    "remove-button-default": "حذف",
+    "inactivate-button-default": "تعطيل",
+    "activate-button-default": "تنشيط"
   },
   "form-modal": {
     "save-label-default": "حفظ",

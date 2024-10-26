@@ -7,6 +7,8 @@ import {
   removeHospital,
   GetHospitalsArgs,
   RemoveHospitalArgs,
+  toggleHospitalStatus,
+  ToggleHospitalStatusArgs
 } from "@services";
 import dayjs from "dayjs";
 import { confirm } from "@helpers";
@@ -18,6 +20,8 @@ import {
   HospitalModal,
   EditIconButton,
   RemoveIconButton,
+  ActivateIconButton,
+  InactivateIconButton,
 } from "@components";
 import { BiPlus } from "react-icons/bi";
 import { Button, Flex, Link } from "@chakra-ui/react";
@@ -45,11 +49,23 @@ const Hospitals = () => {
     },
   });
   const [remove] = useServiceRequest<RemoveHospitalArgs, void>(removeHospital);
+    const [toggleStatus] = useServiceRequest<ToggleHospitalStatusArgs, void>(
+    toggleHospitalStatus
+  );
 
   // Constants
   const columns = React.useMemo<Column<Hospital>[]>(
     () => [
       { name: t("lists.name-cell-label"), selector: "name" },
+      {
+        name: t("lists.status-cell-label"),
+        cell: (row) =>
+          t(
+            row?.isActive
+              ? "lists.active-status-cell-label"
+              : "lists.inactive-status-cell-label"
+          ),
+      },
       {
         name: t("lists.createdAt-cell-label"),
         cell: (row) => dayjs.unix(row.createdAt.seconds).format(datTimeFormat),
@@ -77,6 +93,19 @@ const Hospitals = () => {
         name: t("actions"),
         cell: (row) => (
           <Flex columnGap={1}>
+            
+              {row?.isActive ? (
+                <InactivateIconButton
+                  size="sm"
+                  onClick={() => handleToggleStatus(row)}
+                />
+              ) : (
+                <ActivateIconButton
+                  size="sm"
+                  onClick={() => handleToggleStatus(row)}
+                />
+              )}
+            
             <EditIconButton
               size="sm"
               onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
@@ -102,6 +131,26 @@ const Hospitals = () => {
   const handleOpenModal = (data: AnyObject = {}) => {
     setModalState({ isOpen: true, data });
   };
+
+  const handleToggleStatus = (hospital: Hospital) => {
+    confirm({ showLoaderOnConfirm: true }).then(({ isConfirmed, cleanup }) => {
+      if (isConfirmed) {
+        toggleStatus({
+          args: { id: hospital.id },
+          onSuccess() {
+            getData({
+              args: {
+                pageNumber: pagination.page,
+                pageSize: pagination.perPage,
+              },
+            });
+            cleanup();
+          },
+        });
+      }
+    });
+  };
+
 
   const handleDelete = (hospital: Hospital) => {
     confirm({ showLoaderOnConfirm: true }).then(({ isConfirmed, cleanup }) => {

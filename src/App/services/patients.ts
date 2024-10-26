@@ -181,7 +181,11 @@ export const upsertPatient = async (
     batch.update(patientDoc, { ...patientData, updatedAt: Timestamp.now() });
     await batch.commit();
   } else {
-    batch.set(patientDoc, { ...patientData, createdAt: Timestamp.now() });
+    batch.set(patientDoc, {
+      ...patientData,
+      isActive: true,
+      createdAt: Timestamp.now(),
+    });
     await batch.commit();
     try {
       await logUp({
@@ -207,6 +211,7 @@ export const quickPatientLogup = async ({
 }: QuickPatientLogupArgs) => {
   const patientDoc = await addDoc(collection(db, COLLECTION_NAME), {
     ...patient,
+    isActive: true,
     createdAt: Timestamp.now(),
   });
   if (patientDoc?.id) {
