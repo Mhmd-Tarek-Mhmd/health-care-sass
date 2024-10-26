@@ -4,6 +4,7 @@ import Rooms from "./Rooms";
 import Nurses from "./Nurses";
 import Doctors from "./Doctors";
 import Patients from "./Patients";
+import Medicines from "./Medicines";
 
 export default {
   Root,
@@ -12,4 +13,5 @@ export default {
   Nurses,
   Doctors,
   Patients,
+  Medicines,
 };

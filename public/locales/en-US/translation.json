@@ -57,7 +57,9 @@
     "age-cell-label": "Age",
     "gender-cell-label": "Gender",
     "createdAt-cell-label": "Created at",
-    "updatedAt-cell-label": "Updated at"
+    "updatedAt-cell-label": "Updated at",
+    "createdBy-cell-label": "Created by",
+    "updatedBy-cell-label": "Updated by"
   },
   "forms": {
     "name-label": "Name",
@@ -257,5 +259,13 @@
     "room-placeholder": "Enter patient's room",
     "bed-label": "Bed",
     "bed-placeholder": "Enter patient's bed"
+  },
+
+  "medicines-list": {
+    "add-medicine": "Add Medicine"
+  },
+  "medicine-form": {
+    "create-title": "Add Medicine",
+    "edit-title": "Edit Medicine"
   }
 }

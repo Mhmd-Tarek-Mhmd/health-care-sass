@@ -58,7 +58,9 @@
     "age-cell-label": "السن",
     "gender-cell-label": "النوع",
     "createdAt-cell-label": "تم إنشاؤها في",
-    "updatedAt-cell-label": "تم تعديلها في"
+    "updatedAt-cell-label": "تم تعديلها في",
+    "createdBy-cell-label": "تم إنشاؤها بواسطة",
+    "updatedBy-cell-label": "تم تعديلها بواسطة"
   },
   "forms": {
     "name-label": "الاسم",
@@ -258,5 +260,13 @@
     "room-placeholder": "أدخل غرفة المريض",
     "bed-label": "السرير",
     "bed-placeholder": "أدخل سرير المريض"
+  },
+
+  "medicines-list": {
+    "add-medicine": "إنشاء دواء"
+  },
+  "medicine-form": {
+    "create-title": "إنشاء دواء",
+    "edit-title": "تعديل دواء"
   }
 }

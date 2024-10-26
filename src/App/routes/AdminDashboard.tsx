@@ -16,6 +16,10 @@ const adminDashboardRoutes: Array<RouteObject> = [
         element: <AdminDashboard.Rooms />,
       },
       {
+        path: "medicines",
+        element: <AdminDashboard.Medicines />,
+      },
+      {
         path: "nurses",
         element: <AdminDashboard.Nurses />,
       },

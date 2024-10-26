@@ -78,6 +78,11 @@ export interface Hospital extends Model {
   plan: Plan;
 }
 
+export interface Medicine extends Model {
+  createdBy?: User;
+  updatedBy?: User;
+}
+
 export interface Bed extends Model {
   width: number;
   height: number;
