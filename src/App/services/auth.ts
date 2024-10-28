@@ -8,6 +8,8 @@ import {
 } from "firebase/auth";
 import { createUser } from "./users";
 import { db, auth } from "./firebase";
+import { userTypes } from "@constants";
+import { getHospital } from "./hospitals";
 import { Auth, User, UserType } from "@types";
 import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 
@@ -38,9 +40,15 @@ export const login = async ({ email, password }: LogInArgs): Promise<Auth> => {
   const userData = userDoc?.data();
 
   if (userData) {
-    if (userData.isActive) {
+    const isPatient = userData.type === userTypes.PATIENT;
+    const hospital = await getHospital({ id: userData.hospitalID });
+    const isHospitalActive = isPatient || hospital?.isActive;
+    if (isHospitalActive && userData.isActive) {
       const token = await res.user.getIdToken();
-      const user = userData as User;
+      const user = {
+        ...userData,
+        ...(isPatient ? { hospitals: [hospital] } : { hospital }),
+      } as User;
       return { token, user };
     } else {
       throw new Error("toast.auth/inactive");

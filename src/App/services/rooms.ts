@@ -1,5 +1,6 @@
 import {
   doc,
+  where,
   getDoc,
   addDoc,
   updateDoc,
@@ -8,6 +9,7 @@ import {
   collection,
   DocumentReference,
 } from "firebase/firestore";
+import Store from "@store";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { Bed, PaginatorResponse, Room } from "@types";
@@ -22,7 +24,10 @@ export const getRooms = async ({
   pageSize,
   pageNumber,
 }: GetRoomsArgs): Promise<PaginatorResponse<Room>> => {
+  const hospitalID = Store.auth?.user?.hospital.id;
+  const filters = [where("hospitalID", "==", hospitalID)];
   const rooms = await paginator<Room>({
+    filters,
     pageSize,
     pageNumber,
     collectionName: COLLECTION_NAME,
@@ -71,17 +76,17 @@ export interface UpsertRoomArgs extends Omit<Room, "beds"> {
 }
 
 export const saveRoom = async (room: UpsertRoomArgs): Promise<void> => {
-  let bedsRefs = [] as DocumentReference[];
+  let beds = [] as DocumentReference[];
   if (room?.beds?.length) {
-    const bedsPromises = room.beds.map(async (bed) => {
-      const doctorDoc = await getDoc(bed as unknown as DocumentReference);
-      return doctorDoc?.ref;
-    });
-    bedsRefs = await Promise.all(bedsPromises);
+    const bedsPromises = room.beds.map((bed) => doc(db, COLLECTION_NAME, bed));
+    beds = await Promise.all(bedsPromises);
   }
+
+  const hospitalID = Store.auth?.user?.hospital.id;
   await addDoc(collection(db, COLLECTION_NAME), {
     ...room,
-    beds: bedsRefs,
+    beds,
+    hospitalID,
     createdAt: Timestamp.now(),
   });
 };
@@ -90,17 +95,17 @@ export const updateRoom = async ({
   id,
   ...room
 }: UpsertRoomArgs): Promise<void> => {
-  let bedsRefs = [] as DocumentReference[];
+  let beds = [] as DocumentReference[];
   if (room?.beds?.length) {
-    const bedsPromises = room.beds.map(async (bed) => {
-      const doctorDoc = await getDoc(bed as unknown as DocumentReference);
-      return doctorDoc?.ref;
-    });
-    bedsRefs = await Promise.all(bedsPromises);
+    const bedsPromises = room.beds.map((bed) => doc(db, COLLECTION_NAME, bed));
+    beds = await Promise.all(bedsPromises);
   }
+
+  const hospitalID = Store.auth?.user?.hospital.id;
   await updateDoc(doc(db, COLLECTION_NAME, id), {
     ...room,
-    beds: bedsRefs,
+    beds,
+    hospitalID,
     updatedAt: Timestamp.now(),
   });
 };

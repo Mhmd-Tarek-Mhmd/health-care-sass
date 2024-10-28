@@ -22,6 +22,7 @@ import paginator from "./paginator";
 import { removeUser } from "./users";
 import { userTypes } from "@constants";
 import { logUp, LogUpArgs } from "./auth";
+import { getHospital } from "./hospitals";
 import { buildOptionModel, checkUserTypes } from "@helpers";
 import { PaginatorResponse, Patient, Doctor, Room, Bed } from "@types";
 import { getBeds, COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
@@ -37,8 +38,10 @@ export const getPatients = async ({
   pageSize,
   pageNumber,
 }: GetPatientsArgs): Promise<PaginatorResponse<Patient>> => {
+  const hospitalID = Store.auth?.user?.hospital.id as string;
   const isDoctor = checkUserTypes([userTypes.DOCTOR]);
   const filters = [
+    where("hospitals", "array-contains", hospitalID),
     ...(isDoctor
       ? [
           where(
@@ -82,7 +85,9 @@ export const getPatients = async ({
       const bedDoc = await getDoc(patient.bed as unknown as DocumentReference);
       bed = { id: bedDoc.id, ...bedDoc?.data() } as Bed;
     }
-    return { ...patient, room, bed, doctors };
+
+    const hospital = await getHospital({ id: hospitalID });
+    return { ...patient, room, bed, doctors, hospitals: [hospital] };
   });
 
   const items = await Promise.all(patientsPromises);
@@ -175,7 +180,14 @@ export const upsertPatient = async (
     bed = doc(db, BEDS_COLLECTION_NAME, patient.bed);
   }
 
-  const patientData = { ...patient, room, bed, doctors };
+  const hospitalID = Store.auth?.user?.hospital.id;
+  const patientData = {
+    ...patient,
+    room,
+    bed,
+    doctors,
+    hospitals: [hospitalID],
+  };
 
   if (isEdit) {
     batch.update(patientDoc, { ...patientData, updatedAt: Timestamp.now() });

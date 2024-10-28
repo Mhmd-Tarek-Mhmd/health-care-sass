@@ -1,5 +1,6 @@
 import {
   doc,
+  where,
   getDoc,
   getDocs,
   deleteDoc,
@@ -10,10 +11,12 @@ import {
   arrayRemove,
   DocumentReference,
 } from "firebase/firestore";
+import Store from "@store";
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { userTypes } from "@constants";
+import { getHospital } from "./hospitals";
 import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Doctor, Patient } from "@types";
 import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
@@ -28,7 +31,10 @@ export const getDoctors = async ({
   pageSize,
   pageNumber,
 }: GetDoctorsArgs): Promise<PaginatorResponse<Doctor>> => {
+  const hospitalID = Store.auth?.user?.hospital.id as string;
+  const filters = [where("hospitalID", "==", hospitalID)];
   const doctors = await paginator<Doctor>({
+    filters,
     pageSize,
     pageNumber,
     collectionName: COLLECTION_NAME,
@@ -42,7 +48,8 @@ export const getDoctors = async ({
     });
 
     const patients = await Promise.all(patientsPromises);
-    return { ...doctor, patients };
+    const hospital = await getHospital({ id: hospitalID });
+    return { ...doctor, patients, hospital };
   });
 
   const items = await Promise.all(doctorsPromises);
@@ -94,7 +101,8 @@ export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
     });
   }
 
-  const doctorData = { ...doctor, patients };
+  const hospitalID = Store.auth?.user?.hospital.id;
+  const doctorData = { ...doctor, patients, hospitalID };
 
   if (isEdit) {
     batch.update(doctorDoc, {

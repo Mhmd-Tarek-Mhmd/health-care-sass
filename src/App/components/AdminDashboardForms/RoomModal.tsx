@@ -26,7 +26,7 @@ type Inputs = {
   floor: number;
   width: number;
   length: number;
-  beds: string[];
+  beds?: string[];
   details: string;
 };
 
@@ -83,7 +83,7 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
         onSuccess(response) {
           reset({
             ...response,
-            beds: response?.beds[0].id,
+            beds: response?.beds?.[0]?.id || null,
             // beds: response?.beds.map((p) => p.id),
           });
         },
@@ -102,7 +102,7 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
         ...(data?.id && { id: data?.id }),
         width: +args.width,
         length: +args.length,
-        beds: [args.beds],
+        beds: args?.beds ? [args.beds] : [],
       },
       onSuccess() {
         onClose();
@@ -161,8 +161,7 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
         options={options?.beds || []}
         label={t("room-form.beds-label")}
         placeholder={t("room-form.beds-placeholder")}
-        error={errors.beds?.message as "required"}
-        {...register("beds", { required: "required" })}
+        {...register("beds")}
       />
       <FormTextarea
         label={t("room-form.details-label")}

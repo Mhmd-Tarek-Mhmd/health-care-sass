@@ -48,12 +48,15 @@ export type UserType = (typeof userTypes)[keyof typeof userTypes];
 export interface User extends Model {
   type: UserType;
   userTypeID: string;
+  age: string;
+  gender: string;
   email: string;
   phone?: string;
   photoURL?: string;
   isTempPassword: boolean;
   isActive: boolean;
-};
+  hospital: Hospital;
+}
 
 export type Auth = {
   token: string | null;
@@ -70,7 +73,7 @@ export interface Plan extends Model {
   isInfiniteUsers: boolean;
 }
 
-export interface Hospital extends User {
+export interface Hospital extends Omit<User, "age" | "gender" | "hospital"> {
   plan: Plan;
 }
 
@@ -95,22 +98,17 @@ export interface Room extends Model {
 }
 
 export interface Doctor extends User {
-  age: string;
-  gender: string;
   specialty: string;
   patients: [] | Patient[];
 }
 
 export interface Nurse extends User {
-  age: string;
-  gender: string;
   doctors: [] | Doctor[];
 }
 
-export interface Patient extends User {
-  age: string;
-  gender: string;
+export interface Patient extends Omit<User, "hospital"> {
   doctors: [] | Doctor[];
   room?: Room;
   bed?: Bed;
+  hospitals: [] | Hospital[];
 }

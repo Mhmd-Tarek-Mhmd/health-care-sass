@@ -28,7 +28,7 @@ async function paginator<T>({
 }: Args): Promise<PaginatorResponse<T>> {
   const coll = collection(db, collectionName);
   const snapshot = await getCountFromServer(coll);
-  const totalCount = snapshot.data().count;
+  let totalCount = snapshot.data().count;
   let items: T[] = [];
 
   if (totalCount) {
@@ -48,6 +48,7 @@ async function paginator<T>({
 
     const snapshot = await getDocs(q);
     items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as T[];
+    totalCount = items.length;
   }
 
   return {

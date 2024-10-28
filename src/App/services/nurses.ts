@@ -15,6 +15,7 @@ import { db } from "./firebase";
 import paginator from "./paginator";
 import { userTypes } from "@constants";
 import { checkUserTypes } from "@helpers";
+import { getHospital } from "./hospitals";
 import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Nurse, Doctor } from "@types";
 import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
@@ -29,8 +30,10 @@ export const getNurses = async ({
   pageSize,
   pageNumber,
 }: GetNursesArgs): Promise<PaginatorResponse<Nurse>> => {
+  const hospitalID = Store.auth?.user?.hospital.id as string;
   const isDoctor = checkUserTypes([userTypes.DOCTOR]);
   const filters = [
+    where("hospitalID", "==", hospitalID),
     ...(isDoctor
       ? [
           where(
@@ -58,8 +61,9 @@ export const getNurses = async ({
       return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
     });
 
+    const hospital = await getHospital({ id: hospitalID });
     const doctors = await Promise.all(doctorsPromises);
-    return { ...nurse, doctors };
+    return { ...nurse, doctors, hospital };
   });
 
   const items = await Promise.all(nursesPromises);
@@ -100,7 +104,8 @@ export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
     );
   }
 
-  const nurseData = { ...nurse, doctors };
+  const hospitalID = Store.auth?.user?.hospital.id;
+  const nurseData = { ...nurse, doctors, hospitalID };
 
   if (isEdit) {
     await updateDoc(doc(db, COLLECTION_NAME, nurse?.id), {

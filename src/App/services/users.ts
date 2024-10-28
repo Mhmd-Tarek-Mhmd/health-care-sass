@@ -8,20 +8,30 @@ import {
   collection,
   writeBatch,
 } from "firebase/firestore";
+import Store from "@store";
 import { User } from "@types";
 import { db } from "./firebase";
+import { userTypes } from "@constants";
 
 export const COLLECTION_NAME = "users";
 
 interface CreateUserArgs
-  extends Omit<User, "userTypeID" | "isTempPassword" | "isActive"> {
+  extends Omit<
+    User,
+    "age" | "gender" | "userTypeID" | "isTempPassword" | "isActive" | "hospital"
+  > {
+  age?: string;
+  gender?: string;
   userTypeID?: string;
 }
-export const createUser = async ({ ...user }: CreateUserArgs) => {
+export const createUser = async (user: CreateUserArgs) => {
+  const isPatient = user?.type === userTypes.PATIENT;
+  const hospitalID = Store.auth?.user?.hospital.id;
   await setDoc(doc(db, COLLECTION_NAME, user.id), {
     photoURL: "",
     isActive: true,
     isTempPassword: true,
+    ...(isPatient ? { hospitals: [hospitalID] } : { hospitalID }),
     ...user,
   });
 };

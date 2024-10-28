@@ -1,5 +1,6 @@
 import {
   doc,
+  where,
   addDoc,
   getDoc,
   updateDoc,
@@ -24,7 +25,12 @@ export const getMedicines = async ({
   pageSize,
   pageNumber,
 }: GetMedicinesArgs): Promise<PaginatorResponse<Medicine>> => {
+  const hospitalID = Store.auth?.user?.hospital.id;
+  const filters = [
+    where("hospitalID", "==", hospitalID),
+  ];
   const medicines = await paginator<Medicine>({
+    filters,
     pageSize,
     pageNumber,
     collectionName: COLLECTION_NAME,
@@ -85,6 +91,7 @@ export const upsertMedicine = async (
   medicine: UpsertMedicineArgs
 ): Promise<void> => {
   const isEdit = Boolean(medicine?.id);
+  const hospitalID = Store.auth?.user?.hospital.id;
   const userRef = doc(
     db,
     USERS_COLLECTION_NAME,
@@ -93,6 +100,7 @@ export const upsertMedicine = async (
 
   if (isEdit) {
     await updateDoc(doc(db, COLLECTION_NAME, medicine?.id), {
+      hospitalID,
       name: medicine.name,
       updatedBy: userRef,
       updatedAt: Timestamp.now(),
@@ -100,6 +108,7 @@ export const upsertMedicine = async (
   } else {
     const medicineRef = collection(db, COLLECTION_NAME);
     await addDoc(medicineRef, {
+      hospitalID,
       name: medicine.name,
       createdBy: userRef,
       createdAt: Timestamp.now(),
