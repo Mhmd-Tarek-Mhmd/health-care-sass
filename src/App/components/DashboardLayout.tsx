@@ -147,6 +147,8 @@ const SidebarContent = ({ onClose, links, isMobile }: SidebarProps) => {
 interface NavItemProps extends LinkItemProps {}
 
 const NavItem = ({ icon, to, label }: NavItemProps) => {
+  const { t } = useTranslation();
+
   return (
     <Link
       to={to}
@@ -169,7 +171,7 @@ const NavItem = ({ icon, to, label }: NavItemProps) => {
         _hover={{ bg: "teal.600" }}
       >
         <Icon as={icon} fontSize="16" _groupHover={{ color: "white" }} />
-        {label}
+        {t(label)}
       </Flex>
     </Link>
   );
@@ -252,7 +254,9 @@ const Header = ({ onOpen }: HeaderProps) => {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              <MenuItem onClick={onLogout}>{t("actions.logout-btn-label")}</MenuItem>
+              <MenuItem onClick={onLogout}>
+                {t("actions.logout-btn-label")}
+              </MenuItem>
             </MenuList>
           </Menu>
         </Flex>

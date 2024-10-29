@@ -7,12 +7,12 @@ import { MdSensorDoor } from "react-icons/md";
 import { FaUserDoctor, FaHospitalUser, FaUserNurse } from "react-icons/fa6";
 
 const Links: Array<LinkItemProps> = [
-  { label: "Beds", icon: IoIosBed, to: "beds" },
-  { label: "Rooms", icon: MdSensorDoor, to: "rooms" },
-  { label: "Medicines", icon: GiMedicines, to: "medicines" },
-  { label: "Doctors", icon: FaUserDoctor, to: "doctors" },
-  { label: "Nurses", icon: FaUserNurse, to: "nurses" },
-  { label: "Patients", icon: FaHospitalUser, to: "patients" },
+  { label: "tabs.beds", icon: IoIosBed, to: "beds" },
+  { label: "tabs.rooms", icon: MdSensorDoor, to: "rooms" },
+  { label: "tabs.medicines", icon: GiMedicines, to: "medicines" },
+  { label: "tabs.doctors", icon: FaUserDoctor, to: "doctors" },
+  { label: "tabs.nurses", icon: FaUserNurse, to: "nurses" },
+  { label: "tabs.patients", icon: FaHospitalUser, to: "patients" },
 ];
 
 const AdminDashboard = () => {

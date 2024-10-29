@@ -6,9 +6,9 @@ import { FaRegHospital } from "react-icons/fa";
 import { IoDocumentsOutline } from "react-icons/io5";
 
 const Links: Array<LinkItemProps> = [
-  { label: "Plans", icon: IoDocumentsOutline, to: "plans" },
-  { label: "Hospitals", icon: FaRegHospital, to: "hospitals" },
-  { label: "Payments", icon: MdPayment, to: "payments" },
+  { label: "tabs.plans", icon: IoDocumentsOutline, to: "plans" },
+  { label: "tabs.hospitals", icon: FaRegHospital, to: "hospitals" },
+  { label: "tabs.payments", icon: MdPayment, to: "payments" },
 ];
 
 const SuperDashboardRoot = () => {

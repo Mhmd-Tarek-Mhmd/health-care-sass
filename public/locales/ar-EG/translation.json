@@ -18,8 +18,8 @@
       "primary-label": "ميعاد",
       "secondary-label": "جدولة مكالمة"
     },
-    
-  "copyright-text": "© 2024 HealthCare كل الحقوق محفوظة"
+
+    "copyright-text": "© 2024 HealthCare كل الحقوق محفوظة"
   },
   "notFoundPage": {
     "title": "هذه الصفحة غير موجودة",
@@ -52,6 +52,18 @@
     "select-page": "اختر صفحة {{ num }}",
     "per-page-label": "صفوف لكل صفحة",
     "per-page-select-label": "اختر عدد الصفوف لكل صفحة"
+  },
+  "tabs": {
+    "beds": "الأسرة",
+    "rooms": "الغرف",
+    "doctors": "الأطباء",
+    "nurses": "الممرضات",
+    "patients": "المرضى",
+    "medicines": "الأدوية",
+    "settings": "الإعدادات",
+    "plans": "نظم الإشتراك",
+    "payments": "المدفوعات",
+    "hospitals": "المستشفيات"
   },
   "lists": {
     "actions-cell-label": "الإجراءات",
@@ -142,7 +154,6 @@
   "headings": {
     "reset-password-heading": "أدخل كلمة المرور الجديدة"
   },
-
 
   "plans-list": {
     "add-plan": "إضافة نظام إشتراك",

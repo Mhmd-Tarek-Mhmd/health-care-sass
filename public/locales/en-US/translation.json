@@ -51,6 +51,18 @@
     "per-page-label": "rows per page",
     "per-page-select-label": "select per page count"
   },
+  "tabs": {
+    "beds": "Beds",
+    "plans": "Plans",
+    "rooms": "Rooms",
+    "nurses": "Nurses",
+    "doctors": "Doctors",
+    "payments": "Payments",
+    "settings": "Settings",
+    "patients": "Patients",
+    "medicines": "Medicines",
+    "hospitals": "Hospitals"
+  },
   "lists": {
     "actions-cell-label": "actions",
     "name-cell-label": "Name",

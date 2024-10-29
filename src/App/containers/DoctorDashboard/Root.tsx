@@ -5,9 +5,9 @@ import { DashboardLayout } from "@components";
 import { FaHospitalUser, FaUserNurse } from "react-icons/fa6";
 
 const Links: Array<LinkItemProps> = [
-  { label: "Medicines", icon: GiMedicines, to: "medicines" },
-  { label: "Nurses", icon: FaUserNurse, to: "nurses" },
-  { label: "Patients", icon: FaHospitalUser, to: "patients" },
+  { label: "tabs.medicines", icon: GiMedicines, to: "medicines" },
+  { label: "tabs.nurses", icon: FaUserNurse, to: "nurses" },
+  { label: "tabs.patients", icon: FaHospitalUser, to: "patients" },
 ];
 
 const SuperDashboardRoot = () => {
