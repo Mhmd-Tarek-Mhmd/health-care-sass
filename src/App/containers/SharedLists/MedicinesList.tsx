@@ -76,7 +76,7 @@ const Medicines = () => {
             : "",
       },
       {
-        name: t("actions"),
+        name: t("lists.actions-cell-label"),
         cell: (row) => (
           <Flex columnGap={1}>
             <EditIconButton

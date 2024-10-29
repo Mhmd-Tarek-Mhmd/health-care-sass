@@ -86,7 +86,7 @@ const Patients = () => {
         cell: (row) => row?.bed?.name,
       },
       {
-        name: t("actions"),
+        name: t("lists.actions-cell-label"),
         cell: (row) => (
           <Flex columnGap={1}>
             <EditIconButton

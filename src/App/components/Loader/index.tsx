@@ -22,7 +22,7 @@ const Loader = ({ h, size, isLoading, fixed, absolute }: LoaderProps) => {
       aria-live="assertive"
       className={`${styles.loader} ${classes}`.trim()}
     >
-      <VisuallyHidden>{t("loader-label")}</VisuallyHidden>
+      <VisuallyHidden>{t("feedback.loader-label")}</VisuallyHidden>
       <Spinner size={size || "xl"} />
     </Box>
   ) : null;

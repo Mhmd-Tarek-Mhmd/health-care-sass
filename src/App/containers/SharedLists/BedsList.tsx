@@ -75,7 +75,7 @@ const Beds = () => {
         cell: (row) => <ShowMore>{row.details}</ShowMore>,
       },
       {
-        name: t("actions"),
+        name: t("lists.actions-cell-label"),
         omit: !checkUserTypes([userTypes.ADMIN]),
         cell: (row) => (
           <Flex columnGap={1}>

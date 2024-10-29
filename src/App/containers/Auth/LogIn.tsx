@@ -108,7 +108,7 @@ const LogIn = () => {
                 isLoading={isLoading}
                 _hover={{ bg: "blue.500" }}
               >
-                {t("login-btn-label")}
+                {t("actions.login-btn-label")}
               </Button>
             </Stack>
 
@@ -116,7 +116,7 @@ const LogIn = () => {
               <Text align="center">
                 {t("logInPage.no-acc-label")}{" "}
                 <Link to="/logup" as={LinkRouter} color="blue.400">
-                  {t("logup-btn-label")}
+                  {t("actions.logup-btn-label")}
                 </Link>
               </Text>
             </Stack>

@@ -25,7 +25,7 @@ const Footer = () => {
               theme.direction === "rtl" ? "Cairo" : "Caveat",
           }}
         >
-          {t("copyright_text")}
+          {t("landingPage.copyright-text")}
         </Text>
       </Container>
     </Box>

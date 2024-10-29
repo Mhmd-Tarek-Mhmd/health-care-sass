@@ -95,7 +95,7 @@ const Doctors = () => {
           row?.patients?.map((patient) => patient.name)?.join(", "),
       },
       {
-        name: t("actions"),
+        name: t("lists.actions-cell-label"),
         cell: (row) => (
           <Flex columnGap={1}>
             <ShowIfUserType types={[userTypes.ADMIN]}>

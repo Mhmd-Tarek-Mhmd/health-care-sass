@@ -252,7 +252,7 @@ const Header = ({ onOpen }: HeaderProps) => {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              <MenuItem onClick={onLogout}>{t("logout-btn-label")}</MenuItem>
+              <MenuItem onClick={onLogout}>{t("actions.logout-btn-label")}</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

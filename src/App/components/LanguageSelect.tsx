@@ -28,7 +28,7 @@ const LanguageSelect = () => {
       width={100}
       value={i18n.language}
       onChange={handleChange}
-      aria-label={t("language-select-label")}
+      aria-label={t("actions.language-select-label")}
     >
       {lngs.map((lng) => (
         <option key={lng.value} value={lng.value}>

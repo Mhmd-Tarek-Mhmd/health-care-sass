@@ -75,7 +75,7 @@ const Rooms = () => {
         cell: (row) => <ShowMore>{row.details}</ShowMore>,
       },
       {
-        name: t("actions"),
+        name: t("lists.actions-cell-label"),
         cell: (row) => (
           <Flex columnGap={1}>
             <EditIconButton

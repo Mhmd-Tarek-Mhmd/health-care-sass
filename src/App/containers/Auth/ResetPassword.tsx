@@ -59,7 +59,7 @@ const ResetPassword = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <Heading lineHeight={1.1} fontSize={{ base: "2xl", md: "3xl" }}>
-          Enter new password
+          {t("headings.reset-password-heading")}
         </Heading>
 
         <FormInput
@@ -92,7 +92,7 @@ const ResetPassword = () => {
             isLoading={isLoading}
             _hover={{ bg: "blue.500" }}
           >
-            Submit
+            {t("submit-btn-label")}
           </Button>
         </Stack>
       </Stack>

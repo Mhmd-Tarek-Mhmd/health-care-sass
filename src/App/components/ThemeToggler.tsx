@@ -23,7 +23,7 @@ const ThemeToggler = ({ isDarkOnly = true }) => {
     <Wrapper>
       <IconButton
         onClick={toggleColorMode}
-        aria-label={t("theme_toggler_label")}
+        aria-label={t("actions.theme-toggler-label")}
       >
         {colorMode === "light" ? <IoIosMoon /> : <IoIosSunny />}
       </IconButton>

@@ -17,7 +17,9 @@
     "cta": {
       "primary-label": "ميعاد",
       "secondary-label": "جدولة مكالمة"
-    }
+    },
+    
+  "copyright-text": "© 2024 HealthCare كل الحقوق محفوظة"
   },
   "notFoundPage": {
     "title": "هذه الصفحة غير موجودة",
@@ -52,6 +54,7 @@
     "per-page-select-label": "اختر عدد الصفوف لكل صفحة"
   },
   "lists": {
+    "actions-cell-label": "الإجراءات",
     "name-cell-label": "الاسم",
     "email-cell-label": "عنوان البريد الإلكتروني",
     "phone-cell-label": "رقم الهاتف",
@@ -125,15 +128,21 @@
     "more-label": "إظهار المزيد",
     "less-label": "إظهار أقل"
   },
+  "actions": {
+    "logup-btn-label": "قم بالتسجيل",
+    "login-btn-label": "تسجيل الدخول",
+    "logout-btn-label": "تسجيل الخروج",
+    "language-select-label": "اختر لغة",
+    "theme-toggler-label": "تبديل اللون",
+    "submit-btn-label": "إرسال النموذج"
+  },
+  "feedback": {
+    "loader-label": "جار التحميل"
+  },
+  "headings": {
+    "reset-password-heading": "أدخل كلمة المرور الجديدة"
+  },
 
-  "actions": "الإجراءات",
-  "loader-label": "جار التحميل",
-  "logup-btn-label": "قم بالتسجيل",
-  "login-btn-label": "تسجيل الدخول",
-  "logout-btn-label": "تسجيل الخروج",
-  "language-select-label": "اختر لغة",
-  "theme_toggler_label": "تبديل اللون",
-  "copyright_text": "© 2024 HealthCare كل الحقوق محفوظة",
 
   "plans-list": {
     "add-plan": "إضافة نظام إشتراك",

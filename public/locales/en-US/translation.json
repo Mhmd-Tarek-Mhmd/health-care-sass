@@ -16,7 +16,8 @@
     "cta": {
       "primary-label": "Appointment",
       "secondary-label": "Schedule a call"
-    }
+    },
+    "copyright-text": "© 2024 HealthCare All rights reserved"
   },
   "notFoundPage": {
     "title": "Page Not Found",
@@ -51,6 +52,7 @@
     "per-page-select-label": "select per page count"
   },
   "lists": {
+    "actions-cell-label": "actions",
     "name-cell-label": "Name",
     "email-cell-label": "Email address",
     "phone-cell-label": "Phone",
@@ -124,15 +126,20 @@
     "more-label": "Show More",
     "less-label": "Show Less"
   },
-
-  "actions": "actions",
-  "loader-label": "loading",
-  "logup-btn-label": "Logup",
-  "login-btn-label": "Login",
-  "logout-btn-label": "log out",
-  "theme_toggler_label": "Toggle Theme",
-  "language-select-label": "Choose language",
-  "copyright_text": "© 2024 HealthCare All rights reserved",
+  "actions": {
+    "logup-btn-label": "Logup",
+    "login-btn-label": "Login",
+    "logout-btn-label": "log out",
+    "theme-toggler-label": "Toggle Theme",
+    "language-select-label": "Choose language",
+    "submit-btn-label": "Submit"
+  },
+  "feedback": {
+    "loader-label": "loading"
+  },
+  "headings": {
+    "reset-password-heading": "Enter new password"
+  },
 
   "plans-list": {
     "add-plan": "Add Plan",

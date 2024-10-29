@@ -24,7 +24,7 @@ const Nav = () => {
                 variant="link"
                 textTransform="uppercase"
               >
-                {t("login-btn-label")}
+                {t("actions.login-btn-label")}
               </Button>
             </DarkMode>
           </Stack>

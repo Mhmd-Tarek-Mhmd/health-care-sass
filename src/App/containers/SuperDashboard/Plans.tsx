@@ -69,7 +69,7 @@ const Plans = () => {
         cell: (row) => row?.price + " " + row?.currency,
       },
       {
-        name: t("actions"),
+        name: t("lists.actions-cell-label"),
         cell: (row) => (
           <Flex columnGap={1}>
             <EditIconButton
