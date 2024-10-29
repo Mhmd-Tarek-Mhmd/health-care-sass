@@ -40,9 +40,12 @@ export const login = async ({ email, password }: LogInArgs): Promise<Auth> => {
   const userData = userDoc?.data();
 
   if (userData) {
+    const isSuper = userData.type === userTypes.SUPER;
     const isPatient = userData.type === userTypes.PATIENT;
-    const hospital = await getHospital({ id: userData.hospitalID });
-    const isHospitalActive = isPatient || hospital?.isActive;
+    const hospital = isSuper
+      ? undefined
+      : await getHospital({ id: userData.hospitalID });
+    const isHospitalActive = isSuper || isPatient || hospital?.isActive;
     if (isHospitalActive && userData.isActive) {
       const token = await res.user.getIdToken();
       const user = {
