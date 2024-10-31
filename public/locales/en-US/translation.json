@@ -144,13 +144,16 @@
     "logout-btn-label": "log out",
     "theme-toggler-label": "Toggle Theme",
     "language-select-label": "Choose language",
-    "submit-btn-label": "Submit"
+    "submit-btn-label": "Submit",
+    "update-btn-label": "Update",
+    "update-image-btn-label": "Update your profile image"
   },
   "feedback": {
     "loader-label": "loading"
   },
   "headings": {
-    "reset-password-heading": "Enter new password"
+    "reset-password-heading": "Enter new password",
+    "update-password-heading": "Update your password"
   },
 
   "plans-list": {

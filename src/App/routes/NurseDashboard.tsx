@@ -15,6 +15,10 @@ const nurseDashboardRoutes: Array<RouteObject> = [
         path: "patients",
         element: <NurseDashboard.Patients />,
       },
+      {
+        path: "settings",
+        element: <NurseDashboard.Settings />,
+      },
     ],
   },
 ];

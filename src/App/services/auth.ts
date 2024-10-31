@@ -6,11 +6,18 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
+import {
+  ref,
+  uploadBytes,
+  deleteObject,
+  getDownloadURL,
+} from "firebase/storage";
 import { createUser } from "./users";
-import { db, auth } from "./firebase";
 import { userTypes } from "@constants";
 import { getHospital } from "./hospitals";
 import { Auth, User, UserType } from "@types";
+import { db, auth, storage } from "./firebase";
+import { COLLECTION_NAME as USERS_COLLECTION_NAME } from "./users";
 import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 
 export type LogUpArgs = {
@@ -82,5 +89,30 @@ export const resetPassword = async ({ password }: ResetPasswordArgs) => {
   await Promise.all([
     updatePassword(user, password),
     updateDoc(doc(db, "users", user.uid), { isTempPassword: false }),
+  ]);
+};
+
+export type UpdateProfileImageArgs = {
+  image: File;
+};
+export const updateProfileImage = async ({ image }: UpdateProfileImageArgs) => {
+  const user = auth.currentUser as AuthUser;
+  const imageRef = ref(storage, `avatar/${user.uid}`);
+
+  const snapshot = await uploadBytes(imageRef, image);
+  const photoURL = await getDownloadURL(snapshot.ref);
+  if (photoURL) {
+    updateDoc(doc(db, USERS_COLLECTION_NAME, user.uid), { photoURL });
+  }
+
+  return photoURL;
+};
+
+export const clearProfileImage = async () => {
+  const user = auth.currentUser as AuthUser;
+  const imageRef = ref(storage, `avatar/${user.uid}`);
+  await Promise.all([
+    deleteObject(imageRef),
+    updateDoc(doc(db, USERS_COLLECTION_NAME, user.uid), { photoURL: "" }),
   ]);
 };

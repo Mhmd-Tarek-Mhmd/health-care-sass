@@ -146,13 +146,16 @@
     "logout-btn-label": "تسجيل الخروج",
     "language-select-label": "اختر لغة",
     "theme-toggler-label": "تبديل اللون",
-    "submit-btn-label": "إرسال النموذج"
+    "submit-btn-label": "إرسال النموذج",
+    "update-image-btn-label": "تحديث صورة ملفك الشخصي",
+    "update-btn-label": "تحديث"
   },
   "feedback": {
     "loader-label": "جار التحميل"
   },
   "headings": {
-    "reset-password-heading": "أدخل كلمة المرور الجديدة"
+    "reset-password-heading": "أدخل كلمة المرور الجديدة",
+    "update-password-heading": "تحديث كلمة المرور الخاصة بك"
   },
 
   "plans-list": {
