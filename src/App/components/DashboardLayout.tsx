@@ -120,6 +120,7 @@ const SidebarContent = ({ onClose, links, isMobile }: SidebarProps) => {
   return (
     <Box
       as="aside"
+      height="100%"
       transition="3s ease"
       borderInlineStart="1px"
       bg={useColorModeValue("teal.500", "gray.900")}
