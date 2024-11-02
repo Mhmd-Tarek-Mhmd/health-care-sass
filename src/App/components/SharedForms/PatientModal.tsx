@@ -38,6 +38,7 @@ type PatientModalProps = {
 const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
   const { t } = useTranslation();
   const {
+    watch,
     reset,
     register,
     handleSubmit,
@@ -67,10 +68,9 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
             onSuccess(response) {
               reset({
                 ...response,
-                bed: response?.bed?.id || null,
-                room: response?.room?.id || null,
-                doctors: response?.doctors?.[0]?.id || null,
-                // doctors: response?.doctors?.map((p) => p.id),
+                bed: response?.bed?.id || "",
+                room: response?.room?.id || "",
+                doctors: response?.doctors?.map((p) => p.id),
               });
             },
           });
@@ -87,7 +87,6 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        doctors: args?.doctors ? [args?.doctors] : [],
       },
       onSuccess() {
         onClose();
@@ -127,6 +126,7 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
         <FormSelect
           isRequired
           skipOptionsTranslation
+          value={watch("gender")}
           options={["Male", "Female"]}
           label={t("forms.gender-label")}
           placeholder={t("forms.gender-placeholder")}
@@ -153,8 +153,10 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
         {...register("phone", { required: "required" })}
       />
       <FormSelect
+        isMulti
         isRequired
         skipOptionsTranslation
+        value={watch("doctors")}
         options={options?.doctors || []}
         label={t("patient-form.doctors-label")}
         placeholder={t("patient-form.doctors-placeholder")}
@@ -163,6 +165,7 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
       />
       <FormSelect
         isRequired
+        value={watch("room")}
         skipOptionsTranslation
         options={options?.rooms || []}
         label={t("patient-form.room-label")}
@@ -172,6 +175,7 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
       />
       <FormSelect
         isRequired
+        value={watch("bed")}
         skipOptionsTranslation
         options={options?.beds || []}
         label={t("patient-form.bed-label")}

@@ -39,6 +39,7 @@ type RoomModalProps = {
 const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
   const { t } = useTranslation();
   const {
+    watch,
     reset,
     register,
     handleSubmit,
@@ -83,8 +84,7 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
         onSuccess(response) {
           reset({
             ...response,
-            beds: response?.beds?.[0]?.id || null,
-            // beds: response?.beds.map((p) => p.id),
+            beds: response?.beds.map((p) => p.id),
           });
         },
       });
@@ -102,7 +102,6 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
         ...(data?.id && { id: data?.id }),
         width: +args.width,
         length: +args.length,
-        beds: args?.beds ? [args.beds] : [],
       },
       onSuccess() {
         onClose();
@@ -157,6 +156,8 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
         />
       </Flex>
       <FormSelect
+        isMulti
+        value={watch("beds")}
         skipOptionsTranslation
         options={options?.beds || []}
         label={t("room-form.beds-label")}

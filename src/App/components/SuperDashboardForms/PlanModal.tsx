@@ -53,12 +53,13 @@ const PlanModal = ({ data, onClose, refetchList }: PlanModalProps) => {
   /* ↓ State Effects ↓ */
 
   useDidUpdateEffect(() => {
-    getPlanData({
-      args: { id: data?.id },
-      onSuccess(response) {
-        reset(response);
-      },
-    });
+    data?.id &&
+      getPlanData({
+        args: { id: data?.id },
+        onSuccess(response) {
+          reset(response);
+        },
+      });
   }, []);
 
   /* ↓ Helpers ↓ */
@@ -136,6 +137,7 @@ const PlanModal = ({ data, onClose, refetchList }: PlanModalProps) => {
           isRequired
           prefixIcon="dollar"
           options={priceUnits}
+          value={watch("currency")}
           label={t("plan-form.currency-label")}
           placeholder={t("plan-form.currency-placeholder")}
           error={errors.currency?.message as "required"}

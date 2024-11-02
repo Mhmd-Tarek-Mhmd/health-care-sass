@@ -40,6 +40,7 @@ type DoctorModalProps = {
 const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
   const { t } = useTranslation();
   const {
+    watch,
     reset,
     register,
     handleSubmit,
@@ -81,8 +82,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
             onSuccess(response) {
               reset({
                 ...response,
-                patients: response?.patients?.[0]?.id || null,
-                // patients: response?.patients.map((p) => p.id),
+                patients: response?.patients.map((p) => p.id),
               });
             },
           });
@@ -99,7 +99,6 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        patients: args?.patients ? [args?.patients] : [],
       },
       onSuccess() {
         onClose();
@@ -139,6 +138,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
         <FormSelect
           isRequired
           skipOptionsTranslation
+          value={watch("gender")}
           options={options?.genders || []}
           label={t("forms.gender-label")}
           placeholder={t("forms.gender-placeholder")}
@@ -172,8 +172,10 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
         {...register("phone", { required: "required" })}
       />
       <FormSelect
+        isMulti
         isRequired
         skipOptionsTranslation
+        value={watch("patients")}
         options={options?.patients || []}
         label={t("doctor-form.patients-label")}
         placeholder={t("doctor-form.patients-placeholder")}

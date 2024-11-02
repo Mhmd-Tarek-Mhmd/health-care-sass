@@ -49,12 +49,13 @@ const BedModal = ({ data, onClose, refetchList }: BedModalProps) => {
   /* ↓ State Effects ↓ */
 
   useDidUpdateEffect(() => {
-    getBedData({
-      args: { id: data?.id },
-      onSuccess(response) {
-        reset(response);
-      },
-    });
+    data?.id &&
+      getBedData({
+        args: { id: data?.id },
+        onSuccess(response) {
+          reset(response);
+        },
+      });
   }, []);
 
   /* ↓ Helpers ↓ */

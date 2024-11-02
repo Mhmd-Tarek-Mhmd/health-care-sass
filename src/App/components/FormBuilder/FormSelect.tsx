@@ -1,23 +1,33 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+import {
+  Select,
+  GroupBase,
+  SelectInstance,
+  Props as SelectComponentProps,
+} from "chakra-react-select";
 import { TranslationKeys } from "@types";
-import { Select, SelectProps } from "@chakra-ui/react";
+import { ChangeHandler } from "react-hook-form";
 import FormControl, { FormControlProps } from "./FormControl";
 
 type Option = {
-  value: string | number;
-  label: TranslationKeys | string;
+  label: string;
+  value: string;
 };
 
 interface FormSelectProps
-  extends Omit<FormControlProps, "children">,
-    Omit<SelectProps, "sx" | "prefix"> {
+  extends Omit<FormControlProps, "children" | "onChange">,
+    Omit<SelectComponentProps, "options" | "onChange"> {
+  onChange: ChangeHandler;
+  options: string[] | Option[];
   skipOptionsTranslation?: boolean;
-  options: [] | string[] | Option[];
 }
 
-const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
+const FormSelect = React.forwardRef<
+  SelectInstance<unknown, boolean, GroupBase<unknown>>,
+  FormSelectProps
+>(
   (
     {
       options,
@@ -51,37 +61,54 @@ const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
       suffixIcon,
       prefixIcon,
     };
-    const renderOptions = (() =>
-      options.map((opt) => {
-        type Label<T extends boolean> = T extends true
-          ? string
-          : TranslationKeys;
-        let value: string | number = "",
-          label: Label<typeof skipOptionsTranslation> = "";
-
-        if (typeof opt === "string") (value = opt), (label = opt);
-        else if ("value" in opt) (value = opt.value), (label = opt.label);
-
-        return (
-          <option key={value} value={value}>
-            {skipOptionsTranslation ? label : t(label)}
-          </option>
-        );
-      }))();
+    const formattedOptions: Option[] = options.map((opt) => {
+      if (typeof opt === "string") {
+        return {
+          label: skipOptionsTranslation ? opt : t(opt as TranslationKeys),
+          value: opt,
+        };
+      }
+      return {
+        label: skipOptionsTranslation
+          ? opt.label
+          : t(opt.label as TranslationKeys),
+        value: opt.value,
+      };
+    });
 
     return (
       <FormControl
         {...formControlProps}
         sx={{
-          select: {
-            paddingInlineEnd: suffixIcon ? "2rem" : undefined,
-            paddingInlineStart: prefixIcon ? "2rem" : undefined,
+          zIndex: 999,
+          ".chakra-select-container": { width: "100%" },
+          ".chakra-react-select__control": {
+            paddingInlineEnd: suffixIcon ? 3.5 : undefined,
+            paddingInlineStart: prefixIcon ? 3.5 : undefined,
           },
         }}
       >
-        <Select {...props} ref={ref} aria-label={inputOnly ? label : undefined}>
-          {renderOptions}
-        </Select>
+        <Select
+          {...props}
+          ref={ref}
+          options={formattedOptions}
+          className="chakra-select-container"
+          classNamePrefix="chakra-react-select"
+          aria-label={inputOnly ? label : undefined}
+          value={
+            props?.isMulti
+              ? formattedOptions.filter((opt) =>
+                  (props.value as string[])?.includes?.(opt.value)
+                )
+              : formattedOptions.find((opt) => opt.value === props.value)
+          }
+          onChange={(newValue) => {
+            const value = props?.isMulti
+              ? (newValue as Option[])?.map((val) => val.value)
+              : (newValue as Option)?.value;
+            props.onChange?.({ target: { name: props.name, value } });
+          }}
+        />
       </FormControl>
     );
   }

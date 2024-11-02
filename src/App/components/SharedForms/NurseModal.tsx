@@ -39,6 +39,7 @@ type NurseModalProps = {
 const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
   const { t } = useTranslation();
   const {
+    watch,
     reset,
     register,
     handleSubmit,
@@ -80,8 +81,7 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
             onSuccess(response) {
               reset({
                 ...response,
-                doctors: response?.doctors?.[0]?.id || null,
-                // doctors: response?.doctors?.map((p) => p.id),
+                doctors: response?.doctors?.map((p) => p.id),
               });
             },
           });
@@ -98,7 +98,6 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
       args: {
         ...args,
         ...(data?.id && { id: data?.id }),
-        doctors: args?.doctors ? [args?.doctors] : [],
       },
       onSuccess() {
         onClose();
@@ -136,6 +135,7 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
         <FormSelect
           isRequired
           skipOptionsTranslation
+          value={watch("gender")}
           options={options?.genders || []}
           label={t("forms.gender-label")}
           placeholder={t("forms.gender-placeholder")}
@@ -162,8 +162,10 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
         {...register("phone", { required: "required" })}
       />
       <FormSelect
+        isMulti
         isRequired
         skipOptionsTranslation
+        value={watch("doctors")}
         options={options?.doctors || []}
         label={t("nurse-form.doctors-label")}
         placeholder={t("nurse-form.doctors-placeholder")}

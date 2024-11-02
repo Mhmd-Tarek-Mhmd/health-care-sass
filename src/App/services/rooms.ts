@@ -13,6 +13,7 @@ import Store from "@store";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { Bed, PaginatorResponse, Room } from "@types";
+import { COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
 
 export const COLLECTION_NAME = "rooms";
 
@@ -60,10 +61,9 @@ export const getRoom = async ({ id }: GetRoomArgs): Promise<Room> => {
 
   if (room.beds.length) {
     const bedsPromises = room.beds.map(async (bed) => {
-      const doctorDoc = await getDoc(bed as unknown as DocumentReference);
-      return { id: doctorDoc.id, ...doctorDoc?.data() } as Bed;
+      const bedDoc = await getDoc(bed as unknown as DocumentReference);
+      return { id: bedDoc.id, ...bedDoc?.data() } as Bed;
     });
-
     const beds = await Promise.all(bedsPromises);
     return { ...room, beds };
   } else {
@@ -78,7 +78,9 @@ export interface UpsertRoomArgs extends Omit<Room, "beds"> {
 export const saveRoom = async (room: UpsertRoomArgs): Promise<void> => {
   let beds = [] as DocumentReference[];
   if (room?.beds?.length) {
-    const bedsPromises = room.beds.map((bed) => doc(db, COLLECTION_NAME, bed));
+    const bedsPromises = room.beds.map((bed) =>
+      doc(db, BEDS_COLLECTION_NAME, bed)
+    );
     beds = await Promise.all(bedsPromises);
   }
 
@@ -97,7 +99,9 @@ export const updateRoom = async ({
 }: UpsertRoomArgs): Promise<void> => {
   let beds = [] as DocumentReference[];
   if (room?.beds?.length) {
-    const bedsPromises = room.beds.map((bed) => doc(db, COLLECTION_NAME, bed));
+    const bedsPromises = room.beds.map((bed) =>
+      doc(db, BEDS_COLLECTION_NAME, bed)
+    );
     beds = await Promise.all(bedsPromises);
   }
 

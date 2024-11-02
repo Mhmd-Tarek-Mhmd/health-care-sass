@@ -36,6 +36,7 @@ type HospitalModalProps = {
 const HospitalModal = ({ data, onClose, refetchList }: HospitalModalProps) => {
   const { t } = useTranslation();
   const {
+    watch,
     reset,
     register,
     handleSubmit,
@@ -145,6 +146,7 @@ const HospitalModal = ({ data, onClose, refetchList }: HospitalModalProps) => {
       />
       <FormSelect
         isRequired
+        value={watch("plan")}
         skipOptionsTranslation
         options={options?.plans || []}
         label={t("hospital-form.plan-label")}
