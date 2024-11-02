@@ -26,29 +26,30 @@ async function paginator<T>({
   orderByField = "createdAt",
   filters = [],
 }: Args): Promise<PaginatorResponse<T>> {
-  const coll = collection(db, collectionName);
-  const snapshot = await getCountFromServer(coll);
+  let q = query(
+    collection(db, collectionName),
+    orderBy(orderByField),
+    ...filters
+  );
+  const snapshot = await getCountFromServer(q);
   let totalCount = snapshot.data().count;
   let items: T[] = [];
 
   if (totalCount) {
-    let q = query(
-      collection(db, collectionName),
-      orderBy(orderByField),
-      limit(pageSize),
-      ...filters
-    );
+    q = query(q, limit(pageSize));
 
     if (pageNumber > 1) {
       const offset = (pageNumber - 1) * pageSize;
-      const snapshot = await getDocs(query(q, limit(offset)));
-      const lastVisible = snapshot.docs[snapshot.docs.length - 1];
-      q = query(q, startAfter(lastVisible));
+      const initialSnapshot = await getDocs(query(q, limit(offset)));
+      const lastVisible = initialSnapshot.docs[initialSnapshot.docs.length - 1];
+      if (lastVisible) q = query(q, startAfter(lastVisible));
     }
 
-    const snapshot = await getDocs(q);
-    items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as T[];
-    totalCount = items.length;
+    const dataSnapshot = await getDocs(q);
+    items = dataSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as T[];
   }
 
   return {
