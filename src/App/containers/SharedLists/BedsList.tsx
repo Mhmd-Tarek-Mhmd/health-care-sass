@@ -73,6 +73,10 @@ const Beds = () => {
         cell: (row) => row.height + t("beds-list.dimensions-unit"),
       },
       {
+        name: t("beds-list.room-cell-label"),
+        cell: (row) => row?.room?.name,
+      },
+      {
         name: t("beds-list.details-cell-label"),
         cell: (row) => <ShowMore>{row.details}</ShowMore>,
       },

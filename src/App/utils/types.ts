@@ -86,6 +86,7 @@ export interface Bed extends Model {
   width: number;
   height: number;
   length: number;
+  room?: Room;
   details?: string;
 }
 

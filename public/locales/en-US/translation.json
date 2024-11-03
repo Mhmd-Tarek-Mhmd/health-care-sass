@@ -197,6 +197,7 @@
     "width-cell-label": "Width",
     "length-cell-label": "Length",
     "height-cell-label": "Height",
+    "room-cell-label": "Room",
     "details-cell-label": "Additional Details",
     "dimensions-unit": "cm"
   },
@@ -211,6 +212,8 @@
     "length-placeholder": "Enter bed's length",
     "height-label": "Height",
     "height-placeholder": "Enter bed's height",
+    "room-label": "Room",
+    "room-placeholder": "Enter room",
     "details-label": "Additional Details",
     "details-placeholder": "Enter additional details",
     "dimensions-unit": "cm"

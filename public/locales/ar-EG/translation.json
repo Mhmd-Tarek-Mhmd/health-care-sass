@@ -199,6 +199,7 @@
     "width-cell-label": "العرض",
     "length-cell-label": "الطول",
     "height-cell-label": "الإرتفاع",
+    "room-cell-label": "الغرفة",
     "details-cell-label": "تفاصيل إضافية",
     "dimensions-unit": "سم"
   },
@@ -213,6 +214,8 @@
     "length-placeholder": "أدخل طول السرير",
     "height-label": "الإرتفاع",
     "height-placeholder": "أدخل إرتفاع السرير",
+    "room-label": "الغرفة",
+    "room-placeholder": "أدخل الغرفة",
     "details-label": "تفاصيل إضافية",
     "details-placeholder": "أدخل تفاصيل إضافية",
     "dimensions-unit": "سم"

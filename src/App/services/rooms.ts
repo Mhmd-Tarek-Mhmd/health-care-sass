@@ -3,10 +3,12 @@ import {
   where,
   getDoc,
   addDoc,
+  getDocs,
   updateDoc,
   Timestamp,
-  deleteDoc,
+  writeBatch,
   collection,
+  arrayRemove,
   DocumentReference,
 } from "firebase/firestore";
 import Store from "@store";
@@ -77,11 +79,9 @@ export interface UpsertRoomArgs extends Omit<Room, "beds"> {
 
 export const saveRoom = async (room: UpsertRoomArgs): Promise<void> => {
   let beds = [] as DocumentReference[];
+
   if (room?.beds?.length) {
-    const bedsPromises = room.beds.map((bed) =>
-      doc(db, BEDS_COLLECTION_NAME, bed)
-    );
-    beds = await Promise.all(bedsPromises);
+    beds = room.beds.map((bed) => doc(db, BEDS_COLLECTION_NAME, bed));
   }
 
   const hospitalID = Store.auth?.user?.hospital.id;
@@ -98,11 +98,9 @@ export const updateRoom = async ({
   ...room
 }: UpsertRoomArgs): Promise<void> => {
   let beds = [] as DocumentReference[];
+
   if (room?.beds?.length) {
-    const bedsPromises = room.beds.map((bed) =>
-      doc(db, BEDS_COLLECTION_NAME, bed)
-    );
-    beds = await Promise.all(bedsPromises);
+    beds = room.beds.map((bed) => doc(db, BEDS_COLLECTION_NAME, bed));
   }
 
   const hospitalID = Store.auth?.user?.hospital.id;
@@ -118,5 +116,16 @@ export type RemoveRoomArgs = {
   id: string;
 };
 export const removeRoom = async ({ id }: RemoveRoomArgs) => {
-  await deleteDoc(doc(db, COLLECTION_NAME, id));
+  const batch = writeBatch(db);
+  const roomRef = doc(db, COLLECTION_NAME, id);
+  const beds = await getDocs(collection(db, BEDS_COLLECTION_NAME));
+
+  batch.delete(roomRef);
+  beds.docs.forEach((doc) =>
+    batch.update(doc.ref, {
+      doctors: arrayRemove(roomRef),
+    })
+  );
+
+  await batch.commit();
 };
