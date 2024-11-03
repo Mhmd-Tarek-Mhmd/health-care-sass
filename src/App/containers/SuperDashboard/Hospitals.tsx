@@ -1,6 +1,6 @@
 import React from "react";
+import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
-import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
 import {
   getHospitals,
@@ -8,7 +8,7 @@ import {
   GetHospitalsArgs,
   RemoveHospitalArgs,
   toggleHospitalStatus,
-  ToggleHospitalStatusArgs
+  ToggleHospitalStatusArgs,
 } from "@services";
 import dayjs from "dayjs";
 import { confirm } from "@helpers";
@@ -43,13 +43,15 @@ const Hospitals = () => {
     GetHospitalsArgs,
     PaginatorResponse<Hospital>
   >(getHospitals, {
+    isInitialTrigger: true,
     isShowErrorToast: true,
+    args: { pageNumber: pagination.page, pageSize: pagination.perPage },
     onSuccess(response) {
       setPagination((prev) => ({ ...prev, ...response?.pagination }));
     },
   });
   const [remove] = useServiceRequest<RemoveHospitalArgs, void>(removeHospital);
-    const [toggleStatus] = useServiceRequest<ToggleHospitalStatusArgs, void>(
+  const [toggleStatus] = useServiceRequest<ToggleHospitalStatusArgs, void>(
     toggleHospitalStatus
   );
 
@@ -93,19 +95,18 @@ const Hospitals = () => {
         name: t("lists.actions-cell-label"),
         cell: (row) => (
           <Flex columnGap={1}>
-            
-              {row?.isActive ? (
-                <InactivateIconButton
-                  size="sm"
-                  onClick={() => handleToggleStatus(row)}
-                />
-              ) : (
-                <ActivateIconButton
-                  size="sm"
-                  onClick={() => handleToggleStatus(row)}
-                />
-              )}
-            
+            {row?.isActive ? (
+              <InactivateIconButton
+                size="sm"
+                onClick={() => handleToggleStatus(row)}
+              />
+            ) : (
+              <ActivateIconButton
+                size="sm"
+                onClick={() => handleToggleStatus(row)}
+              />
+            )}
+
             <EditIconButton
               size="sm"
               onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
@@ -117,14 +118,6 @@ const Hospitals = () => {
     ],
     []
   );
-
-  /* ↓ State Effects ↓ */
-
-  useDidUpdateEffect(() => {
-    getData({
-      args: { pageNumber: pagination.page, pageSize: pagination.perPage },
-    });
-  }, [pagination.page, pagination.perPage]);
 
   /* ↓ Helpers ↓ */
 
@@ -151,19 +144,13 @@ const Hospitals = () => {
     });
   };
 
-
   const handleDelete = (hospital: Hospital) => {
     confirm({ showLoaderOnConfirm: true }).then(({ isConfirmed, cleanup }) => {
       if (isConfirmed) {
         remove({
           args: { id: hospital.id },
           onSuccess() {
-            getData({
-              args: {
-                pageNumber: pagination.page,
-                pageSize: pagination.perPage,
-              },
-            });
+            getData();
             cleanup();
           },
         });
@@ -172,11 +159,11 @@ const Hospitals = () => {
   };
 
   const onPaginate = (page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
+    getData({ args: { pageNumber: page, pageSize: pagination.perPage } });
   };
 
   const onPerPageChange = (perPage: number) => {
-    setPagination((prev) => ({ ...prev, perPage, page: 1 }));
+    getData({ args: { pageNumber: 1, pageSize: perPage } });
   };
 
   return (

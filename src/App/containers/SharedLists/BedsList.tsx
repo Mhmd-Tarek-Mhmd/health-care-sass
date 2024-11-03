@@ -1,6 +1,6 @@
 import React from "react";
+import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
-import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
 import dayjs from "dayjs";
 import { checkUserTypes, confirm } from "@helpers";
@@ -36,7 +36,9 @@ const Beds = () => {
     GetBedsArgs,
     PaginatorResponse<Bed>
   >(getBeds, {
+    isInitialTrigger: true,
     isShowErrorToast: true,
+    args: { pageNumber: pagination.page, pageSize: pagination.perPage },
     onSuccess(response) {
       setPagination((prev) => ({ ...prev, ...response?.pagination }));
     },
@@ -91,14 +93,6 @@ const Beds = () => {
     []
   );
 
-  /* ↓ State Effects ↓ */
-
-  useDidUpdateEffect(() => {
-    getData({
-      args: { pageNumber: pagination.page, pageSize: pagination.perPage },
-    });
-  }, [pagination.page, pagination.perPage]);
-
   /* ↓ Helpers ↓ */
 
   const handleOpenModal = (data: AnyObject = {}) => {
@@ -111,12 +105,7 @@ const Beds = () => {
         remove({
           args: { id: bed.id },
           onSuccess() {
-            getData({
-              args: {
-                pageNumber: pagination.page,
-                pageSize: pagination.perPage,
-              },
-            });
+            getData();
             cleanup();
           },
         });
@@ -125,11 +114,11 @@ const Beds = () => {
   };
 
   const onPaginate = (page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
+    getData({ args: { pageNumber: page, pageSize: pagination.perPage } });
   };
 
   const onPerPageChange = (perPage: number) => {
-    setPagination((prev) => ({ ...prev, perPage, page: 1 }));
+    getData({ args: { pageNumber: 1, pageSize: perPage } });
   };
 
   return (

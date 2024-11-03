@@ -15,6 +15,7 @@ type SuccessCB<Response> = (response?: Response) => void;
 type ErrorCB<Error> = (error?: Error) => void;
 type Options<Args, Response, Error> = {
   args?: Args;
+  isInitialTrigger?: boolean;
   isShowErrorToast?: boolean;
   isShowSuccessToast?: boolean;
   onError?: ErrorCB<Error>;
@@ -63,7 +64,7 @@ export const useServiceRequest = <Args, Response, Error = FirebaseError>(
     setIsLoading(true);
     const mergedOptions = { ...options, ...triggerOptions };
     const {
-      args = [],
+      args = {},
       successToastOptions = {},
       errorToastOptions = {},
     } = mergedOptions;
@@ -75,12 +76,15 @@ export const useServiceRequest = <Args, Response, Error = FirebaseError>(
         showToast({ status: "success", ...successToastOptions });
       mergedOptions?.onSuccess?.(data as Response);
     } catch (error) {
+      console.log(error);
       setData(null);
       setError(error as Error);
       mergedOptions?.isShowErrorToast &&
         showToast({
           status: "error",
-          description: error?.code ? t("toast." + (error as Error)?.code) : t(error?.message),
+          description: error?.code
+            ? t("toast." + (error as Error)?.code)
+            : t(error?.message),
           ...errorToastOptions,
         });
       mergedOptions?.onError?.(error as Error);
@@ -88,6 +92,10 @@ export const useServiceRequest = <Args, Response, Error = FirebaseError>(
       setIsLoading(false);
     }
   };
+
+  useDidUpdateEffect(() => {
+    options?.isInitialTrigger && trigger();
+  }, [options?.isInitialTrigger]);
 
   return [trigger, { data, error, called, isLoading }];
 };

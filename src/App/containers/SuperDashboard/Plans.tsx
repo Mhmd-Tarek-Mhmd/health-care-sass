@@ -1,6 +1,6 @@
 import React from "react";
+import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
-import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
 import dayjs from "dayjs";
 import { confirm } from "@helpers";
@@ -34,7 +34,9 @@ const Plans = () => {
     GetPlansArgs,
     PaginatorResponse<Plan>
   >(getPlans, {
+    isInitialTrigger: true,
     isShowErrorToast: true,
+    args: { pageNumber: pagination.page, pageSize: pagination.perPage },
     onSuccess(response) {
       setPagination((prev) => ({ ...prev, ...response?.pagination }));
     },
@@ -84,14 +86,6 @@ const Plans = () => {
     []
   );
 
-  /* ↓ State Effects ↓ */
-
-  useDidUpdateEffect(() => {
-    getData({
-      args: { pageNumber: pagination.page, pageSize: pagination.perPage },
-    });
-  }, [pagination.page, pagination.perPage]);
-
   /* ↓ Helpers ↓ */
 
   const handleOpenModal = (data: AnyObject = {}) => {
@@ -104,9 +98,7 @@ const Plans = () => {
         remove({
           args: { id: plan.id },
           onSuccess() {
-            getData({
-              args: { pageNumber: pagination.page, pageSize: pagination.perPage },
-            });
+            getData();
             cleanup();
           },
         });
@@ -115,11 +107,11 @@ const Plans = () => {
   };
 
   const onPaginate = (page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
+    getData({ args: { pageNumber: page, pageSize: pagination.perPage } });
   };
 
   const onPerPageChange = (perPage: number) => {
-    setPagination((prev) => ({ ...prev, perPage, page: 1 }));
+    getData({ args: { pageNumber: 1, pageSize: perPage } });
   };
 
   return (
