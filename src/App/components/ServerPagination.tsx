@@ -26,11 +26,11 @@ import { CgChevronRight, CgChevronLeft } from "react-icons/cg";
 
 let perPageRef: number | undefined;
 const generatePerPageOptions = (
-  options: number[] = [10, 50, 100],
+  options: number[] = [5, 10, 50, 100],
   perPage: number
 ) => {
   if (!options.includes(perPage)) perPageRef = perPage;
-  return !perPageRef ? options : [...options, perPageRef].sort();
+  return !perPageRef ? options : [...options, perPageRef].sort((a, b) => a - b);
 };
 
 /**
