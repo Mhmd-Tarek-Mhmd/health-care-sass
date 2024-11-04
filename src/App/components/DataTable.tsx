@@ -18,6 +18,7 @@ import Loader from "./Loader";
 export type Column<T> = {
   name?: string;
   omit?: boolean;
+  wrap?: boolean;
   selector?: keyof T;
   cell?: (row: T) => React.ReactNode;
 };
@@ -26,7 +27,7 @@ interface DataTableProps<T> extends ServerPaginationProps {
   data: T[];
   size: string;
   columns: Column<T>[];
-  noPagination: boolean;
+  noPagination?: boolean;
 }
 
 const getSelectorOrCell = <T,>(row: T, col: Column<T>): React.ReactNode => {
@@ -80,7 +81,10 @@ const DataTable = <T,>({
                     col.omit ? (
                       <React.Fragment key={`${col?.name}-cell`} />
                     ) : (
-                      <Td key={`${col?.name}-cell`}>
+                      <Td
+                        key={`${col?.name}-cell`}
+                        sx={{ textWrap: col?.wrap ? "wrap" : undefined }}
+                      >
                         {getSelectorOrCell(d, col)}
                       </Td>
                     )

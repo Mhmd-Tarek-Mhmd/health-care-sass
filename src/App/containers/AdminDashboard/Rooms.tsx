@@ -75,6 +75,7 @@ const Rooms = () => {
       {
         name: t("rooms-list.details-cell-label"),
         cell: (row) => <ShowMore>{row.details}</ShowMore>,
+        wrap: true,
       },
       {
         name: t("lists.actions-cell-label"),
