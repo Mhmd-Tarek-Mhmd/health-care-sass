@@ -157,6 +157,7 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
       </Flex>
       <FormSelect
         isMulti
+        isClearable={false}
         value={watch("beds")}
         skipOptionsTranslation
         options={options?.beds || []}

@@ -174,6 +174,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
       <FormSelect
         isMulti
         isRequired
+        isClearable={false}
         skipOptionsTranslation
         value={watch("patients")}
         options={options?.patients || []}

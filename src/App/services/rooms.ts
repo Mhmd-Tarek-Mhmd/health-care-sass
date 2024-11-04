@@ -2,9 +2,7 @@ import {
   doc,
   where,
   getDoc,
-  addDoc,
   getDocs,
-  updateDoc,
   Timestamp,
   writeBatch,
   collection,
@@ -78,38 +76,50 @@ export interface UpsertRoomArgs extends Omit<Room, "beds"> {
 }
 
 export const saveRoom = async (room: UpsertRoomArgs): Promise<void> => {
+  const batch = writeBatch(db);
   let beds = [] as DocumentReference[];
+  const roomRef = doc(collection(db, COLLECTION_NAME));
 
   if (room?.beds?.length) {
     beds = room.beds.map((bed) => doc(db, BEDS_COLLECTION_NAME, bed));
+    beds.forEach((bed) => {
+      batch.update(bed, { room: roomRef });
+    });
   }
 
   const hospitalID = Store.auth?.user?.hospital.id;
-  await addDoc(collection(db, COLLECTION_NAME), {
+  batch.set(roomRef, {
     ...room,
     beds,
     hospitalID,
     createdAt: Timestamp.now(),
   });
+  await batch.commit();
 };
 
 export const updateRoom = async ({
   id,
   ...room
 }: UpsertRoomArgs): Promise<void> => {
+  const batch = writeBatch(db);
   let beds = [] as DocumentReference[];
+  const roomRef = doc(db, COLLECTION_NAME, id);
 
   if (room?.beds?.length) {
     beds = room.beds.map((bed) => doc(db, BEDS_COLLECTION_NAME, bed));
+    beds.forEach((bed) => {
+      batch.update(bed, { room: roomRef });
+    });
   }
 
   const hospitalID = Store.auth?.user?.hospital.id;
-  await updateDoc(doc(db, COLLECTION_NAME, id), {
+  batch.update(roomRef, {
     ...room,
     beds,
     hospitalID,
     updatedAt: Timestamp.now(),
   });
+  await batch.commit();
 };
 
 export type RemoveRoomArgs = {

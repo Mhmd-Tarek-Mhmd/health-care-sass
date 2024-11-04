@@ -95,6 +95,9 @@ const FormSelect = React.forwardRef<
           className="chakra-select-container"
           classNamePrefix="chakra-react-select"
           aria-label={inputOnly ? label : undefined}
+          components={{
+            MultiValueRemove: props?.isMulti ? () => null : undefined,
+          }}
           value={
             props?.isMulti
               ? formattedOptions.filter((opt) =>

@@ -2,11 +2,11 @@ import {
   doc,
   where,
   getDoc,
-  addDoc,
-  updateDoc,
   Timestamp,
   deleteDoc,
   collection,
+  writeBatch,
+  arrayUnion,
   DocumentReference,
 } from "firebase/firestore";
 import Store from "@store";
@@ -70,35 +70,46 @@ export interface UpsertBedArgs extends Omit<Bed, "room"> {
 }
 
 export const saveBed = async (bed: UpsertBedArgs): Promise<void> => {
+  const batch = writeBatch(db);
   let room: string | DocumentReference = "";
+  const bedRef = doc(collection(db, COLLECTION_NAME));
 
   if (bed?.room) {
     room = doc(db, ROOMS_COLLECTION_NAME, bed.room);
+    batch.update(room, { beds: arrayUnion(bedRef) });
   }
 
   const hospitalID = Store.auth?.user?.hospital.id;
-  await addDoc(collection(db, COLLECTION_NAME), {
+  batch.set(bedRef, {
     ...bed,
     room,
     hospitalID,
     createdAt: Timestamp.now(),
   });
+  await batch.commit();
 };
 
-export const updateBed = async ({ id, ...bed }: UpsertBedArgs): Promise<void> => {
+export const updateBed = async ({
+  id,
+  ...bed
+}: UpsertBedArgs): Promise<void> => {
+  const batch = writeBatch(db);
   let room: string | DocumentReference = "";
+  const bedRef = doc(db, COLLECTION_NAME, id);
 
   if (bed?.room) {
     room = doc(db, ROOMS_COLLECTION_NAME, bed.room);
+    batch.update(room, { beds: arrayUnion(bedRef) });
   }
 
   const hospitalID = Store.auth?.user?.hospital.id;
-  await updateDoc(doc(db, COLLECTION_NAME, id), {
+  batch.update(bedRef, {
     ...bed,
     room,
     hospitalID,
     updatedAt: Timestamp.now(),
   });
+  await batch.commit();
 };
 
 export type RemoveBedArgs = {
