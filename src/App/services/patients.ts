@@ -1,8 +1,10 @@
 import {
   doc,
   where,
+  query,
   addDoc,
   getDoc,
+  orderBy,
   getDocs,
   deleteDoc,
   Timestamp,
@@ -10,6 +12,7 @@ import {
   writeBatch,
   arrayUnion,
   arrayRemove,
+  DocumentData,
   DocumentReference,
 } from "firebase/firestore";
 import {
@@ -23,7 +26,7 @@ import { removeUser } from "./users";
 import { userTypes } from "@constants";
 import { logUp, LogUpArgs } from "./auth";
 import { getHospital } from "./hospitals";
-import { buildOptionModel, checkUserTypes } from "@helpers";
+import { buildOptionModel } from "@helpers";
 import { PaginatorResponse, Patient, Doctor, Room, Bed } from "@types";
 import { getBeds, COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
 import { getRooms, COLLECTION_NAME as ROOMS_COLLECTION_NAME } from "./rooms";
@@ -39,23 +42,7 @@ export const getPatients = async ({
   pageNumber,
 }: GetPatientsArgs): Promise<PaginatorResponse<Patient>> => {
   const hospitalID = Store.auth?.user?.hospital.id as string;
-  const isDoctor = checkUserTypes([userTypes.DOCTOR]);
-  const filters = [
-    where("hospitals", "array-contains", hospitalID),
-    ...(isDoctor
-      ? [
-          where(
-            "doctors",
-            "array-contains",
-            doc(
-              db,
-              DOCTORS_COLLECTION_NAME,
-              Store.auth?.user?.userTypeID as string
-            )
-          ),
-        ]
-      : []),
-  ];
+  const filters = [where("hospitals", "array-contains", hospitalID)];
 
   const patients = await paginator<Patient>({
     filters,
@@ -92,6 +79,33 @@ export const getPatients = async ({
 
   const items = await Promise.all(patientsPromises);
   return { ...patients, items };
+};
+
+export const getDoctorsPatients = async () => {
+  const authUser = Store.auth?.user;
+  const patients = await getDocs(
+    query(
+      collection(db, COLLECTION_NAME),
+      orderBy("createdAt"),
+      where("hospitals", "array-contains", authUser?.hospital.id)
+    )
+  );
+  const items = patients.docs.reduce(
+    (acc: [] | Patient[], curr: DocumentData) => {
+      const data = curr.data();
+      const doctors = data.doctors.map(
+        (doctor: DocumentReference) => doctor.id
+      );
+      if (doctors.includes(authUser?.userTypeID)) {
+        return [...acc, { id: curr.id, ...data }];
+      } else {
+        return acc;
+      }
+    },
+    []
+  );
+
+  return { items };
 };
 
 export interface GetPatientArgs {

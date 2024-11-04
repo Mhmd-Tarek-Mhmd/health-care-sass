@@ -9,9 +9,11 @@ import {
   RemovePatientArgs,
 } from "@services";
 import dayjs from "dayjs";
+import { FirebaseError } from "firebase/app";
 import { checkUserTypes, confirm } from "@helpers";
-import { datTimeFormat, paginationInitState, userTypes } from "@constants";
+import { ServiceRequestHook, Options } from "@hooks";
 import { AnyObject, Column, PaginatorResponse, Patient } from "@types";
+import { datTimeFormat, paginationInitState, userTypes } from "@constants";
 
 import {
   DataTable,
@@ -28,7 +30,13 @@ const modalInitState = {
   isOpen: false,
 };
 
-const Patients = () => {
+const Patients = (props: {
+  doctorsPatientsService: ServiceRequestHook<
+    undefined,
+    PaginatorResponse<Patient>,
+    FirebaseError
+  >;
+}) => {
   const { t } = useTranslation();
 
   // Local State
@@ -36,11 +44,11 @@ const Patients = () => {
   const [pagination, setPagination] = React.useState(paginationInitState);
 
   // Server State
-  const [getData, { data, called, isLoading }] = useServiceRequest<
+  const listService = useServiceRequest<
     GetPatientsArgs,
     PaginatorResponse<Patient>
   >(getPatients, {
-    isInitialTrigger: true,
+    isInitialTrigger: !props?.doctorsPatientsService,
     isShowErrorToast: true,
     args: { pageNumber: pagination.page, pageSize: pagination.perPage },
     onSuccess(response) {
@@ -50,6 +58,9 @@ const Patients = () => {
   const [remove] = useServiceRequest<RemovePatientArgs, void>(removePatient);
 
   // Constants
+  const isDoctor = Boolean(props?.doctorsPatientsService);
+  const [getData, { data, called, isLoading }] =
+    props?.doctorsPatientsService || listService;
   const columns = React.useMemo<Column<Patient>[]>(
     () => [
       { name: t("lists.name-cell-label"), selector: "name" },
@@ -126,11 +137,19 @@ const Patients = () => {
   };
 
   const onPaginate = (page: number) => {
-    getData({ args: { pageNumber: page, pageSize: pagination.perPage } });
+    type Args = typeof isDoctor extends true ? undefined : GetPatientsArgs;
+    const options: Options<Args, Response, Error> = isDoctor
+      ? {}
+      : { args: { pageNumber: page, pageSize: pagination.perPage } };
+    getData(options);
   };
 
   const onPerPageChange = (perPage: number) => {
-    getData({ args: { pageNumber: 1, pageSize: perPage } });
+    type Args = typeof isDoctor extends true ? undefined : GetPatientsArgs;
+    const options: Options<Args, Response, Error> = isDoctor
+      ? {}
+      : { args: { pageNumber: 1, pageSize: perPage } };
+    getData(options);
   };
 
   return (
@@ -150,6 +169,7 @@ const Patients = () => {
       <DataTable<Patient>
         size="sm"
         columns={columns}
+        noPagination={isDoctor}
         data={(data?.items as Patient[]) || []}
         isLoading={isLoading || !called}
         pagination={pagination}
@@ -161,11 +181,15 @@ const Patients = () => {
         <PatientModal
           data={modalState.data}
           onClose={() => setModalState(modalInitState)}
-          refetchList={() =>
-            getData({
-              args: { pageNumber: 1, pageSize: pagination.perPage },
-            })
-          }
+          refetchList={() => {
+            type Args = typeof isDoctor extends true
+              ? undefined
+              : GetPatientsArgs;
+            const options: Options<Args, Response, Error> = isDoctor
+              ? {}
+              : { args: { pageNumber: 1, pageSize: pagination.perPage } };
+            getData(options);
+          }}
         />
       ) : null}
     </section>

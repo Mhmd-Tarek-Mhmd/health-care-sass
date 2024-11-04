@@ -13,7 +13,7 @@ import { UseToastOptions } from "@chakra-ui/react";
 type Service<Args, Response> = (args: Args) => Promise<Response>;
 type SuccessCB<Response> = (response?: Response) => void;
 type ErrorCB<Error> = (error?: Error) => void;
-type Options<Args, Response, Error> = {
+export type Options<Args, Response, Error> = {
   args?: Args;
   isInitialTrigger?: boolean;
   isShowErrorToast?: boolean;
@@ -33,7 +33,7 @@ type ReturnOpt<Response, Error> = {
   isLoading: boolean;
   called: boolean;
 };
-type HookReturn<Args, Response, Error> = [
+export type ServiceRequestHook<Args, Response, Error> = [
   Trigger<Args, Response, Error>,
   ReturnOpt<Response, Error>
 ];
@@ -50,7 +50,7 @@ type HookReturn<Args, Response, Error> = [
 export const useServiceRequest = <Args, Response, Error = FirebaseError>(
   service: Service<Args, Response>,
   options: Options<Args, Response, Error> = {}
-): HookReturn<Args, Response, Error> => {
+): ServiceRequestHook<Args, Response, Error> => {
   const { t } = useTranslation();
   const [called, setCalled] = React.useState(false);
   const [error, setError] = React.useState<Error | null>(null);

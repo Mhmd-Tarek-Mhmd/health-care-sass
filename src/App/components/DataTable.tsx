@@ -26,6 +26,7 @@ interface DataTableProps<T> extends ServerPaginationProps {
   data: T[];
   size: string;
   columns: Column<T>[];
+  noPagination: boolean;
 }
 
 const getSelectorOrCell = <T,>(row: T, col: Column<T>): React.ReactNode => {
@@ -41,6 +42,7 @@ const DataTable = <T,>({
   columns,
   isLoading,
   pagination,
+  noPagination = false,
   ...props
 }: DataTableProps<T>) => {
   const { t } = useTranslation();
@@ -90,7 +92,7 @@ const DataTable = <T,>({
         )}
       </TableContainer>
 
-      {pagination && (
+      {noPagination ? null : (
         <ServerPagination
           sx={{ px: 1 }}
           isLoading={isLoading}
