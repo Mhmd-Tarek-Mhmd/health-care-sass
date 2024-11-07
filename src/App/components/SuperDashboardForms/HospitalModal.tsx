@@ -12,8 +12,8 @@ import {
   GetHospitalArgs,
 } from "@services";
 import { emailPattern } from "@constants";
-import { buildOptionModel } from "@helpers";
 import { SubmitHandler } from "react-hook-form";
+import { buildOptionModel, validatePhoneNumber } from "@helpers";
 import { Plan, Hospital, AnyObject, PaginatorResponse } from "@types";
 
 import Loader from "../Loader";
@@ -142,7 +142,10 @@ const HospitalModal = ({ data, onClose, refetchList }: HospitalModalProps) => {
         label={t("forms.phone-label")}
         placeholder={t("forms.phone-placeholder")}
         error={errors.phone?.message as "required"}
-        {...register("phone", { required: "required" })}
+        {...register("phone", {
+          required: "required",
+          validate: validatePhoneNumber,
+        })}
       />
       <FormSelect
         isRequired

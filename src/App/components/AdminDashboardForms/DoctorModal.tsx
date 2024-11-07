@@ -12,8 +12,8 @@ import {
   UpsertDoctorArgs,
 } from "@services";
 import { emailPattern } from "@constants";
-import { buildOptionModel } from "@helpers";
 import { SubmitHandler } from "react-hook-form";
+import { buildOptionModel, validatePhoneNumber } from "@helpers";
 import { Patient, Doctor, AnyObject, PaginatorResponse } from "@types";
 
 import Loader from "../Loader";
@@ -169,7 +169,10 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
         label={t("forms.phone-label")}
         placeholder={t("forms.phone-placeholder")}
         error={errors.phone?.message as "required"}
-        {...register("phone", { required: "required" })}
+        {...register("phone", {
+          required: "required",
+          validate: validatePhoneNumber,
+        })}
       />
       <FormSelect
         isMulti

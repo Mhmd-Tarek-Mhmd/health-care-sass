@@ -1,9 +1,19 @@
 import Store from "@store";
 import i18next from "i18next";
 import ReactDOM from "react-dom/client";
+import { parsePhoneNumber } from "libphonenumber-js";
 import { Model, TranslationKeys, UserType } from "@types";
 import { ConfirmDialog, ConfirmDialogOptions } from "@components";
 import { createStandaloneToast, UseToastOptions } from "@chakra-ui/react";
+
+export const validatePhoneNumber = (value: string) => {
+  try {
+    const phoneNumber = parsePhoneNumber(value);
+    return phoneNumber.isValid();
+  } catch (error) {
+    return "phone";
+  }
+};
 
 export const buildOptionModel = (model: Model) => {
   return {

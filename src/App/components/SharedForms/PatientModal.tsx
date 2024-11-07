@@ -11,6 +11,7 @@ import {
 } from "@services";
 import { emailPattern } from "@constants";
 import { Patient, AnyObject } from "@types";
+import { validatePhoneNumber } from "@helpers";
 import { SubmitHandler } from "react-hook-form";
 
 import Loader from "../Loader";
@@ -150,7 +151,10 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
         label={t("forms.phone-label")}
         placeholder={t("forms.phone-placeholder")}
         error={errors.phone?.message as "required"}
-        {...register("phone", { required: "required" })}
+        {...register("phone", {
+          required: "required",
+          validate: validatePhoneNumber,
+        })}
       />
       <FormSelect
         isMulti
