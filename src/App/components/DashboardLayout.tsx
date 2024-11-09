@@ -44,7 +44,7 @@ const Dashboard = ({ links }: DashboardProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   React.useEffect(() => {
-    if (window.location.pathname === "/dashboard") {
+    if (/\/dashboard\/?$/.test(window.location.pathname)) {
       navigate(links[0].to);
     }
   }, []);

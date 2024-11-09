@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useAppStore } from "@store";
 import { useColorModeValue } from "@chakra-ui/react";
 
 import { Link } from "react-router-dom";
@@ -6,6 +7,7 @@ import { Box, Heading, Text, Button } from "@chakra-ui/react";
 
 const NotFound = () => {
   const { t } = useTranslation();
+  const token = useAppStore((state) => state.auth?.token);
 
   return (
     <Box
@@ -47,7 +49,7 @@ const NotFound = () => {
         </Text>
 
         <Button
-          to="/"
+          to={token ? "/dashboard" : "/login"}
           as={Link}
           color="white"
           variant="solid"
