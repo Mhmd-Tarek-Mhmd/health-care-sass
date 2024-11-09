@@ -158,34 +158,28 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
       />
       <FormSelect
         isMulti
-        isRequired
         isClearable={false}
         skipOptionsTranslation
         value={watch("doctors")}
         options={options?.doctors || []}
         label={t("patient-form.doctors-label")}
         placeholder={t("patient-form.doctors-placeholder")}
-        // error={errors.doctors?.message as "required"}
         {...register("doctors")}
       />
       <FormSelect
-        isRequired
         value={watch("room")}
         skipOptionsTranslation
         options={options?.rooms || []}
         label={t("patient-form.room-label")}
         placeholder={t("patient-form.room-placeholder")}
-        // error={errors.room?.message as "required"}
         {...register("room")}
       />
       <FormSelect
-        isRequired
         value={watch("bed")}
         skipOptionsTranslation
         options={options?.beds || []}
         label={t("patient-form.bed-label")}
         placeholder={t("patient-form.bed-placeholder")}
-        // error={errors.bed?.message as "required"}
         {...register("bed")}
       />
     </FormModal>

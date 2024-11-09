@@ -166,14 +166,12 @@ const NurseModal = ({ data, onClose, refetchList }: NurseModalProps) => {
       />
       <FormSelect
         isMulti
-        isRequired
         isClearable={false}
         skipOptionsTranslation
         value={watch("doctors")}
         options={options?.doctors || []}
         label={t("nurse-form.doctors-label")}
         placeholder={t("nurse-form.doctors-placeholder")}
-        // error={errors.doctors?.message as "required"}
         {...register("doctors")}
       />
     </FormModal>
