@@ -130,7 +130,7 @@ const Patients = (props: {
           onError() {
             setTimeout(() => {
               cleanup();
-            }, 500);
+            }, 1500);
           },
         });
       }

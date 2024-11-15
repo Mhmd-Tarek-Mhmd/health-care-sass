@@ -105,7 +105,7 @@ const Plans = () => {
           onError() {
             setTimeout(() => {
               cleanup();
-            }, 500);
+            }, 1500);
           },
         });
       }

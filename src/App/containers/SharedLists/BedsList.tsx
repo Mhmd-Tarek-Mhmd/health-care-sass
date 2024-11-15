@@ -117,7 +117,7 @@ const Beds = () => {
           onError() {
             setTimeout(() => {
               cleanup();
-            }, 500);
+            }, 1500);
           },
         });
       }

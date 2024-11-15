@@ -112,7 +112,7 @@ const Medicines = () => {
           onError() {
             setTimeout(() => {
               cleanup();
-            }, 500);
+            }, 1500);
           },
         });
       }

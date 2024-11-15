@@ -112,7 +112,7 @@ const Rooms = () => {
           onError() {
             setTimeout(() => {
               cleanup();
-            }, 500);
+            }, 1500);
           },
         });
       }

@@ -149,7 +149,7 @@ const Nurses = () => {
           onError() {
             setTimeout(() => {
               cleanup();
-            }, 500);
+            }, 1500);
           },
         });
       }
@@ -169,7 +169,7 @@ const Nurses = () => {
           onError() {
             setTimeout(() => {
               cleanup();
-            }, 500);
+            }, 1500);
           },
         });
       }
