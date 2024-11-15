@@ -105,24 +105,27 @@ export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
       updatedAt: Timestamp.now(),
     });
   } else {
-    const nurseRef = collection(db, COLLECTION_NAME);
-    const nursesDoc = await addDoc(nurseRef, {
+    const newDoc = await addDoc(collection(db, COLLECTION_NAME), {
       ...nurseData,
       isActive: true,
       createdAt: Timestamp.now(),
     });
 
+    if (!newDoc?.id) {
+      throw new Error("toast.default-error-desc");
+    }
+
     try {
       await logUp({
         type: userTypes.NURSE,
-        userTypeID: nursesDoc.id,
+        userTypeID: newDoc.id,
         password: "123456",
         email: nurse?.email,
         phone: nurse?.phone,
         name: nurse?.name,
       });
     } catch (error) {
-      await deleteDoc(doc(db, COLLECTION_NAME, nurseRef.id));
+      await deleteDoc(doc(db, COLLECTION_NAME, newDoc.id));
       throw new Error(error.message);
     }
   }

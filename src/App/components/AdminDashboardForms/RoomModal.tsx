@@ -72,7 +72,11 @@ const RoomModal = ({ data, onClose, refetchList }: RoomModalProps) => {
       args: { pageSize: 999, pageNumber: 1 },
       onSuccess(response) {
         const beds = (
-          response?.items?.length ? response?.items?.map(buildOptionModel) : []
+          response?.items?.length
+            ? response?.items
+                ?.filter((bed) => !bed?.room)
+                ?.map(buildOptionModel)
+            : []
         ) as [];
         setOptions((prev) => ({ ...prev, beds }));
       },

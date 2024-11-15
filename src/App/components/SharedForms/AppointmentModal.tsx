@@ -33,6 +33,12 @@ type AppointmentModalProps = {
   refetchList: VoidFunction;
 };
 
+const toValidate = (to: string, inputs: Inputs) => {
+  return (
+    dayjs(to).isAfter(dayjs(inputs.from)) || "to"
+  );
+};
+
 const AppointmentModal = ({
   data,
   onClose,
@@ -149,7 +155,7 @@ const AppointmentModal = ({
           isDisabled={data?.isEdit && checkUserTypes([userTypes.NURSE])}
           label={t("forms.to-label")}
           error={errors.to?.message as "required"}
-          {...register("to", { required: "required" })}
+          {...register("to", { required: "required", validate: toValidate })}
           sx={{ maxWidth: 230 }}
         />
       </Flex>

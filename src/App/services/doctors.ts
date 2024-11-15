@@ -9,11 +9,8 @@ import {
   deleteDoc,
   Timestamp,
   collection,
+  getCountFromServer,
 } from "firebase/firestore";
-import {
-  GetDoctorAppointmentsArgs,
-  COLLECTION_NAME as APPOINTMENTS_COLLECTION_NAME,
-} from "./appointments";
 import Store from "@store";
 import { logUp } from "./auth";
 import { db } from "./firebase";
@@ -23,6 +20,7 @@ import { getPatient } from "./patients";
 import { getHospital } from "./hospitals";
 import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Doctor, Patient, Appointment } from "@types";
+import { COLLECTION_NAME as APPOINTMENTS_COLLECTION_NAME } from "./appointments";
 
 export const COLLECTION_NAME = "doctors";
 
@@ -55,12 +53,16 @@ export interface GetDoctorArgs {
 }
 
 export const getDoctor = async ({ id }: GetDoctorArgs): Promise<Doctor> => {
-  const hospitalID = Store.auth?.user?.hospital.id as string;
   const doctorDoc = await getDoc(doc(db, COLLECTION_NAME, id));
-  const hospital = await getHospital({ id: hospitalID });
+  const doctor = doctorDoc.data();
+  const hospital = await getHospital({ id: doctor?.hospitalID });
   const appointments = await getDoctorAppointments({ id });
-  return { id, ...doctorDoc?.data(), hospital, appointments } as Doctor;
+  return { id, ...doctor, hospital, appointments } as Doctor;
 };
+
+interface GetDoctorAppointmentsArgs {
+  id: string;
+}
 
 export const getDoctorAppointments = async ({
   id,
@@ -98,8 +100,8 @@ export interface UpsertDoctorArgs extends Omit<Doctor, "appointments"> {}
 
 export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
   const isEdit = Boolean(doctor?.id);
-  const hospitalID = Store.auth?.user?.hospital.id;
-  const doctorData = { ...doctor, hospitalID, appointments: [] };
+  const hospitalID = Store.auth?.user?.hospital?.id;
+  const doctorData = { ...doctor, hospitalID };
 
   if (isEdit) {
     await updateDoc(doc(db, COLLECTION_NAME, doctor?.id), {
@@ -107,25 +109,27 @@ export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
       updatedAt: Timestamp.now(),
     });
   } else {
-    const doctorCollection = collection(db, COLLECTION_NAME);
-    const doctorRef = doc(doctorCollection);
-    await addDoc(doctorCollection, {
+    const newDoc = await addDoc(collection(db, COLLECTION_NAME), {
       ...doctorData,
       isActive: true,
       createdAt: Timestamp.now(),
     });
 
+    if (!newDoc?.id) {
+      throw new Error("toast.default-error-desc");
+    }
+
     try {
       await logUp({
         type: userTypes.DOCTOR,
-        userTypeID: doctorRef.id,
+        userTypeID: newDoc.id,
         password: "123456",
         email: doctor?.email,
         phone: doctor?.phone,
         name: doctor?.name,
       });
     } catch (error) {
-      await deleteDoc(doc(db, COLLECTION_NAME, doctorRef.id));
+      await deleteDoc(doc(db, COLLECTION_NAME, newDoc.id));
       throw new Error(error.message);
     }
   }
@@ -135,10 +139,16 @@ export type ToggleDoctorStatusArgs = {
   id: string;
 };
 export const toggleDoctorStatus = async ({ id }: ToggleDoctorStatusArgs) => {
-  const appointments = await getDoctorAppointments({ id });
-  if (appointments?.length) {
+  const doctorAppointmentsSnapshot = await getCountFromServer(
+    query(
+      collection(db, APPOINTMENTS_COLLECTION_NAME),
+      where("doctor", "==", doc(db, COLLECTION_NAME, id))
+    )
+  );
+  if (doctorAppointmentsSnapshot.data().count) {
     throw new Error("Can't deactivate a doctor with appointments");
   }
+
   await toggleActiveStatus({ id, collectionName: COLLECTION_NAME });
 };
 
@@ -146,8 +156,13 @@ export type RemoveDoctorArgs = {
   id: string;
 };
 export const removeDoctor = async ({ id }: RemoveDoctorArgs) => {
-  const appointments = await getDoctorAppointments({ id });
-  if (appointments?.length) {
+  const doctorAppointmentsSnapshot = await getCountFromServer(
+    query(
+      collection(db, APPOINTMENTS_COLLECTION_NAME),
+      where("doctor", "==", id)
+    )
+  );
+  if (doctorAppointmentsSnapshot.data().count) {
     throw new Error("Can't delete a doctor with appointments");
   }
 

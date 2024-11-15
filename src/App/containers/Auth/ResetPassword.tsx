@@ -92,7 +92,7 @@ const ResetPassword = () => {
             isLoading={isLoading}
             _hover={{ bg: "blue.500" }}
           >
-            {t("submit-btn-label")}
+            {t("actions.submit-btn-label")}
           </Button>
         </Stack>
       </Stack>

@@ -59,26 +59,25 @@ export const getHospital = async ({
   id,
 }: GetHospitalArgs): Promise<Hospital> => {
   const hospitalDoc = await getDoc(doc(db, COLLECTION_NAME, id));
-  const planDoc = await getDoc(hospitalDoc?.data()?.plan as DocumentReference);
+  const hospital = hospitalDoc.data();
+  const planDoc = await getDoc(hospital?.plan as DocumentReference);
   const plan = { id: planDoc.id, ...planDoc?.data() } as Plan;
-  return { id, ...hospitalDoc?.data(), plan } as Hospital;
+  return { id, ...hospital, plan } as Hospital;
 };
 
 export const saveHospital = async ({
   plan,
   ...hospital
 }: Hospital): Promise<void> => {
-  const planDoc = await getDoc(
-    doc(db, PLANS_COLLECTION_NAME, plan as unknown as string)
-  );
+  const planRef = doc(db, PLANS_COLLECTION_NAME, plan as unknown as string);
   const newDoc = await addDoc(collection(db, COLLECTION_NAME), {
     ...hospital,
     isActive: true,
-    plan: planDoc.ref,
+    plan: planRef,
     createdAt: Timestamp.now(),
   });
 
-  if (!newDoc.id) {
+  if (!newDoc?.id) {
     throw new Error("toast.default-error-desc");
   }
 

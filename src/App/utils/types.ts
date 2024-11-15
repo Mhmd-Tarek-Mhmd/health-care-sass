@@ -88,6 +88,7 @@ export interface Bed extends Model {
   length: number;
   room?: Room;
   details?: string;
+  occupied?: boolean;
 }
 
 export interface Room extends Model {

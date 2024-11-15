@@ -81,7 +81,7 @@ export const getPatientModalOptions = async () => {
   ]);
 
   return {
-    beds: res[0].items.map(buildOptionModel),
+    beds: res[0].items?.filter((bed) => !bed?.occupied).map(buildOptionModel),
     rooms: res[1].items.map(buildOptionModel),
   };
 };
@@ -98,6 +98,16 @@ export const upsertPatient = async (
   let bed: string | DocumentReference = "";
   if (patient?.bed) {
     bed = doc(db, BEDS_COLLECTION_NAME, patient.bed);
+    await updateDoc(bed, { occupied: true });
+    if (isEdit) {
+      const patientData = await getPatient({ id: patient?.id as string });
+      if (patientData?.bed?.id !== patient.bed) {
+        await updateDoc(
+          doc(db, BEDS_COLLECTION_NAME, patientData?.bed?.id as string),
+          { occupied: false }
+        );
+      }
+    }
   }
 
   const hospitalID = Store.auth?.user?.hospital.id;
@@ -113,25 +123,27 @@ export const upsertPatient = async (
       updatedAt: Timestamp.now(),
     });
   } else {
-    const patientCollection = collection(db, COLLECTION_NAME);
-    const patientRef = doc(patientCollection);
-    await addDoc(patientCollection, {
+    const newDoc = await addDoc(collection(db, COLLECTION_NAME), {
       ...patientData,
       isActive: true,
       createdAt: Timestamp.now(),
     });
 
+    if (!newDoc?.id) {
+      throw new Error("toast.default-error-desc");
+    }
+
     try {
       await logUp({
         type: userTypes.PATIENT,
-        userTypeID: patientRef.id,
+        userTypeID: newDoc.id,
         password: "123456",
         email: patient?.email,
         phone: patient?.phone,
         name: patient?.name,
       });
     } catch (error) {
-      await deleteDoc(doc(db, COLLECTION_NAME, patientRef.id));
+      await deleteDoc(doc(db, COLLECTION_NAME, newDoc.id));
       throw new Error(error.message);
     }
   }
@@ -169,20 +181,27 @@ export const quickPatientLogup = async ({
 
 export type RemovePatientArgs = {
   id: string;
+  bedId: string;
 };
-export const removePatient = async ({ id }: RemovePatientArgs) => {
+export const removePatient = async ({ id, bedId }: RemovePatientArgs) => {
   const batch = writeBatch(db);
   const patientRef = doc(db, COLLECTION_NAME, id);
   const appointments = await getDocs(
     collection(db, APPOINTMENTS_COLLECTION_NAME)
   );
+  const bedRef = bedId ? doc(db, BEDS_COLLECTION_NAME, bedId) : null;
 
   batch.delete(patientRef);
-  appointments.docs.forEach((doc) =>
-    batch.update(doc.ref, {
-      patients: arrayRemove(patientRef.id),
-    })
-  );
+  if (bedRef) {
+    batch.update(bedRef, { occupied: false });
+  }
+  if (appointments?.docs?.length) {
+    appointments.docs.forEach((doc) =>
+      batch.update(doc.ref, {
+        patients: arrayRemove(patientRef.id),
+      })
+    );
+  }
 
   await Promise.all([removeUser({ userTypeID: id }), batch.commit()]);
 };

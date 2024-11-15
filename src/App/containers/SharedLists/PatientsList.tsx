@@ -122,7 +122,7 @@ const Patients = (props: {
       if (isConfirmed) {
         remove({
           isShowErrorToast: true,
-          args: { id: patient.id },
+          args: { id: patient.id, bedId: patient?.bed?.id as string },
           onSuccess() {
             getData();
             cleanup();

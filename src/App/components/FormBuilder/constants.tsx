@@ -8,6 +8,7 @@ export type Errors = {
   required: TranslationKeys;
   email: TranslationKeys;
   phone: TranslationKeys;
+  to: TranslationKeys;
   passwordConfirm: TranslationKeys;
   default: TranslationKeys;
 };
@@ -16,6 +17,7 @@ export const errors: Errors = {
   required: "validations.required",
   email: "validations.email",
   phone: "validations.phone",
+  to: "validations.to",
   passwordConfirm: "validations.passwordConfirm",
   default: "validations.default",
 };

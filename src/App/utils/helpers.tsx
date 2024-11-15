@@ -9,7 +9,7 @@ import { createStandaloneToast, UseToastOptions } from "@chakra-ui/react";
 export const validatePhoneNumber = (value: string) => {
   try {
     const phoneNumber = parsePhoneNumber(value);
-    return phoneNumber.isValid();
+    return phoneNumber.isValid() || "phone";
   } catch (error) {
     return "phone";
   }

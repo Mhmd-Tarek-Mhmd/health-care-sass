@@ -78,6 +78,7 @@ export const saveBed = async (bed: UpsertBedArgs): Promise<void> => {
     ...bed,
     room,
     hospitalID,
+    occupied: false,
     createdAt: Timestamp.now(),
   });
   await batch.commit();
@@ -101,6 +102,7 @@ export const updateBed = async ({
     ...bed,
     room,
     hospitalID,
+    occupied: false,
     updatedAt: Timestamp.now(),
   });
   await batch.commit();

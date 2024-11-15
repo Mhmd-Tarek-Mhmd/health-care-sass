@@ -77,10 +77,6 @@ export const getAppointment = async ({
   return { ...appointment, doctor, patients };
 };
 
-export interface GetDoctorAppointmentsArgs {
-  id: string;
-}
-
 export const getAppointmentModalOptions = async () => {
   const res = await Promise.all([
     getDoctors({ pageSize: 999, pageNumber: 1 }),

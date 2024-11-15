@@ -103,6 +103,7 @@
   "validations": {
     "required": "This field is required",
     "email": "Please enter a valid email.",
+    "to": "Must be after From date",
     "phone": "Please provide a valid phone",
     "passwordConfirm": "Passwords do not match",
     "default": "Something went wrong. Try again!"

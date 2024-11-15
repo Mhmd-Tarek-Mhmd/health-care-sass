@@ -15,10 +15,10 @@ import {
 import { createUser } from "./users";
 import { userTypes } from "@constants";
 import { getHospital } from "./hospitals";
-import { Auth, User, UserType } from "@types";
+import { Auth, Hospital, User, UserType } from "@types";
 import { db, auth, storage } from "./firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { COLLECTION_NAME as USERS_COLLECTION_NAME } from "./users";
-import { doc, getDoc, Timestamp, updateDoc } from "firebase/firestore";
 
 export type LogUpArgs = {
   name: string;
@@ -31,10 +31,10 @@ export type LogUpArgs = {
 };
 export const logUp = async ({ password, ...args }: LogUpArgs) => {
   const res = await createUserWithEmailAndPassword(auth, args?.email, password);
-  if (!res.user) {
+  if (!res?.user?.uid) {
     throw new Error("toast.default-error-desc");
   }
-  await createUser({ id: res.user.uid, createdAt: Timestamp.now(), ...args });
+  await createUser({ id: res.user.uid, ...args });
 };
 
 export type LogInArgs = {
@@ -44,22 +44,28 @@ export type LogInArgs = {
 export const login = async ({ email, password }: LogInArgs): Promise<Auth> => {
   const res = await signInWithEmailAndPassword(auth, email, password);
   const userDoc = await getDoc(doc(db, "users", res.user.uid));
-  const userData = userDoc?.data();
+  const user = userDoc?.data();
+  if (user) {
+    let hospital, hospitals;
+    const isSuper = user.type === userTypes.SUPER;
+    const isPatient = user.type === userTypes.PATIENT;
 
-  if (userData) {
-    const isSuper = userData.type === userTypes.SUPER;
-    const isPatient = userData.type === userTypes.PATIENT;
-    const hospital = isSuper
-      ? undefined
-      : await getHospital({ id: userData.hospitalID });
-    const isHospitalActive = isSuper || isPatient || hospital?.isActive;
-    if (isHospitalActive && userData.isActive) {
+    if (isPatient) {
+      const hospitalsPromises = user?.hospitals?.map((hospital: string) =>
+        getHospital({ id: hospital })
+      );
+      hospitals = await Promise.all(hospitalsPromises);
+    }
+    if (!isSuper && !isPatient) {
+      hospital = await getHospital({ id: user.hospitalID });
+    }
+
+    if (user.isActive) {
       const token = await res.user.getIdToken();
-      const user = {
-        ...userData,
-        ...(isPatient ? { hospitals: [hospital] } : { hospital }),
-      } as User;
-      return { token, user };
+      return {
+        token,
+        user: { ...user, hospital, hospitals } as unknown as User,
+      };
     } else {
       throw new Error("toast.auth/inactive");
     }

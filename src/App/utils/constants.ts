@@ -54,3 +54,35 @@ export const priceUnits = [
   "DKK", // Danish Krone
   "PHP", // Philippine Peso
 ];
+
+export const doctorSpecializations = [
+  "General Practitioner",
+  "Internal Medicine",
+  "General Surgeon",
+  "Orthopedic Surgeon",
+  "Neurosurgeon",
+  "Cardiothoracic Surgeon",
+  "Plastic Surgeon",
+  "Cardiologist",
+  "Pulmonologist",
+  "Gastroenterologist",
+  "Nephrologist",
+  "Hepatologist",
+  "Endocrinologist",
+  "Dermatologist",
+  "Neurologist",
+  "Psychiatrist",
+  "Psychologist",
+  "Obstetrician/Gynecologist (OB/GYN)",
+  "Pediatrician",
+  "Neonatologist",
+  "Ophthalmologist",
+  "Optometrist",
+  "Otolaryngologist (ENT)",
+  "Physiotherapist",
+  "Speech Therapist",
+  "Oncologist",
+  "Hematologist",
+  "Anesthesiologist",
+  "Emergency Medicine Specialist",
+];

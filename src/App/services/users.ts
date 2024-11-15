@@ -5,6 +5,7 @@ import {
   setDoc,
   getDocs,
   deleteDoc,
+  Timestamp,
   collection,
   writeBatch,
 } from "firebase/firestore";
@@ -18,19 +19,27 @@ export const COLLECTION_NAME = "users";
 interface CreateUserArgs
   extends Omit<
     User,
-    "age" | "gender" | "userTypeID" | "isTempPassword" | "isActive" | "hospital"
+    | "age"
+    | "gender"
+    | "userTypeID"
+    | "isTempPassword"
+    | "isActive"
+    | "hospital"
+    | "createdAt"
   > {
   age?: string;
   gender?: string;
   userTypeID?: string;
 }
 export const createUser = async (user: CreateUserArgs) => {
+  const isAdmin = user?.type === userTypes.ADMIN;
   const isPatient = user?.type === userTypes.PATIENT;
-  const hospitalID = Store.auth?.user?.hospital.id;
+  const hospitalID = isAdmin ? user.userTypeID : Store.auth?.user?.hospital.id;
   await setDoc(doc(db, COLLECTION_NAME, user.id), {
     photoURL: "",
     isActive: true,
     isTempPassword: true,
+    createdAt: Timestamp.now(),
     ...(isPatient ? { hospitals: [hospitalID] } : { hospitalID }),
     ...user,
   });

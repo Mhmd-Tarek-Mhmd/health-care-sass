@@ -8,10 +8,10 @@ import {
   GetDoctorArgs,
   UpsertDoctorArgs,
 } from "@services";
-import { emailPattern } from "@constants";
 import { Doctor, AnyObject } from "@types";
 import { validatePhoneNumber } from "@helpers";
 import { SubmitHandler } from "react-hook-form";
+import { doctorSpecializations, emailPattern } from "@constants";
 
 import Loader from "../Loader";
 import FormModal from "../FormModal";
@@ -121,8 +121,11 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
           {...register("gender", { required: "required" })}
         />
       </Flex>
-      <FormInput
+      <FormSelect
         isRequired
+        skipOptionsTranslation
+        value={watch("specialty")}
+        options={doctorSpecializations}
         label={t("doctor-form.specialty-label")}
         placeholder={t("doctor-form.specialty-placeholder")}
         error={errors.specialty?.message as "required"}
