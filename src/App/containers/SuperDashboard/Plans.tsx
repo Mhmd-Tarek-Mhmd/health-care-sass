@@ -96,10 +96,16 @@ const Plans = () => {
     confirm({ showLoaderOnConfirm: true }).then(({ isConfirmed, cleanup }) => {
       if (isConfirmed) {
         remove({
+          isShowErrorToast: true,
           args: { id: plan.id },
           onSuccess() {
             getData();
             cleanup();
+          },
+          onError() {
+            setTimeout(() => {
+              cleanup();
+            }, 500);
           },
         });
       }

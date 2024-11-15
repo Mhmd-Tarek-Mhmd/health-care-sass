@@ -135,6 +135,7 @@ const Nurses = () => {
     confirm({ showLoaderOnConfirm: true }).then(({ isConfirmed, cleanup }) => {
       if (isConfirmed) {
         toggleStatus({
+          isShowErrorToast: true,
           args: { id: nurse.id },
           onSuccess() {
             getData({
@@ -145,6 +146,11 @@ const Nurses = () => {
             });
             cleanup();
           },
+          onError() {
+            setTimeout(() => {
+              cleanup();
+            }, 500);
+          },
         });
       }
     });
@@ -154,10 +160,16 @@ const Nurses = () => {
     confirm({ showLoaderOnConfirm: true }).then(({ isConfirmed, cleanup }) => {
       if (isConfirmed) {
         remove({
+          isShowErrorToast: true,
           args: { id: nurse.id },
           onSuccess() {
             getData();
             cleanup();
+          },
+          onError() {
+            setTimeout(() => {
+              cleanup();
+            }, 500);
           },
         });
       }
