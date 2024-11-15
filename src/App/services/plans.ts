@@ -1,15 +1,19 @@
 import {
   doc,
+  where,
+  query,
   getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
   Timestamp,
   collection,
+  getCountFromServer,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { PaginatorResponse, Plan } from "@types";
+import { COLLECTION_NAME as HOSPITALS_COLLECTION_NAME } from './hospitals'
 
 export const COLLECTION_NAME = "plans";
 
@@ -55,5 +59,15 @@ export type RemovePlanArgs = {
   id: string;
 };
 export const removePlan = async ({ id }: RemovePlanArgs) => {
+  const planHospitalsSnapshot = await getCountFromServer(
+    query(
+      collection(db, HOSPITALS_COLLECTION_NAME),
+      where("plan", "==", doc(db, COLLECTION_NAME, id))
+    )
+  );
+  if (planHospitalsSnapshot.data().count) {
+    throw new Error("Can't remove a plan with current subscription.");
+  }
+
   await deleteDoc(doc(db, COLLECTION_NAME, id));
 };

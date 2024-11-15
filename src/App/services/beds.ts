@@ -1,5 +1,6 @@
 import {
   doc,
+  query,
   where,
   getDoc,
   Timestamp,
@@ -8,12 +9,14 @@ import {
   writeBatch,
   arrayUnion,
   DocumentReference,
+  getCountFromServer,
 } from "firebase/firestore";
 import Store from "@store";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { PaginatorResponse, Bed, Room } from "@types";
 import { COLLECTION_NAME as ROOMS_COLLECTION_NAME } from "./rooms";
+import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
 
 export const COLLECTION_NAME = "beds";
 
@@ -107,5 +110,15 @@ export type RemoveBedArgs = {
   id: string;
 };
 export const removeBed = async ({ id }: RemoveBedArgs) => {
+  const bedPatientSnapshot = await getCountFromServer(
+    query(
+      collection(db, PATIENTS_COLLECTION_NAME),
+      where("bed", "==", doc(db, COLLECTION_NAME, id))
+    )
+  );
+  if (bedPatientSnapshot.data().count) {
+    throw new Error("Can't remove a bed with a current patient.");
+  }
+
   await deleteDoc(doc(db, COLLECTION_NAME, id));
 };

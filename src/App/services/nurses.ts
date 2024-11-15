@@ -19,7 +19,7 @@ import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Nurse, Doctor } from "@types";
 import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
 
-const COLLECTION_NAME = "nurses";
+export const COLLECTION_NAME = "nurses";
 
 export interface GetNursesArgs {
   pageSize: number;

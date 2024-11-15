@@ -15,7 +15,7 @@ import paginator from "./paginator";
 import { PaginatorResponse, Medicine, User } from "@types";
 import { COLLECTION_NAME as USERS_COLLECTION_NAME } from "./users";
 
-const COLLECTION_NAME = "medicines";
+export const COLLECTION_NAME = "medicines";
 
 export interface GetMedicinesArgs {
   pageSize: number;

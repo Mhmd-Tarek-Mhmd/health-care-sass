@@ -1,5 +1,6 @@
 import {
   doc,
+  query,
   where,
   getDoc,
   getDocs,
@@ -8,6 +9,7 @@ import {
   collection,
   arrayRemove,
   DocumentReference,
+  getCountFromServer,
 } from "firebase/firestore";
 import Store from "@store";
 import { db } from "./firebase";
@@ -116,6 +118,16 @@ export type RemoveRoomArgs = {
   id: string;
 };
 export const removeRoom = async ({ id }: RemoveRoomArgs) => {
+  const roomBedsSnapshot = await getCountFromServer(
+    query(
+      collection(db, BEDS_COLLECTION_NAME),
+      where("room", "==", doc(db, COLLECTION_NAME, id))
+    )
+  );
+  if (roomBedsSnapshot.data().count) {
+    throw new Error("Can't remove a room with current beds.");
+  }
+
   const batch = writeBatch(db);
   const roomRef = doc(db, COLLECTION_NAME, id);
   const beds = await getDocs(collection(db, BEDS_COLLECTION_NAME));
@@ -123,7 +135,7 @@ export const removeRoom = async ({ id }: RemoveRoomArgs) => {
   batch.delete(roomRef);
   beds.docs.forEach((doc) =>
     batch.update(doc.ref, {
-      doctors: arrayRemove(roomRef),
+      room: arrayRemove(roomRef),
     })
   );
 

@@ -1,12 +1,17 @@
 import {
   doc,
+  query,
+  where,
   getDoc,
   addDoc,
+  getDocs,
   updateDoc,
   Timestamp,
   deleteDoc,
   collection,
+  writeBatch,
   DocumentReference,
+  getCountFromServer,
 } from "firebase/firestore";
 import { logUp } from "./auth";
 import { db } from "./firebase";
@@ -14,9 +19,16 @@ import paginator from "./paginator";
 import { userTypes } from "@constants";
 import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Hospital, Plan } from "@types";
+import { COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
 import { COLLECTION_NAME as PLANS_COLLECTION_NAME } from "./plans";
+import { COLLECTION_NAME as ROOMS_COLLECTION_NAME } from "./rooms";
+import { COLLECTION_NAME as NURSES_COLLECTION_NAME } from "./nurses";
+import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
+import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
+import { COLLECTION_NAME as MEDICINES_COLLECTION_NAME } from "./medicines";
+import { COLLECTION_NAME as APPOINTMENTS_COLLECTION_NAME } from "./appointments";
 
-const COLLECTION_NAME = "hospitals";
+export const COLLECTION_NAME = "hospitals";
 
 export interface GetHospitalsArgs {
   pageSize: number;
@@ -106,6 +118,33 @@ export type ToggleHospitalStatusArgs = {
 export const toggleHospitalStatus = async ({
   id,
 }: ToggleHospitalStatusArgs) => {
+  const hospitalPatientsSnapshot = await getCountFromServer(
+    query(
+      collection(db, PATIENTS_COLLECTION_NAME),
+      where("hospitalID", "==", id)
+    )
+  );
+  if (hospitalPatientsSnapshot.data().count) {
+    throw new Error("Can't deactivate an hospital have patients.");
+  }
+
+  const hospitalDoctorsSnapshot = await getCountFromServer(
+    query(
+      collection(db, DOCTORS_COLLECTION_NAME),
+      where("hospitalID", "==", id)
+    )
+  );
+  if (hospitalDoctorsSnapshot.data().count) {
+    throw new Error("Can't deactivate an hospital have doctors.");
+  }
+
+  const hospitalNursesSnapshot = await getCountFromServer(
+    query(collection(db, NURSES_COLLECTION_NAME), where("hospitalID", "==", id))
+  );
+  if (hospitalNursesSnapshot.data().count) {
+    throw new Error("Can't deactivate an hospital have nurses.");
+  }
+
   await toggleActiveStatus({ id, collectionName: COLLECTION_NAME });
 };
 
@@ -113,8 +152,59 @@ export type RemoveHospitalArgs = {
   id: string;
 };
 export const removeHospital = async ({ id }: RemoveHospitalArgs) => {
-  await Promise.all([
-    removeUser({ userTypeID: id }),
-    deleteDoc(doc(db, COLLECTION_NAME, id)),
-  ]);
+  const hospitalPatientsSnapshot = await getCountFromServer(
+    query(
+      collection(db, PATIENTS_COLLECTION_NAME),
+      where("hospitalID", "==", id)
+    )
+  );
+  if (hospitalPatientsSnapshot.data().count) {
+    throw new Error("Can't remove an hospital have patients.");
+  }
+
+  const hospitalDoctorsSnapshot = await getCountFromServer(
+    query(
+      collection(db, DOCTORS_COLLECTION_NAME),
+      where("hospitalID", "==", id)
+    )
+  );
+  if (hospitalDoctorsSnapshot.data().count) {
+    throw new Error("Can't remove an hospital have doctors.");
+  }
+
+  const hospitalNursesSnapshot = await getCountFromServer(
+    query(collection(db, NURSES_COLLECTION_NAME), where("hospitalID", "==", id))
+  );
+  if (hospitalNursesSnapshot.data().count) {
+    throw new Error("Can't remove an hospital have nurses.");
+  }
+
+  const batch = writeBatch(db);
+  const hospitalRef = doc(db, COLLECTION_NAME, id);
+  const beds = await getDocs(
+    query(collection(db, BEDS_COLLECTION_NAME), where("hospitalID", "==", id))
+  );
+  const rooms = await getDocs(
+    query(collection(db, ROOMS_COLLECTION_NAME), where("hospitalID", "==", id))
+  );
+  const medicines = await getDocs(
+    query(
+      collection(db, MEDICINES_COLLECTION_NAME),
+      where("hospitalID", "==", id)
+    )
+  );
+  const appointments = await getDocs(
+    query(
+      collection(db, APPOINTMENTS_COLLECTION_NAME),
+      where("hospitalID", "==", id)
+    )
+  );
+
+  batch.delete(hospitalRef);
+  beds.docs.forEach((doc) => batch.delete(doc.ref));
+  rooms.docs.forEach((doc) => batch.delete(doc.ref));
+  medicines.docs.forEach((doc) => batch.delete(doc.ref));
+  appointments.docs.forEach((doc) => batch.delete(doc.ref));
+
+  await Promise.all([removeUser({ userTypeID: id }), batch.commit()]);
 };

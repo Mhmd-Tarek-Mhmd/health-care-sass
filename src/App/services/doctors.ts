@@ -137,7 +137,7 @@ export type ToggleDoctorStatusArgs = {
 export const toggleDoctorStatus = async ({ id }: ToggleDoctorStatusArgs) => {
   const appointments = await getDoctorAppointments({ id });
   if (appointments?.length) {
-    throw new Error("Can't suspend a doctor with appointments");
+    throw new Error("Can't deactivate a doctor with appointments");
   }
   await toggleActiveStatus({ id, collectionName: COLLECTION_NAME });
 };
