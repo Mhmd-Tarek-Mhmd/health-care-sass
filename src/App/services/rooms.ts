@@ -33,19 +33,9 @@ export const getRooms = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const roomsPromises = rooms.items.map(async (room) => {
-    if (room.beds.length) {
-      const bedsPromises = room.beds.map(async (bed) => {
-        const bedDoc = await getDoc(bed as unknown as DocumentReference);
-        return { id: bedDoc.id, ...bedDoc?.data() } as Bed;
-      });
-
-      const beds = await Promise.all(bedsPromises);
-      return { ...room, beds };
-    } else {
-      return room;
-    }
-  });
+  const roomsPromises = rooms.items.map(async (room) =>
+    getRoom({ id: room.id })
+  );
 
   const items = await Promise.all(roomsPromises);
   return { ...rooms, items };

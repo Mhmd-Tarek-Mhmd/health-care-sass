@@ -42,10 +42,9 @@ export const getDoctors = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const doctorsPromises = doctors.items.map(async (doctor) => {
-    const doctorData = await getDoctor({ id: doctor.id });
-    return doctorData;
-  });
+  const doctorsPromises = doctors.items.map(async (doctor) =>
+    getDoctor({ id: doctor.id })
+  );
 
   const items = await Promise.all(doctorsPromises);
   return { ...doctors, items };

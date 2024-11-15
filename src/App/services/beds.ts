@@ -33,16 +33,7 @@ export const getBeds = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-
-  const bedsPromises = beds.items.map(async (bed) => {
-    let room;
-    if (bed.room) {
-      const roomDoc = await getDoc(bed.room as unknown as DocumentReference);
-      room = { id: roomDoc.id, ...roomDoc?.data() } as Room;
-    }
-
-    return { ...bed, room };
-  });
+  const bedsPromises = beds.items.map((bed) => getBed({ id: bed.id }));
 
   const items = await Promise.all(bedsPromises);
   return { ...beds, items };

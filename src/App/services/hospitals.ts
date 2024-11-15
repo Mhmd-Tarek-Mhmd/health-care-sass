@@ -31,15 +31,9 @@ export const getHospitals = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const hospitalsPromises = hospitals.items.map(async (hospital) => {
-    const planDoc = await getDoc(
-      hospital?.plan as unknown as DocumentReference
-    );
-    return {
-      ...hospital,
-      plan: { id: planDoc.id, ...planDoc?.data() } as Plan,
-    };
-  });
+  const hospitalsPromises = hospitals.items.map((hospital) =>
+    getHospital({ id: hospital.id })
+  );
 
   const items = await Promise.all(hospitalsPromises);
   return { ...hospitals, items };
@@ -53,7 +47,7 @@ export const getHospital = async ({
   id,
 }: GetHospitalArgs): Promise<Hospital> => {
   const docDoc = await getDoc(doc(db, COLLECTION_NAME, id));
-  const planDoc = await getDoc(docDoc?.data()?.plan);
+  const planDoc = await getDoc(docDoc?.data()?.plan as DocumentReference);
   const plan = { id: planDoc.id, ...planDoc?.data() } as Plan;
   return { id, ...docDoc?.data(), plan } as Hospital;
 };
@@ -109,10 +103,11 @@ export const updateHospital = async ({
 export type ToggleHospitalStatusArgs = {
   id: string;
 };
-export const toggleHospitalStatus = async ({ id }: ToggleHospitalStatusArgs) => {
+export const toggleHospitalStatus = async ({
+  id,
+}: ToggleHospitalStatusArgs) => {
   await toggleActiveStatus({ id, collectionName: COLLECTION_NAME });
 };
-
 
 export type RemoveHospitalArgs = {
   id: string;

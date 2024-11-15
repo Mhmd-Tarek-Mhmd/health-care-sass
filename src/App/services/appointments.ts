@@ -41,11 +41,9 @@ export const getAppointments = async ({
     orderByField: "from",
     collectionName: COLLECTION_NAME,
   });
-
-  const appointmentsPromises = appointments.items.map((appointment) => {
-    const appointmentData = getAppointment({ id: appointment.id });
-    return appointmentData;
-  });
+  const appointmentsPromises = appointments.items.map((appointment) =>
+    getAppointment({ id: appointment.id })
+  );
 
   const items = await Promise.all(appointmentsPromises);
   return { ...appointments, items };

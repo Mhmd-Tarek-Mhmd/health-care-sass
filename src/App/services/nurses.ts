@@ -15,7 +15,6 @@ import { db } from "./firebase";
 import paginator from "./paginator";
 import { userTypes } from "@constants";
 import { checkUserTypes } from "@helpers";
-import { getHospital } from "./hospitals";
 import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Nurse, Doctor } from "@types";
 import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
@@ -55,16 +54,9 @@ export const getNurses = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const nursesPromises = nurses.items.map(async (nurse) => {
-    const doctorsPromises = nurse.doctors.map(async (doctor) => {
-      const doctorDoc = await getDoc(doctor as unknown as DocumentReference);
-      return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
-    });
-
-    const hospital = await getHospital({ id: hospitalID });
-    const doctors = await Promise.all(doctorsPromises);
-    return { ...nurse, doctors, hospital };
-  });
+  const nursesPromises = nurses.items.map((nurse) =>
+    getNurse({ id: nurse.id })
+  );
 
   const items = await Promise.all(nursesPromises);
   return { ...nurses, items };

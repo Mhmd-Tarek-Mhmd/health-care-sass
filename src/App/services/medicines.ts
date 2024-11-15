@@ -26,32 +26,16 @@ export const getMedicines = async ({
   pageNumber,
 }: GetMedicinesArgs): Promise<PaginatorResponse<Medicine>> => {
   const hospitalID = Store.auth?.user?.hospital.id;
-  const filters = [
-    where("hospitalID", "==", hospitalID),
-  ];
+  const filters = [where("hospitalID", "==", hospitalID)];
   const medicines = await paginator<Medicine>({
     filters,
     pageSize,
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const medicinesPromises = medicines.items.map(async (medicine) => {
-    let createdBy, updatedBy;
-    if (medicine.createdBy) {
-      const createdByDoc = await getDoc(
-        medicine.createdBy as unknown as DocumentReference
-      );
-      createdBy = { id: createdByDoc.id, ...createdByDoc?.data() } as User;
-    }
-    if (medicine.updatedBy) {
-      const updatedByDoc = await getDoc(
-        medicine.updatedBy as unknown as DocumentReference
-      );
-      updatedBy = { id: updatedByDoc.id, ...updatedByDoc?.data() } as User;
-    }
-
-    return { ...medicine, createdBy, updatedBy };
-  });
+  const medicinesPromises = medicines.items.map((medicine) =>
+    getMedicine({ id: medicine.id })
+  );
 
   const items = await Promise.all(medicinesPromises);
   return { ...medicines, items };

@@ -48,10 +48,9 @@ export const getPatients = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const patientsPromises = patients.items.map(async (patient) => {
-    const patientData = await getPatient({ id: patient.id });
-    return patientData;
-  });
+  const patientsPromises = patients.items.map((patient) =>
+    getPatient({ id: patient.id })
+  );
 
   const items = await Promise.all(patientsPromises);
   return { ...patients, items };
