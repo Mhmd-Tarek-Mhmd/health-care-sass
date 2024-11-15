@@ -67,8 +67,8 @@ export interface GetNurseArgs {
 }
 
 export const getNurse = async ({ id }: GetNurseArgs): Promise<Nurse> => {
-  const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  const nurse = { id, ...docRef?.data() } as Nurse;
+  const nurseDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  const nurse = { id, ...nurseDoc?.data() } as Nurse;
   if (nurse.doctors.length) {
     const doctorsPromises = nurse.doctors.map(async (doctor) => {
       const doctorDoc = await getDoc(doctor as unknown as DocumentReference);

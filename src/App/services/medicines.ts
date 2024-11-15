@@ -48,8 +48,8 @@ export interface GetMedicineArgs {
 export const getMedicine = async ({
   id,
 }: GetMedicineArgs): Promise<Medicine> => {
-  const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  const medicine = docRef?.data();
+  const medicineDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  const medicine = medicineDoc?.data();
   let createdBy, updatedBy;
 
   if (medicine?.createdBy) {

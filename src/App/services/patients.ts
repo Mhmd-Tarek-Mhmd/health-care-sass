@@ -61,8 +61,8 @@ export interface GetPatientArgs {
 }
 
 export const getPatient = async ({ id }: GetPatientArgs): Promise<Patient> => {
-  const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  const patient = { id, ...docRef?.data() } as Patient;
+  const patientDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  const patient = { id, ...patientDoc?.data() } as Patient;
 
   let bed;
   if (patient?.bed) {

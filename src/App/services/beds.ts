@@ -47,8 +47,8 @@ export interface GetBedArgs {
 }
 
 export const getBed = async ({ id }: GetBedArgs): Promise<Bed> => {
-  const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  const bed = { id, ...docRef?.data() } as Bed;
+  const bedDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  const bed = { id, ...bedDoc?.data() } as Bed;
 
   if (bed?.room) {
     const roomDoc = await getDoc(bed.room as unknown as DocumentReference);

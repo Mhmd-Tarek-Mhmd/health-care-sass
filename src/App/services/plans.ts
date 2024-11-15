@@ -37,8 +37,8 @@ export interface GetPlanArgs {
 }
 
 export const getPlan = async ({ id }: GetPlanArgs): Promise<Plan> => {
-  const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  return { id, ...docRef?.data() } as Plan;
+  const planDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  return { id, ...planDoc?.data() } as Plan;
 };
 
 export const savePlan = async (plan: Plan): Promise<void> => {

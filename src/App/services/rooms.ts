@@ -48,8 +48,8 @@ export interface GetRoomArgs {
 }
 
 export const getRoom = async ({ id }: GetRoomArgs): Promise<Room> => {
-  const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  const room = { id, ...docRef?.data() } as Room;
+  const roomDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  const room = { id, ...roomDoc?.data() } as Room;
 
   if (room.beds.length) {
     const bedsPromises = room.beds.map(async (bed) => {

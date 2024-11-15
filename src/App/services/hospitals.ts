@@ -58,10 +58,10 @@ export interface GetHospitalArgs {
 export const getHospital = async ({
   id,
 }: GetHospitalArgs): Promise<Hospital> => {
-  const docDoc = await getDoc(doc(db, COLLECTION_NAME, id));
-  const planDoc = await getDoc(docDoc?.data()?.plan as DocumentReference);
+  const hospitalDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  const planDoc = await getDoc(hospitalDoc?.data()?.plan as DocumentReference);
   const plan = { id: planDoc.id, ...planDoc?.data() } as Plan;
-  return { id, ...docDoc?.data(), plan } as Hospital;
+  return { id, ...hospitalDoc?.data(), plan } as Hospital;
 };
 
 export const saveHospital = async ({

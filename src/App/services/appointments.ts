@@ -56,8 +56,8 @@ export interface GetAppointmentArgs {
 export const getAppointment = async ({
   id,
 }: GetAppointmentArgs): Promise<Appointment> => {
-  const docRef = await getDoc(doc(db, COLLECTION_NAME, id));
-  const appointment = { id, ...docRef?.data() } as Appointment;
+  const appointmentDoc = await getDoc(doc(db, COLLECTION_NAME, id));
+  const appointment = { id, ...appointmentDoc?.data() } as Appointment;
 
   // Doctor
   const doctor = await getDoctor({
@@ -67,12 +67,9 @@ export const getAppointment = async ({
   // Patients
   let patients: Patient[] = [];
   if (appointment.patients.length) {
-    const patientsPromises = appointment.patients.map(async (patient) => {
-      const patientData = await getPatient({
-        id: patient as unknown as string,
-      });
-      return patientData;
-    });
+    const patientsPromises = appointment.patients.map((patient) =>
+      getPatient({ id: patient as unknown as string })
+    );
 
     patients = await Promise.all(patientsPromises);
   }
