@@ -12,6 +12,10 @@ const doctorDashboardRoutes: Array<RouteObject> = [
         element: <DoctorDashboard.Medicines />,
       },
       {
+        path: "appointments",
+        element: <DoctorDashboard.Appointments />,
+      },
+      {
         path: "nurses",
         element: <DoctorDashboard.Nurses />,
       },

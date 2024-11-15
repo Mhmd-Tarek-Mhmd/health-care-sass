@@ -1,13 +1,15 @@
 import Root from "./Root";
 import Nurses from "./Nurses";
 import Patients from "./Patients";
-import Medicines from "./Medicines";
 import Settings from "../Settings";
+import Medicines from "./Medicines";
+import Appointments from "./Appointments";
 
 export default {
   Root,
   Nurses,
   Patients,
-  Medicines,
   Settings,
+  Medicines,
+  Appointments,
 };

@@ -26,8 +26,6 @@ type Inputs = {
   email: string;
   phone: string;
   bed?: string;
-  room?: string;
-  doctors?: string[];
 };
 
 type PatientModalProps = {
@@ -70,8 +68,6 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
               reset({
                 ...response,
                 bed: response?.bed?.id || "",
-                room: response?.room?.id || "",
-                doctors: response?.doctors?.map((p) => p.id),
               });
             },
           });
@@ -155,24 +151,6 @@ const PatientModal = ({ data, onClose, refetchList }: PatientModalProps) => {
           required: "required",
           validate: validatePhoneNumber,
         })}
-      />
-      <FormSelect
-        isMulti
-        isClearable={false}
-        skipOptionsTranslation
-        value={watch("doctors")}
-        options={options?.doctors || []}
-        label={t("patient-form.doctors-label")}
-        placeholder={t("patient-form.doctors-placeholder")}
-        {...register("doctors")}
-      />
-      <FormSelect
-        value={watch("room")}
-        skipOptionsTranslation
-        options={options?.rooms || []}
-        label={t("patient-form.room-label")}
-        placeholder={t("patient-form.room-placeholder")}
-        {...register("room")}
       />
       <FormSelect
         value={watch("bed")}

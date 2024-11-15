@@ -15,8 +15,9 @@ import {
 } from "@chakra-ui/react";
 
 type FormModalProps = {
-  title: TranslationKeys;
   isOpen: boolean;
+  size?: string;
+  title: TranslationKeys;
   isLoading?: boolean;
   onSave: VoidFunction;
   onClose: VoidFunction;
@@ -28,6 +29,7 @@ type FormModalProps = {
 };
 
 const FormModal = ({
+  size,
   title,
   isOpen,
   onSave,
@@ -43,6 +45,7 @@ const FormModal = ({
   return (
     <Modal
       isCentered
+      size={size}
       isOpen={isOpen}
       onClose={onClose}
       closeOnOverlayClick={false}

@@ -61,7 +61,8 @@
     "settings": "Settings",
     "patients": "Patients",
     "medicines": "Medicines",
-    "hospitals": "Hospitals"
+    "hospitals": "Hospitals",
+    "appointments": "Appointments"
   },
   "lists": {
     "actions-cell-label": "actions",
@@ -92,7 +93,12 @@
     "passwordConfirm-label": "Confirm Password",
     "passwordConfirm-placeholder": "Confirm your password",
     "phone-label": "Phone",
-    "phone-placeholder": "Enter your phone"
+    "phone-placeholder": "Enter your phone",
+    "weekday-label": "Weekday",
+    "weekday-placeholder": "Enter weekday",
+    "to-label": "To",
+    "from-label": "From",
+    "repeatEveryWeek-label": "Repeat this appointment every week?"
   },
   "validations": {
     "required": "This field is required",
@@ -295,5 +301,21 @@
   "medicine-form": {
     "create-title": "Add Medicine",
     "edit-title": "Edit Medicine"
+  },
+
+  "appointments-list": {
+    "add-appointment": "Add Appointment",
+    "doctor-cell-label": "Doctor",
+    "patients-cell-label": "Patients",
+    "from-cell-label": "From",
+    "to-cell-label": "To"
+  },
+  "appointment-form": {
+    "create-title": "Add Appointment",
+    "edit-title": "Edit Appointment",
+    "doctor-label": "Doctor",
+    "doctor-placeholder": "Enter a doctor",
+    "patients-label": "Patients",
+    "patients-placeholder": "Enter patients"
   }
 }

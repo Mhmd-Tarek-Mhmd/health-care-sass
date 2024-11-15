@@ -1,20 +1,17 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDidUpdateEffect, useServiceRequest } from "@hooks";
 
 import {
   getDoctor,
-  getPatients,
   upsertDoctor,
-  GetPatientsArgs,
   GetDoctorArgs,
   UpsertDoctorArgs,
 } from "@services";
 import { emailPattern } from "@constants";
+import { Doctor, AnyObject } from "@types";
+import { validatePhoneNumber } from "@helpers";
 import { SubmitHandler } from "react-hook-form";
-import { buildOptionModel, validatePhoneNumber } from "@helpers";
-import { Patient, Doctor, AnyObject, PaginatorResponse } from "@types";
 
 import Loader from "../Loader";
 import FormModal from "../FormModal";
@@ -28,7 +25,6 @@ type Inputs = {
   email: string;
   phone: string;
   specialty: string;
-  patients?: string[];
 };
 
 type DoctorModalProps = {
@@ -47,15 +43,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  // Local State
-  const [options, setOptions] = React.useState({
-    patients: [],
-    genders: ["Male", "Female"],
-  });
-
   // Server State
-  const [getPatientsOptions, { isLoading: isPatientsOptionsLoading }] =
-    useServiceRequest<GetPatientsArgs, PaginatorResponse<Patient>>(getPatients);
   const [getDoctorData, { isLoading: isDataLoading }] = useServiceRequest<
     GetDoctorArgs,
     Doctor
@@ -68,26 +56,13 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
   /* ↓ State Effects ↓ */
 
   useDidUpdateEffect(() => {
-    getPatientsOptions({
-      args: { pageSize: 999, pageNumber: 1 },
-      onSuccess(response) {
-        const patients = (
-          response?.items?.length ? response?.items?.map(buildOptionModel) : []
-        ) as [];
-        setOptions((prev) => ({ ...prev, patients }));
-
-        data?.id &&
-          getDoctorData({
-            args: { id: data?.id },
-            onSuccess(response) {
-              reset({
-                ...response,
-                patients: response?.patients.map((p) => p.id),
-              });
-            },
-          });
-      },
-    });
+    data?.id &&
+      getDoctorData({
+        args: { id: data?.id },
+        onSuccess(response) {
+          reset(response);
+        },
+      });
   }, []);
 
   /* ↓ Helpers ↓ */
@@ -117,7 +92,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
         data?.isEdit ? "doctor-form.edit-title" : "doctor-form.create-title"
       }
     >
-      <Loader fixed isLoading={isDataLoading || isPatientsOptionsLoading} />
+      <Loader fixed isLoading={isDataLoading} />
 
       <FormInput
         isRequired
@@ -139,7 +114,7 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
           isRequired
           skipOptionsTranslation
           value={watch("gender")}
-          options={options?.genders || []}
+          options={["Male", "Female"]}
           label={t("forms.gender-label")}
           placeholder={t("forms.gender-placeholder")}
           error={errors.gender?.message as "required"}
@@ -173,16 +148,6 @@ const DoctorModal = ({ data, onClose, refetchList }: DoctorModalProps) => {
           required: "required",
           validate: validatePhoneNumber,
         })}
-      />
-      <FormSelect
-        isMulti
-        isClearable={false}
-        skipOptionsTranslation
-        value={watch("patients")}
-        options={options?.patients || []}
-        label={t("doctor-form.patients-label")}
-        placeholder={t("doctor-form.patients-placeholder")}
-        {...register("patients")}
       />
     </FormModal>
   );

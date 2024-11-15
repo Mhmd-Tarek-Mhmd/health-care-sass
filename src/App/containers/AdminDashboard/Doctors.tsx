@@ -92,11 +92,6 @@ const Doctors = () => {
         cell: (row) => <Link href={`tel:${row?.phone}`}>{row?.phone}</Link>,
       },
       {
-        name: t("doctors-list.patients-cell-label"),
-        cell: (row) =>
-          row?.patients?.map((patient) => patient.name)?.join(", "),
-      },
-      {
         name: t("lists.actions-cell-label"),
         cell: (row) => (
           <Flex columnGap={1}>

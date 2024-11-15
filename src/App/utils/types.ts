@@ -98,9 +98,17 @@ export interface Room extends Model {
   details: string;
 }
 
+export interface Appointment {
+  id: string;
+  from: Timestamp; // DateTime
+  to: Timestamp; // DateTime
+  doctor: Doctor;
+  patients: [] | Patient[];
+}
+
 export interface Doctor extends User {
   specialty: string;
-  patients: [] | Patient[];
+  appointments: [] | Appointment[];
 }
 
 export interface Nurse extends User {
@@ -108,8 +116,6 @@ export interface Nurse extends User {
 }
 
 export interface Patient extends Omit<User, "hospital"> {
-  doctors: [] | Doctor[];
-  room?: Room;
   bed?: Bed;
   hospitals: [] | Hospital[];
 }

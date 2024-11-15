@@ -9,8 +9,8 @@ import {
   RemovePatientArgs,
 } from "@services";
 import dayjs from "dayjs";
+import { confirm } from "@helpers";
 import { FirebaseError } from "firebase/app";
-import { checkUserTypes, confirm } from "@helpers";
 import { ServiceRequestHook, Options } from "@hooks";
 import { AnyObject, Column, PaginatorResponse, Patient } from "@types";
 import { datTimeFormat, paginationInitState, userTypes } from "@constants";
@@ -86,13 +86,8 @@ const Patients = (props: {
         cell: (row) => <Link href={`tel:${row?.phone}`}>{row?.phone}</Link>,
       },
       {
-        name: t("patients-list.doctors-cell-label"),
-        omit: checkUserTypes([userTypes.DOCTOR]),
-        cell: (row) => row?.doctors?.map((doctor) => doctor.name)?.join(", "),
-      },
-      {
         name: t("patients-list.room-cell-label"),
-        cell: (row) => row?.room?.name,
+        cell: (row) => row?.bed?.room?.name,
       },
       {
         name: t("patients-list.bed-cell-label"),

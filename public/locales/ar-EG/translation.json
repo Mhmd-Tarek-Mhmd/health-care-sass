@@ -63,7 +63,8 @@
     "settings": "الإعدادات",
     "plans": "نظم الإشتراك",
     "payments": "المدفوعات",
-    "hospitals": "المستشفيات"
+    "hospitals": "المستشفيات",
+    "appointments": "المواعيد"
   },
   "lists": {
     "actions-cell-label": "الإجراءات",
@@ -94,7 +95,12 @@
     "passwordConfirm-label": "تأكيد كلمة المرور",
     "passwordConfirm-placeholder": "أكد رقمك السري",
     "phone-label": "رقم الهاتف",
-    "phone-placeholder": "أدخل رقم الهاتف"
+    "phone-placeholder": "أدخل رقم الهاتف",
+    "weekday-label": "يوم الأسبوع",
+    "weekday-placeholder": "أدخل يوم الأسبوع",
+    "from-label": "من",
+    "to-label": "إلي",
+    "repeatEveryWeek-label": "تكرار هذا الموعد كل أسبوع؟"
   },
   "validations": {
     "required": "هذا الحقل مطلوب",
@@ -297,5 +303,21 @@
   "medicine-form": {
     "create-title": "إنشاء دواء",
     "edit-title": "تعديل دواء"
+  },
+
+  "appointments-list": {
+    "add-appointment": "إنشاء موعد",
+    "doctor-cell-label": "الطبيب",
+    "patients-cell-label": "المرضي",
+    "from-cell-label": "من",
+    "to-cell-label": "إلي"
+  },
+  "appointment-form": {
+    "create-title": "إنشاء موعد",
+    "edit-title": "تعديل موعد",
+    "doctor-label": "طبيب",
+    "doctor-placeholder": "أدخل طبيب",
+    "patients-label": "المرضي",
+    "patients-placeholder": "أدخل المرضي"
   }
 }

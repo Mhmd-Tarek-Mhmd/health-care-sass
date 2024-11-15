@@ -5,6 +5,7 @@ import Nurses from "./Nurses";
 import Doctors from "./Doctors";
 import Patients from "./Patients";
 import Medicines from "./Medicines";
+import Appointments from "./Appointments";
 
 export default {
   Root,
@@ -14,4 +15,5 @@ export default {
   Doctors,
   Patients,
   Medicines,
+  Appointments,
 };
