@@ -54,6 +54,7 @@
     "per-page-select-label": "اختر عدد الصفوف لكل صفحة"
   },
   "tabs": {
+    "home": "الرئيسية",
     "beds": "الأسرة",
     "rooms": "الغرف",
     "doctors": "الأطباء",
@@ -138,7 +139,9 @@
     "edit-button-default": "تعديل",
     "remove-button-default": "حذف",
     "inactivate-button-default": "تعطيل",
-    "activate-button-default": "تنشيط"
+    "activate-button-default": "تنشيط",
+    "reserve-appointment": "حجز موعد",
+    "cancel-reservation": "إلغاء الحجز"
   },
   "form-modal": {
     "save-label-default": "حفظ",
@@ -296,6 +299,12 @@
     "room-placeholder": "أدخل غرفة المريض",
     "bed-label": "السرير",
     "bed-placeholder": "أدخل سرير المريض"
+  },
+  "patient-home": {
+    "title": "مرحبا {{name}}",
+    "bed": "السرير",
+    "room": "الغرفة",
+    "N/A": "لا يوجد"
   },
 
   "medicines-list": {

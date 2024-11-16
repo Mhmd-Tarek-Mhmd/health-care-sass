@@ -56,6 +56,7 @@ export interface User extends Model {
   isTempPassword: boolean;
   isActive: boolean;
   hospital: Hospital;
+  hospitals?: Hospital[];
 }
 
 export type Auth = {

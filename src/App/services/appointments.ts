@@ -30,8 +30,9 @@ export const getAppointments = async ({
 }: GetAppointmentsArgs): Promise<PaginatorResponse<Appointment>> => {
   const authUser = Store.auth?.user;
   const isDoctor = authUser?.type === userTypes.DOCTOR;
+  const isPatient = authUser?.type === userTypes.PATIENT;
   const filters = [
-    where("hospitalID", "==", authUser?.hospital.id),
+    ...(isPatient ? [] : [where("hospitalID", "==", authUser?.hospital.id)]),
     ...(isDoctor ? [where("doctor", "==", authUser.userTypeID)] : []),
   ];
   const appointments = await paginator<Appointment>({
@@ -66,7 +67,7 @@ export const getAppointment = async ({
 
   // Patients
   let patients: Patient[] = [];
-  if (appointment.patients.length) {
+  if (appointment?.patients?.length) {
     const patientsPromises = appointment.patients.map((patient) =>
       getPatient({ id: patient as unknown as string })
     );

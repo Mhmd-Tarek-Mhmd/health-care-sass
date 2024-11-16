@@ -1,4 +1,5 @@
 import React from "react";
+import { useAppStore } from "@store";
 import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
 
@@ -7,6 +8,8 @@ import {
   removeAppointment,
   GetAppointmentsArgs,
   RemoveAppointmentArgs,
+  addRemovePatientToAppointment,
+  AddRemovePatientToAppointmentArgs,
 } from "@services";
 import dayjs from "dayjs";
 import { checkUserTypes, confirm } from "@helpers";
@@ -18,10 +21,12 @@ import {
   EditIconButton,
   AppointmentModal,
   RemoveIconButton,
+  IconButtonWithTooltip,
 } from "@components";
 import { ShowIfUserType } from "@hoc";
 import { BiPlus } from "react-icons/bi";
 import { Button, Flex } from "@chakra-ui/react";
+import { FaUserPlus, FaUserTimes } from "react-icons/fa";
 
 const modalInitState = {
   data: {},
@@ -35,7 +40,14 @@ const Appointments = () => {
   const [modalState, setModalState] = React.useState(modalInitState);
   const [pagination, setPagination] = React.useState(paginationInitState);
 
+  // Reducer State
+  const patientId = useAppStore((state) => state.auth?.user?.userTypeID);
+
   // Server State
+  const [addRemovePatientAppointment] = useServiceRequest<
+    AddRemovePatientToAppointmentArgs,
+    void
+  >(addRemovePatientToAppointment);
   const [remove] = useServiceRequest<RemoveAppointmentArgs, void>(
     removeAppointment
   );
@@ -69,18 +81,40 @@ const Appointments = () => {
       },
       {
         name: t("appointments-list.patients-cell-label"),
+        omit: checkUserTypes([userTypes.PATIENT]),
         cell: (row) => row?.patients?.map((p) => p?.name)?.join(", "),
       },
       {
         name: t("lists.actions-cell-label"),
-        omit: !checkUserTypes([userTypes.ADMIN, userTypes.NURSE]),
+        omit: checkUserTypes([userTypes.DOCTOR]),
         cell: (row) => (
           <>
-            <EditIconButton
-              size="sm"
-              onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
-            />
-            <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
+            <ShowIfUserType types={[userTypes.ADMIN, userTypes.NURSE]}>
+              <EditIconButton
+                size="sm"
+                onClick={() => handleOpenModal({ isEdit: true, id: row.id })}
+              />
+              <RemoveIconButton size="sm" onClick={() => handleDelete(row)} />
+            </ShowIfUserType>
+            <ShowIfUserType types={[userTypes.PATIENT]}>
+              {row?.patients
+                ?.map((p) => p.id)
+                ?.includes(patientId as string) ? (
+                <IconButtonWithTooltip
+                  label="icon-button.reserve-appointment"
+                  icon={<FaUserPlus color="#68D391" />}
+                  onClick={() =>
+                    handleAddRemovePatientAppointment(row, "REMOVE")
+                  }
+                />
+              ) : (
+                <IconButtonWithTooltip
+                  label="icon-button.cancel-reservation"
+                  icon={<FaUserTimes color="#d91103" />}
+                  onClick={() => handleAddRemovePatientAppointment(row, "ADD")}
+                />
+              )}
+            </ShowIfUserType>
           </>
         ),
       },
@@ -92,6 +126,31 @@ const Appointments = () => {
 
   const handleOpenModal = (data: AnyObject = {}) => {
     setModalState({ isOpen: true, data });
+  };
+
+  const handleAddRemovePatientAppointment = (
+    appointment: Appointment,
+    type: "ADD" | "REMOVE"
+  ) => {
+    confirm({ showLoaderOnConfirm: true, body: " " }).then(
+      ({ isConfirmed, cleanup }) => {
+        if (isConfirmed) {
+          addRemovePatientAppointment({
+            isShowErrorToast: true,
+            args: { id: appointment.id, type },
+            onSuccess() {
+              getData();
+              cleanup();
+            },
+            onError() {
+              setTimeout(() => {
+                cleanup();
+              }, 1500);
+            },
+          });
+        }
+      }
+    );
   };
 
   const handleDelete = (appointment: Appointment) => {

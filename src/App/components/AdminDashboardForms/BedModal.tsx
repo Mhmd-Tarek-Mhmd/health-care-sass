@@ -26,7 +26,7 @@ type Inputs = {
   width: number;
   height: number;
   length: number;
-  room?: string;
+  room: string;
   details?: string;
 };
 
@@ -168,7 +168,8 @@ const BedModal = ({ data, onClose, refetchList }: BedModalProps) => {
         options={options?.rooms || []}
         label={t("bed-form.room-label")}
         placeholder={t("bed-form.room-placeholder")}
-        {...register("room")}
+        error={errors.room?.message as "required"}
+        {...register("room", { required: "required" })}
       />
       <FormTextarea
         label={t("bed-form.details-label")}

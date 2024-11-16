@@ -17,7 +17,7 @@ const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
       ...state,
       auth: {
         ...(state?.auth as Auth),
-        user: { ...(state?.auth?.user ), photoURL },
+        user: { ...(state?.auth?.user ), photoURL } as User,
       },
     })),
 });

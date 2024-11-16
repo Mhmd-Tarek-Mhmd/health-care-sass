@@ -9,6 +9,7 @@ import {
   Timestamp,
   collection,
   writeBatch,
+  arrayUnion,
   arrayRemove,
   DocumentReference,
 } from "firebase/firestore";
@@ -26,7 +27,7 @@ import { userTypes } from "@constants";
 import { logUp, LogUpArgs } from "./auth";
 import { getHospital } from "./hospitals";
 import { buildOptionModel } from "@helpers";
-import { PaginatorResponse, Patient } from "@types";
+import { Hospital, PaginatorResponse, Patient } from "@types";
 import { COLLECTION_NAME as APPOINTMENTS_COLLECTION_NAME } from "./appointments";
 
 export const COLLECTION_NAME = "patients";
@@ -69,9 +70,12 @@ export const getPatient = async ({ id }: GetPatientArgs): Promise<Patient> => {
     bed = await getBed({ id: patient.bed.id });
   }
 
-  const hospitalID = Store.auth?.user?.hospital.id as string;
-  const hospital = await getHospital({ id: hospitalID });
-  return { ...patient, bed, hospitals: [hospital] };
+  const hospitalsData = Store.auth?.user?.hospitals as Hospital[];
+  const hospitalsPromises = hospitalsData?.map((hospital) =>
+    getHospital({ id: hospital.id })
+  );
+  const hospitals = await Promise.all(hospitalsPromises);
+  return { ...patient, bed, hospitals };
 };
 
 export const getPatientModalOptions = async () => {
@@ -176,6 +180,23 @@ export const quickPatientLogup = async ({
     }
   } else {
     throw new Error("toast.default-error-desc");
+  }
+};
+
+export type AddRemovePatientToAppointmentArgs = {
+  id: string;
+  type: "ADD" | "REMOVE";
+};
+export const addRemovePatientToAppointment = async ({
+  id,
+  type,
+}: AddRemovePatientToAppointmentArgs) => {
+  const patientId = Store.auth?.user?.userTypeID;
+  const appointmentRef = doc(db, APPOINTMENTS_COLLECTION_NAME, id);
+  if (type === "REMOVE") {
+    await updateDoc(appointmentRef, { patients: arrayRemove(patientId) });
+  } else {
+    await updateDoc(appointmentRef, { patients: arrayUnion(patientId) });
   }
 };
 

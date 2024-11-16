@@ -52,6 +52,7 @@
     "per-page-select-label": "select per page count"
   },
   "tabs": {
+    "home": "Home",
     "beds": "Beds",
     "plans": "Plans",
     "rooms": "Rooms",
@@ -136,7 +137,9 @@
     "edit-button-default": "Edit",
     "remove-button-default": "Remove",
     "activate-button-default": "Activate",
-    "inactivate-button-default": "Inactivate"
+    "inactivate-button-default": "Inactivate",
+    "reserve-appointment": "Reserve an Appointment",
+    "cancel-reservation": "Cancel Reservation"
   },
   "form-modal": {
     "save-label-default": "Save",
@@ -294,6 +297,12 @@
     "room-placeholder": "Enter patient's room",
     "bed-label": "Bed",
     "bed-placeholder": "Enter patient's bed"
+  },
+  "patient-home": {
+    "title": "Welcome {{name}}",
+    "bed": "Bed",
+    "room": "Room",
+    "N/A": "N/A"
   },
 
   "medicines-list": {
