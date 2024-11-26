@@ -1,4 +1,5 @@
 import React from "react";
+import { useAppStore } from "@store";
 import { useServiceRequest } from "@hooks";
 import { useTranslation } from "react-i18next";
 
@@ -25,7 +26,7 @@ import {
 } from "@components";
 import { ShowIfUserType } from "@hoc";
 import { BiPlus } from "react-icons/bi";
-import { Button, Flex, Link } from "@chakra-ui/react";
+import { Button, Flex, Link, Tooltip } from "@chakra-ui/react";
 
 const modalInitState = {
   data: {},
@@ -38,6 +39,11 @@ const Nurses = () => {
   // Local State
   const [modalState, setModalState] = React.useState(modalInitState);
   const [pagination, setPagination] = React.useState(paginationInitState);
+
+  // Reducer State
+  const canAddNewUser = useAppStore(
+    (store) => store.auth?.user?.hospital.canAddNewUser
+  );
 
   // Server State
   const [getData, { data, called, isLoading }] = useServiceRequest<
@@ -188,13 +194,20 @@ const Nurses = () => {
     <section>
       <ShowIfUserType types={[userTypes.ADMIN]}>
         <Flex mb={4} justifyContent="flex-end">
-          <Button
-            size="sm"
-            leftIcon={<BiPlus />}
-            onClick={() => handleOpenModal({ isEdit: false })}
-          >
-            {t("nurses-list.add-nurse")}
-          </Button>
+          <Tooltip label={canAddNewUser ? "" : t("lists.limit")}>
+            <Button
+              size="sm"
+              leftIcon={<BiPlus />}
+              disabled={!canAddNewUser}
+              onClick={
+                canAddNewUser
+                  ? () => handleOpenModal({ isEdit: false })
+                  : undefined
+              }
+            >
+              {t("nurses-list.add-nurse")}
+            </Button>
+          </Tooltip>
         </Flex>
       </ShowIfUserType>
 

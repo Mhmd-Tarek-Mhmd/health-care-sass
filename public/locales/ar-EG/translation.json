@@ -80,7 +80,8 @@
     "createdAt-cell-label": "تم إنشاؤها في",
     "updatedAt-cell-label": "تم تعديلها في",
     "createdBy-cell-label": "تم إنشاؤها بواسطة",
-    "updatedBy-cell-label": "تم تعديلها بواسطة"
+    "updatedBy-cell-label": "تم تعديلها بواسطة",
+    "limit": "لقد وصلت للحد الأقصي لنظام الإشتراك الخاص بك. لا يمكنك إنشاء مستخدم جديد"
   },
   "forms": {
     "name-label": "الاسم",

@@ -60,9 +60,10 @@ export const getHospital = async ({
 }: GetHospitalArgs): Promise<Hospital> => {
   const hospitalDoc = await getDoc(doc(db, COLLECTION_NAME, id));
   const hospital = hospitalDoc.data();
+  const canAddNewUser = await canCreateNewUser(id);
   const planDoc = await getDoc(hospital?.plan as DocumentReference);
   const plan = { id: planDoc.id, ...planDoc?.data() } as Plan;
-  return { id, ...hospital, plan } as Hospital;
+  return { id, ...hospital, plan, canAddNewUser } as Hospital;
 };
 
 export const saveHospital = async ({
@@ -206,4 +207,40 @@ export const removeHospital = async ({ id }: RemoveHospitalArgs) => {
   appointments.docs.forEach((doc) => batch.delete(doc.ref));
 
   await Promise.all([removeUser({ userTypeID: id }), batch.commit()]);
+};
+
+export const canCreateNewUser = async (id: string): Promise<boolean> => {
+  let usersCount = 0;
+  const hospital = await getHospital({ id });
+  const planLimit = hospital.plan.isInfiniteUsers
+    ? Infinity
+    : hospital.plan.users;
+
+  const hospitalPatientsSnapshot = await getCountFromServer(
+    query(
+      collection(db, PATIENTS_COLLECTION_NAME),
+      where("hospitalID", "==", id)
+    )
+  );
+  const hospitalPatientsCount = hospitalPatientsSnapshot.data().count;
+  if (hospitalPatientsCount >= planLimit) return false;
+  usersCount += hospitalPatientsCount;
+
+  const hospitalDoctorsSnapshot = await getCountFromServer(
+    query(
+      collection(db, DOCTORS_COLLECTION_NAME),
+      where("hospitalID", "==", id)
+    )
+  );
+  const hospitalDoctorsCount = hospitalDoctorsSnapshot.data().count;
+  if (usersCount + hospitalDoctorsCount >= planLimit) return false;
+  usersCount += hospitalDoctorsCount;
+
+  const hospitalNursesSnapshot = await getCountFromServer(
+    query(collection(db, NURSES_COLLECTION_NAME), where("hospitalID", "==", id))
+  );
+  const hospitalNursesCount = hospitalNursesSnapshot.data().count;
+  if (usersCount + hospitalNursesCount >= planLimit) return false;
+
+  return true;
 };

@@ -78,7 +78,8 @@
     "createdAt-cell-label": "Created at",
     "updatedAt-cell-label": "Updated at",
     "createdBy-cell-label": "Created by",
-    "updatedBy-cell-label": "Updated by"
+    "updatedBy-cell-label": "Updated by",
+    "limit": "You have reached to plan limit. can't add a new user"
   },
   "forms": {
     "name-label": "Name",

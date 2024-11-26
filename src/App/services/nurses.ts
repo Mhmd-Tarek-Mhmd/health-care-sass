@@ -105,6 +105,12 @@ export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
       updatedAt: Timestamp.now(),
     });
   } else {
+    if (!Store.auth?.user?.hospital.canAddNewUser) {
+      throw new Error(
+        "Can't create a new nurse. You have reached to limit of this plan."
+      );
+    }
+
     const newDoc = await addDoc(collection(db, COLLECTION_NAME), {
       ...nurseData,
       isActive: true,

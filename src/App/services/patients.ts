@@ -70,9 +70,8 @@ export const getPatient = async ({ id }: GetPatientArgs): Promise<Patient> => {
     bed = await getBed({ id: patient.bed.id });
   }
 
-  const hospitalsData = Store.auth?.user?.hospitals as Hospital[];
-  const hospitalsPromises = hospitalsData?.map((hospital) =>
-    getHospital({ id: hospital.id })
+  const hospitalsPromises = patient.hospitals?.map((id) =>
+    getHospital({ id: id as unknown as string })
   );
   const hospitals = await Promise.all(hospitalsPromises);
   return { ...patient, bed, hospitals };
@@ -127,6 +126,12 @@ export const upsertPatient = async (
       updatedAt: Timestamp.now(),
     });
   } else {
+    if (!Store.auth?.user?.hospital.canAddNewUser) {
+      throw new Error(
+        "Can't create a new patient. You have reached to limit of this plan."
+      );
+    }
+
     const newDoc = await addDoc(collection(db, COLLECTION_NAME), {
       ...patientData,
       isActive: true,

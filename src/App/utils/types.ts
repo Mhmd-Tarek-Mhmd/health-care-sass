@@ -76,6 +76,7 @@ export interface Plan extends Model {
 
 export interface Hospital extends Omit<User, "age" | "gender" | "hospital"> {
   plan: Plan;
+  canAddNewUser: boolean;
 }
 
 export interface Medicine extends Model {
