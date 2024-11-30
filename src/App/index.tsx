@@ -19,6 +19,7 @@ const router = createBrowserRouter([
 
 function App() {
   const login = useAppStore((state) => state.login);
+  const authToken = useAppStore((state) => state.auth?.token);
 
   React.useEffect(() => {
     if (localStorage?.[AUTH_STORAGE_KEY]) {
@@ -26,6 +27,16 @@ function App() {
       login(auth);
     }
   }, []);
+
+  React.useEffect(() => {
+    if (
+      !authToken &&
+      !localStorage?.[AUTH_STORAGE_KEY] &&
+      !["/login", "/logup", "/forget-password"].includes(location.pathname)
+    ) {
+      window.location.pathname = "/login";
+    }
+  }, [authToken, localStorage?.[AUTH_STORAGE_KEY]]);
 
   return <RouterProvider router={router} />;
 }

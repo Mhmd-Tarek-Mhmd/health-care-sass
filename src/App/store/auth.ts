@@ -1,5 +1,7 @@
 import { Auth, User } from "@types";
 import { StateCreator } from "zustand";
+import { persist } from "zustand/middleware";
+import { AUTH_STORAGE_KEY } from "@constants";
 
 export interface AuthSlice {
   auth: Auth | null;
@@ -17,9 +19,16 @@ const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
       ...state,
       auth: {
         ...(state?.auth as Auth),
-        user: { ...(state?.auth?.user ), photoURL } as User,
+        user: { ...state?.auth?.user, photoURL } as User,
       },
     })),
 });
 
-export default createAuthSlice;
+export default persist(createAuthSlice, {
+  name: AUTH_STORAGE_KEY,
+  onRehydrateStorage: () => (state) => {
+    if (!state?.auth?.token) {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+  },
+});
