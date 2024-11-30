@@ -27,10 +27,23 @@ import { userTypes } from "@constants";
 import { logUp, LogUpArgs } from "./auth";
 import { getHospital } from "./hospitals";
 import { buildOptionModel } from "@helpers";
-import { Hospital, PaginatorResponse, Patient } from "@types";
+import { FirebaseError } from "firebase/app";
+import { PaginatorResponse, Patient } from "@types";
 import { COLLECTION_NAME as APPOINTMENTS_COLLECTION_NAME } from "./appointments";
 
 export const COLLECTION_NAME = "patients";
+const formatPatient = async (patient: Patient): Promise<Patient> => {
+  let bed;
+  if (patient?.bed) {
+    bed = await getBed({ id: patient.bed.id });
+  }
+
+  const hospitalsPromises = patient.hospitals?.map((id) =>
+    getHospital({ id: id as unknown as string })
+  );
+  const hospitals = await Promise.all(hospitalsPromises);
+  return { ...patient, bed, hospitals };
+};
 
 export interface GetPatientsArgs {
   pageSize: number;
@@ -49,10 +62,7 @@ export const getPatients = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const patientsPromises = patients.items.map((patient) =>
-    getPatient({ id: patient.id })
-  );
-
+  const patientsPromises = patients.items.map(formatPatient);
   const items = await Promise.all(patientsPromises);
   return { ...patients, items };
 };
@@ -64,17 +74,7 @@ export interface GetPatientArgs {
 export const getPatient = async ({ id }: GetPatientArgs): Promise<Patient> => {
   const patientDoc = await getDoc(doc(db, COLLECTION_NAME, id));
   const patient = { id, ...patientDoc?.data() } as Patient;
-
-  let bed;
-  if (patient?.bed) {
-    bed = await getBed({ id: patient.bed.id });
-  }
-
-  const hospitalsPromises = patient.hospitals?.map((id) =>
-    getHospital({ id: id as unknown as string })
-  );
-  const hospitals = await Promise.all(hospitalsPromises);
-  return { ...patient, bed, hospitals };
+  return await formatPatient(patient);
 };
 
 export const getPatientModalOptions = async () => {
@@ -153,7 +153,11 @@ export const upsertPatient = async (
       });
     } catch (error) {
       await deleteDoc(doc(db, COLLECTION_NAME, newDoc.id));
-      throw new Error(error.message);
+      throw new Error(
+        (error as FirebaseError)?.code ||
+          (error as FirebaseError)?.message ||
+          "toast.default-error-desc"
+      );
     }
   }
 };
@@ -181,7 +185,11 @@ export const quickPatientLogup = async ({
       });
     } catch (error) {
       await deleteDoc(doc(db, COLLECTION_NAME, patientDoc.id));
-      throw new Error(error.message);
+      throw new Error(
+        (error as FirebaseError)?.code ||
+          (error as FirebaseError)?.message ||
+          "toast.default-error-desc"
+      );
     }
   } else {
     throw new Error("toast.default-error-desc");

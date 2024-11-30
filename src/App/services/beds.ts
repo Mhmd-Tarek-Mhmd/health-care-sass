@@ -19,6 +19,15 @@ import { COLLECTION_NAME as ROOMS_COLLECTION_NAME } from "./rooms";
 import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
 
 export const COLLECTION_NAME = "beds";
+const formatBed = async (bed: Bed): Promise<Bed> => {
+  if (bed?.room) {
+    const roomDoc = await getDoc(bed.room as unknown as DocumentReference);
+    const room = { id: roomDoc.id, ...roomDoc?.data() } as Room;
+    return { ...bed, room };
+  } else {
+    return bed;
+  }
+};
 
 export interface GetBedsArgs {
   pageSize: number;
@@ -36,8 +45,7 @@ export const getBeds = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const bedsPromises = beds.items.map((bed) => getBed({ id: bed.id }));
-
+  const bedsPromises = beds.items.map(formatBed);
   const items = await Promise.all(bedsPromises);
   return { ...beds, items };
 };
@@ -49,14 +57,7 @@ export interface GetBedArgs {
 export const getBed = async ({ id }: GetBedArgs): Promise<Bed> => {
   const bedDoc = await getDoc(doc(db, COLLECTION_NAME, id));
   const bed = { id, ...bedDoc?.data() } as Bed;
-
-  if (bed?.room) {
-    const roomDoc = await getDoc(bed.room as unknown as DocumentReference);
-    const room = { id: roomDoc.id, ...roomDoc?.data() } as Room;
-    return { ...bed, room };
-  } else {
-    return bed;
-  }
+  return await formatBed(bed);
 };
 
 export interface UpsertBedArgs extends Omit<Bed, "room"> {

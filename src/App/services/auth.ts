@@ -15,7 +15,7 @@ import {
 import { createUser } from "./users";
 import { userTypes } from "@constants";
 import { getHospital } from "./hospitals";
-import { Auth, Hospital, User, UserType } from "@types";
+import { Auth, User, UserType } from "@types";
 import { db, auth, storage } from "./firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { COLLECTION_NAME as USERS_COLLECTION_NAME } from "./users";
@@ -43,8 +43,9 @@ export type LogInArgs = {
 };
 export const login = async ({ email, password }: LogInArgs): Promise<Auth> => {
   const res = await signInWithEmailAndPassword(auth, email, password);
-  const userDoc = await getDoc(doc(db, "users", res.user.uid));
+  const userDoc = await getDoc(doc(db, USERS_COLLECTION_NAME, res.user.uid));
   const user = userDoc?.data();
+  console.log(user);
   if (user) {
     let hospital, hospitals;
     const isSuper = user.type === userTypes.SUPER;
@@ -94,7 +95,9 @@ export const resetPassword = async ({ password }: ResetPasswordArgs) => {
   const user = auth.currentUser as AuthUser;
   await Promise.all([
     updatePassword(user, password),
-    updateDoc(doc(db, "users", user.uid), { isTempPassword: false }),
+    updateDoc(doc(db, USERS_COLLECTION_NAME, user.uid), {
+      isTempPassword: false,
+    }),
   ]);
 };
 

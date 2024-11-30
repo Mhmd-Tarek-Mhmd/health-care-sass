@@ -16,6 +16,25 @@ import { PaginatorResponse, Medicine, User } from "@types";
 import { COLLECTION_NAME as USERS_COLLECTION_NAME } from "./users";
 
 export const COLLECTION_NAME = "medicines";
+const formatMedicine = async (medicine: Medicine): Promise<Medicine> => {
+  let createdBy, updatedBy;
+
+  if (medicine?.createdBy) {
+    const createdByDoc = await getDoc(
+      medicine.createdBy as unknown as DocumentReference
+    );
+    createdBy = { id: createdByDoc.id, ...createdByDoc?.data() } as User;
+  }
+
+  if (medicine?.updatedBy) {
+    const updatedByDoc = await getDoc(
+      medicine.updatedBy as unknown as DocumentReference
+    );
+    updatedBy = { id: updatedByDoc.id, ...updatedByDoc?.data() } as User;
+  }
+
+  return { ...medicine, createdBy, updatedBy } as Medicine;
+};
 
 export interface GetMedicinesArgs {
   pageSize: number;
@@ -33,10 +52,7 @@ export const getMedicines = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const medicinesPromises = medicines.items.map((medicine) =>
-    getMedicine({ id: medicine.id })
-  );
-
+  const medicinesPromises = medicines.items.map(formatMedicine);
   const items = await Promise.all(medicinesPromises);
   return { ...medicines, items };
 };
@@ -49,24 +65,8 @@ export const getMedicine = async ({
   id,
 }: GetMedicineArgs): Promise<Medicine> => {
   const medicineDoc = await getDoc(doc(db, COLLECTION_NAME, id));
-  const medicine = medicineDoc?.data();
-  let createdBy, updatedBy;
-
-  if (medicine?.createdBy) {
-    const createdByDoc = await getDoc(
-      medicine.createdBy as unknown as DocumentReference
-    );
-    createdBy = { id: createdByDoc.id, ...createdByDoc?.data() } as User;
-  }
-
-  if (medicine?.updatedBy) {
-    const updatedByDoc = await getDoc(
-      medicine.updatedBy as unknown as DocumentReference
-    );
-    updatedBy = { id: updatedByDoc.id, ...updatedByDoc?.data() } as User;
-  }
-
-  return { id, ...medicine, createdBy, updatedBy } as Medicine;
+  const medicine = { id, ...medicineDoc?.data() } as Medicine;
+  return await formatMedicine(medicine);
 };
 
 export interface UpsertMedicineArgs extends Medicine {}

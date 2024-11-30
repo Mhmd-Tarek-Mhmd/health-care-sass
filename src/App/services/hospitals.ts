@@ -10,25 +10,33 @@ import {
   deleteDoc,
   collection,
   writeBatch,
-  DocumentReference,
   getCountFromServer,
 } from "firebase/firestore";
 import { logUp } from "./auth";
 import { db } from "./firebase";
 import paginator from "./paginator";
 import { userTypes } from "@constants";
+import { FirebaseError } from "firebase/app";
 import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Hospital, Plan } from "@types";
 import { COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
-import { COLLECTION_NAME as PLANS_COLLECTION_NAME } from "./plans";
 import { COLLECTION_NAME as ROOMS_COLLECTION_NAME } from "./rooms";
 import { COLLECTION_NAME as NURSES_COLLECTION_NAME } from "./nurses";
 import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
 import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
 import { COLLECTION_NAME as MEDICINES_COLLECTION_NAME } from "./medicines";
+import { getPlan, COLLECTION_NAME as PLANS_COLLECTION_NAME } from "./plans";
 import { COLLECTION_NAME as APPOINTMENTS_COLLECTION_NAME } from "./appointments";
 
 export const COLLECTION_NAME = "hospitals";
+const formatHospital = async (hospital: Hospital): Promise<Hospital> => {
+  const plan = await getPlan({ id: hospital?.plan?.id });
+  const canAddNewUser = await canCreateNewUser({
+    hospitalId: hospital.id,
+    hospitalPlan: plan,
+  });
+  return { ...hospital, plan, canAddNewUser } as Hospital;
+};
 
 export interface GetHospitalsArgs {
   pageSize: number;
@@ -43,10 +51,7 @@ export const getHospitals = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const hospitalsPromises = hospitals.items.map((hospital) =>
-    getHospital({ id: hospital.id })
-  );
-
+  const hospitalsPromises = hospitals.items.map(formatHospital);
   const items = await Promise.all(hospitalsPromises);
   return { ...hospitals, items };
 };
@@ -59,11 +64,8 @@ export const getHospital = async ({
   id,
 }: GetHospitalArgs): Promise<Hospital> => {
   const hospitalDoc = await getDoc(doc(db, COLLECTION_NAME, id));
-  const hospital = hospitalDoc.data();
-  const canAddNewUser = await canCreateNewUser(id);
-  const planDoc = await getDoc(hospital?.plan as DocumentReference);
-  const plan = { id: planDoc.id, ...planDoc?.data() } as Plan;
-  return { id, ...hospital, plan, canAddNewUser } as Hospital;
+  const hospital = { id, ...hospitalDoc.data() } as Hospital;
+  return await formatHospital(hospital);
 };
 
 export const saveHospital = async ({
@@ -93,7 +95,11 @@ export const saveHospital = async ({
     });
   } catch (error) {
     await deleteDoc(doc(db, COLLECTION_NAME, newDoc.id));
-    throw new Error("toast.default-error-desc");
+    throw new Error(
+      (error as FirebaseError)?.code ||
+        (error as FirebaseError)?.message ||
+        "toast.default-error-desc"
+    );
   }
 };
 
@@ -209,17 +215,22 @@ export const removeHospital = async ({ id }: RemoveHospitalArgs) => {
   await Promise.all([removeUser({ userTypeID: id }), batch.commit()]);
 };
 
-export const canCreateNewUser = async (id: string): Promise<boolean> => {
+type CanCreateNewUserArgs = {
+  hospitalId: string;
+  hospitalPlan: Plan;
+};
+export const canCreateNewUser = async ({
+  hospitalId,
+  hospitalPlan,
+}: CanCreateNewUserArgs): Promise<boolean> => {
   let usersCount = 0;
-  const hospital = await getHospital({ id });
-  const planLimit = hospital.plan.isInfiniteUsers
+  const planLimit = hospitalPlan.isInfiniteUsers
     ? Infinity
-    : hospital.plan.users;
-
+    : hospitalPlan.users;
   const hospitalPatientsSnapshot = await getCountFromServer(
     query(
       collection(db, PATIENTS_COLLECTION_NAME),
-      where("hospitalID", "==", id)
+      where("hospitalID", "==", hospitalId)
     )
   );
   const hospitalPatientsCount = hospitalPatientsSnapshot.data().count;
@@ -229,7 +240,7 @@ export const canCreateNewUser = async (id: string): Promise<boolean> => {
   const hospitalDoctorsSnapshot = await getCountFromServer(
     query(
       collection(db, DOCTORS_COLLECTION_NAME),
-      where("hospitalID", "==", id)
+      where("hospitalID", "==", hospitalId)
     )
   );
   const hospitalDoctorsCount = hospitalDoctorsSnapshot.data().count;
@@ -237,7 +248,10 @@ export const canCreateNewUser = async (id: string): Promise<boolean> => {
   usersCount += hospitalDoctorsCount;
 
   const hospitalNursesSnapshot = await getCountFromServer(
-    query(collection(db, NURSES_COLLECTION_NAME), where("hospitalID", "==", id))
+    query(
+      collection(db, NURSES_COLLECTION_NAME),
+      where("hospitalID", "==", hospitalId)
+    )
   );
   const hospitalNursesCount = hospitalNursesSnapshot.data().count;
   if (usersCount + hospitalNursesCount >= planLimit) return false;

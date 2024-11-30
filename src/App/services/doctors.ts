@@ -18,11 +18,19 @@ import paginator from "./paginator";
 import { userTypes } from "@constants";
 import { getPatient } from "./patients";
 import { getHospital } from "./hospitals";
+import { FirebaseError } from "firebase/app";
 import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Doctor, Patient, Appointment } from "@types";
 import { COLLECTION_NAME as APPOINTMENTS_COLLECTION_NAME } from "./appointments";
 
 export const COLLECTION_NAME = "doctors";
+const formatDoctor = async (
+  doctor: Doctor & { hospitalID: string }
+): Promise<Doctor> => {
+  const hospital = await getHospital({ id: doctor?.hospitalID });
+  const appointments = await getDoctorAppointments({ id: doctor.id });
+  return { ...doctor, hospital, appointments } as Doctor;
+};
 
 export interface GetDoctorsArgs {
   pageSize: number;
@@ -40,10 +48,7 @@ export const getDoctors = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const doctorsPromises = doctors.items.map(async (doctor) =>
-    getDoctor({ id: doctor.id })
-  );
-
+  const doctorsPromises = doctors.items.map(formatDoctor);
   const items = await Promise.all(doctorsPromises);
   return { ...doctors, items };
 };
@@ -54,10 +59,8 @@ export interface GetDoctorArgs {
 
 export const getDoctor = async ({ id }: GetDoctorArgs): Promise<Doctor> => {
   const doctorDoc = await getDoc(doc(db, COLLECTION_NAME, id));
-  const doctor = doctorDoc.data();
-  const hospital = await getHospital({ id: doctor?.hospitalID });
-  const appointments = await getDoctorAppointments({ id });
-  return { id, ...doctor, hospital, appointments } as Doctor;
+  const doctor = { id, ...doctorDoc.data() } as Doctor;
+  return await formatDoctor(doctor);
 };
 
 interface GetDoctorAppointmentsArgs {
@@ -136,7 +139,11 @@ export const upsertDoctor = async (doctor: UpsertDoctorArgs): Promise<void> => {
       });
     } catch (error) {
       await deleteDoc(doc(db, COLLECTION_NAME, newDoc.id));
-      throw new Error(error.message);
+      throw new Error(
+        (error as FirebaseError)?.code ||
+          (error as FirebaseError)?.message ||
+          "toast.default-error-desc"
+      );
     }
   }
 };

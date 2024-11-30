@@ -19,6 +19,26 @@ import { PaginatorResponse, Appointment, Patient } from "@types";
 import { COLLECTION_NAME as PATIENTS_COLLECTION_NAME } from "./patients";
 
 export const COLLECTION_NAME = "appointments";
+const formatAppointment = async (
+  appointment: Appointment
+): Promise<Appointment> => {
+  // Doctor
+  const doctor = await getDoctor({
+    id: appointment.doctor as unknown as string,
+  });
+
+  // Patients
+  let patients: Patient[] = [];
+  if (appointment?.patients?.length) {
+    const patientsPromises = appointment.patients.map((patient) =>
+      getPatient({ id: patient as unknown as string })
+    );
+
+    patients = await Promise.all(patientsPromises);
+  }
+
+  return { ...appointment, doctor, patients } as Appointment;
+};
 
 export interface GetAppointmentsArgs {
   pageSize: number;
@@ -42,10 +62,7 @@ export const getAppointments = async ({
     orderByField: "from",
     collectionName: COLLECTION_NAME,
   });
-  const appointmentsPromises = appointments.items.map((appointment) =>
-    getAppointment({ id: appointment.id })
-  );
-
+  const appointmentsPromises = appointments.items.map(formatAppointment);
   const items = await Promise.all(appointmentsPromises);
   return { ...appointments, items };
 };
@@ -59,23 +76,7 @@ export const getAppointment = async ({
 }: GetAppointmentArgs): Promise<Appointment> => {
   const appointmentDoc = await getDoc(doc(db, COLLECTION_NAME, id));
   const appointment = { id, ...appointmentDoc?.data() } as Appointment;
-
-  // Doctor
-  const doctor = await getDoctor({
-    id: appointment.doctor as unknown as string,
-  });
-
-  // Patients
-  let patients: Patient[] = [];
-  if (appointment?.patients?.length) {
-    const patientsPromises = appointment.patients.map((patient) =>
-      getPatient({ id: patient as unknown as string })
-    );
-
-    patients = await Promise.all(patientsPromises);
-  }
-
-  return { ...appointment, doctor, patients };
+  return await formatAppointment(appointment);
 };
 
 export const getAppointmentModalOptions = async () => {

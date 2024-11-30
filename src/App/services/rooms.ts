@@ -18,6 +18,18 @@ import { Bed, PaginatorResponse, Room } from "@types";
 import { COLLECTION_NAME as BEDS_COLLECTION_NAME } from "./beds";
 
 export const COLLECTION_NAME = "rooms";
+const formatRoom = async (room: Room): Promise<Room> => {
+  if (room.beds.length) {
+    const bedsPromises = room.beds.map(async (bed) => {
+      const bedDoc = await getDoc(bed as unknown as DocumentReference);
+      return { id: bedDoc.id, ...bedDoc?.data() } as Bed;
+    });
+    const beds = await Promise.all(bedsPromises);
+    return { ...room, beds };
+  } else {
+    return room;
+  }
+};
 
 export interface GetRoomsArgs {
   pageSize: number;
@@ -35,10 +47,7 @@ export const getRooms = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const roomsPromises = rooms.items.map(async (room) =>
-    getRoom({ id: room.id })
-  );
-
+  const roomsPromises = rooms.items.map(formatRoom);
   const items = await Promise.all(roomsPromises);
   return { ...rooms, items };
 };
@@ -50,17 +59,7 @@ export interface GetRoomArgs {
 export const getRoom = async ({ id }: GetRoomArgs): Promise<Room> => {
   const roomDoc = await getDoc(doc(db, COLLECTION_NAME, id));
   const room = { id, ...roomDoc?.data() } as Room;
-
-  if (room.beds.length) {
-    const bedsPromises = room.beds.map(async (bed) => {
-      const bedDoc = await getDoc(bed as unknown as DocumentReference);
-      return { id: bedDoc.id, ...bedDoc?.data() } as Bed;
-    });
-    const beds = await Promise.all(bedsPromises);
-    return { ...room, beds };
-  } else {
-    return room;
-  }
+  return await formatRoom(room);
 };
 
 export interface UpsertRoomArgs extends Omit<Room, "beds"> {
@@ -118,26 +117,25 @@ export type RemoveRoomArgs = {
   id: string;
 };
 export const removeRoom = async ({ id }: RemoveRoomArgs) => {
+  const roomRef = doc(db, COLLECTION_NAME, id);
   const roomBedsSnapshot = await getCountFromServer(
     query(
       collection(db, BEDS_COLLECTION_NAME),
-      where("room", "==", doc(db, COLLECTION_NAME, id))
+      where("room", "==", roomRef),
+      where("occupied", "==", true)
     )
   );
   if (roomBedsSnapshot.data().count) {
-    throw new Error("Can't remove a room with current beds.");
+    throw new Error("Can't remove a room with occupied beds.");
   }
 
   const batch = writeBatch(db);
-  const roomRef = doc(db, COLLECTION_NAME, id);
-  const beds = await getDocs(collection(db, BEDS_COLLECTION_NAME));
+  const roomBeds = await getDocs(
+    query(collection(db, BEDS_COLLECTION_NAME), where("room", "==", roomRef))
+  );
 
   batch.delete(roomRef);
-  beds.docs.forEach((doc) =>
-    batch.update(doc.ref, {
-      room: arrayRemove(roomRef),
-    })
-  );
+  roomBeds.docs.forEach((doc) => batch.update(doc.ref, { room: null }));
 
   await batch.commit();
 };

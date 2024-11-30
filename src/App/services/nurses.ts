@@ -15,11 +15,32 @@ import { db } from "./firebase";
 import paginator from "./paginator";
 import { userTypes } from "@constants";
 import { checkUserTypes } from "@helpers";
+import { getHospital } from "./hospitals";
+import { FirebaseError } from "firebase/app";
 import { removeUser, toggleActiveStatus } from "./users";
 import { PaginatorResponse, Nurse, Doctor } from "@types";
 import { COLLECTION_NAME as DOCTORS_COLLECTION_NAME } from "./doctors";
 
 export const COLLECTION_NAME = "nurses";
+const formatNurse = async (
+  nurse: Nurse & { hospitalID: string }
+): Promise<Nurse> => {
+  console.log(nurse);
+  let doctors: Doctor[] = [];
+
+  if (nurse.doctors.length) {
+    const doctorsPromises = nurse.doctors.map(async (doctor) => {
+      const doctorDoc = await getDoc(doctor as unknown as DocumentReference);
+      return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
+    });
+
+    doctors = await Promise.all(doctorsPromises);
+    return { ...nurse, doctors };
+  }
+
+  const hospital = await getHospital({ id: nurse?.hospitalID });
+  return { ...nurse, hospital, doctors };
+};
 
 export interface GetNursesArgs {
   pageSize: number;
@@ -54,10 +75,7 @@ export const getNurses = async ({
     pageNumber,
     collectionName: COLLECTION_NAME,
   });
-  const nursesPromises = nurses.items.map((nurse) =>
-    getNurse({ id: nurse.id })
-  );
-
+  const nursesPromises = nurses.items.map(formatNurse);
   const items = await Promise.all(nursesPromises);
   return { ...nurses, items };
 };
@@ -69,17 +87,7 @@ export interface GetNurseArgs {
 export const getNurse = async ({ id }: GetNurseArgs): Promise<Nurse> => {
   const nurseDoc = await getDoc(doc(db, COLLECTION_NAME, id));
   const nurse = { id, ...nurseDoc?.data() } as Nurse;
-  if (nurse.doctors.length) {
-    const doctorsPromises = nurse.doctors.map(async (doctor) => {
-      const doctorDoc = await getDoc(doctor as unknown as DocumentReference);
-      return { id: doctorDoc.id, ...doctorDoc?.data() } as Doctor;
-    });
-
-    const doctors = await Promise.all(doctorsPromises);
-    return { ...nurse, doctors };
-  } else {
-    return nurse;
-  }
+  return formatNurse(nurse);
 };
 
 export interface UpsertNurseArgs extends Omit<Nurse, "doctors"> {
@@ -132,7 +140,11 @@ export const upsertNurse = async (nurse: UpsertNurseArgs): Promise<void> => {
       });
     } catch (error) {
       await deleteDoc(doc(db, COLLECTION_NAME, newDoc.id));
-      throw new Error(error.message);
+      throw new Error(
+        (error as FirebaseError)?.code ||
+          (error as FirebaseError)?.message ||
+          "toast.default-error-desc"
+      );
     }
   }
 };
