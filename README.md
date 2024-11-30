@@ -1,30 +1,70 @@
-# React + TypeScript + Vite
+# Helthcare
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Project preview](./public/images/hero.jpg)
 
-Currently, two official plugins are available:
+Helthcare is a powerful, intuitive platform designed to streamline and optimize hospital operations. It provides tools for patient management, appointment scheduling, staff coordination, and reporting, all in a secure and user-friendly environment.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌟 Features
 
-## Expanding the ESLint configuration
+- Patient Management: Easily manage patient records, medical history, and billing.
+- Appointment Scheduling: Simplified scheduling for doctors, nurses, and other staff.
+- Staff Management: Coordinate shifts, duties, and personnel information efficiently.
+- Reports & Analytics: Gain insights into hospital performance with real-time data.
+- Multi-language Support: Designed to work in diverse regions and languages.
+- Role-Based Access Control: Securely manage permissions for admins, doctors, and other staff.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 🛠️ Technologies Used
 
-- Configure the top-level `parserOptions` property like this:
+- **Frontend:** React 18, Chakra UI
+- **Backend:** Firebase
+- **Database:** Firebase - Firestore (Modular API)
+- **State Management:** Zustand
+- **Authentication:** Firebase - Authentication (Modular API)
+- **Form Management:** React Hook Form
+  <!-- - **CI/CD:** GitHub Actions -->
+  <!-- - **Testing:** Jest, React Testing Library -->
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## 🎮 Demo
+
+Use the following accounts to explore the platform:
+
+**Super Account**
+
+```
+Email: super@healthcare.com
+Password: 123456
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+**Admin/Hospital Account**
+
+```
+Email: h1@healthcare.com
+Password: 123456
+```
+
+**Doctor Account**
+
+```
+Email: d1@healthcare.com
+Password: 123456
+```
+
+**Nurse Account**
+
+```
+Email: n1@healthcare.com
+Password: 123456
+```
+
+**Patient Account**
+
+```
+Email: p1@healthcare.com
+Password: 123456
+```
+
+## ✅ Todos
+
+- [ ] Doctor/Nurse/Patient profile.
+- [ ] List filters.
+- [ ] Track Payments.
