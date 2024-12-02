@@ -112,14 +112,14 @@ const LogIn = () => {
               </Button>
             </Stack>
 
-            <Stack pt={2}>
+            {/* <Stack pt={2}>
               <Text align="center">
                 {t("logInPage.no-acc-label")}{" "}
                 <Link to="/logup" as={LinkRouter} color="blue.400">
                   {t("actions.logup-btn-label")}
                 </Link>
               </Text>
-            </Stack>
+            </Stack> */}
           </Stack>
         </Box>
       </Stack>

@@ -7,10 +7,10 @@ const authRoutes: Array<RouteObject> = [
     path: "/login",
     element: <Auth.LogIn />,
   },
-  {
-    path: "/logup",
-    element: <Auth.LogUp />,
-  },
+  // {
+  //   path: "/logup",
+  //   element: <Auth.LogUp />,
+  // },
   {
     path: "/forget-password",
     element: <Auth.ForgetPassword />,
