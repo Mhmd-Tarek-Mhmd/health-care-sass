@@ -25,7 +25,6 @@ export const COLLECTION_NAME = "nurses";
 const formatNurse = async (
   nurse: Nurse & { hospitalID: string }
 ): Promise<Nurse> => {
-  console.log(nurse);
   let doctors: Doctor[] = [];
 
   if (nurse.doctors.length) {

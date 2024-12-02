@@ -45,7 +45,7 @@ export const login = async ({ email, password }: LogInArgs): Promise<Auth> => {
   const res = await signInWithEmailAndPassword(auth, email, password);
   const userDoc = await getDoc(doc(db, USERS_COLLECTION_NAME, res.user.uid));
   const user = userDoc?.data();
-  console.log(user);
+
   if (user) {
     let hospital, hospitals;
     const isSuper = user.type === userTypes.SUPER;
