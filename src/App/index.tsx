@@ -32,7 +32,7 @@ function App() {
     if (
       !authToken &&
       !localStorage?.[AUTH_STORAGE_KEY] &&
-      !["","/login", "/logup", "/forget-password"].includes(location.pathname)
+      !["/","/login", "/logup", "/forget-password"].includes(location.pathname)
     ) {
       window.location.pathname = "/login";
     }
